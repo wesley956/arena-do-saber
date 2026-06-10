@@ -50,17 +50,23 @@ function StatCard({
   helper?: string;
 }) {
   return (
-    <Card className="p-4">
-      <div className="flex items-start gap-3">
+    <Card className="min-w-0 p-3 sm:p-4">
+      <div className="flex min-w-0 items-start gap-3">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-violet-500/15 text-xl">
           {icon}
         </div>
-        <div>
-          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+        <div className="min-w-0 flex-1">
+          <p className="break-words text-[10px] font-bold uppercase leading-tight tracking-wide text-slate-500 sm:text-xs">
             {label}
           </p>
-          <p className="mt-1 text-2xl font-black text-white">{value}</p>
-          {helper && <p className="mt-1 text-xs text-slate-400">{helper}</p>}
+          <p className="mt-1 break-words text-xl font-black leading-tight text-white sm:text-2xl">
+            {value}
+          </p>
+          {helper && (
+            <p className="mt-1 break-words text-[11px] leading-snug text-slate-400 sm:text-xs">
+              {helper}
+            </p>
+          )}
         </div>
       </div>
     </Card>
@@ -86,17 +92,19 @@ function CategoryProgressCard({ stats }: { stats: ProfileCategoryStats }) {
       : "Sem progresso ainda";
 
   return (
-    <div className="rounded-2xl border border-slate-700/70 bg-slate-900/45 p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">{stats.icon || "📘"}</span>
-            <h4 className="truncate font-black text-white">{stats.categoryName}</h4>
+    <div className="min-w-0 rounded-2xl border border-slate-700/70 bg-slate-900/45 p-4">
+      <div className="flex min-w-0 items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="shrink-0 text-xl">{stats.icon || "📘"}</span>
+            <h4 className="min-w-0 break-words font-black leading-tight text-white">
+              {stats.categoryName}
+            </h4>
           </div>
-          <p className="mt-1 text-xs text-slate-400">{activityLabel}</p>
+          <p className="mt-1 break-words text-xs leading-snug text-slate-400">{activityLabel}</p>
         </div>
         {stats.hasEmblem && (
-          <span className="rounded-full border border-amber-400/40 bg-amber-500/15 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-amber-200">
+          <span className="shrink-0 rounded-full border border-amber-400/40 bg-amber-500/15 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-amber-200">
             Insígnia
           </span>
         )}
@@ -124,18 +132,20 @@ function CategoryProgressCard({ stats }: { stats: ProfileCategoryStats }) {
 
 function WorldProgressSection({ worldStats }: { worldStats: ProfileWorldStats }) {
   return (
-    <Card className="p-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+    <Card className="min-w-0 p-5">
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-violet-300">
             Progresso por mundo
           </p>
-          <h3 className="mt-1 text-2xl font-black text-white">{worldStats.label}</h3>
-          <p className="mt-1 text-sm text-slate-400">
+          <h3 className="mt-1 break-words text-2xl font-black leading-tight text-white">
+            {worldStats.label}
+          </h3>
+          <p className="mt-1 break-words text-sm leading-snug text-slate-400">
             {WORLD_DESCRIPTIONS[worldStats.world]}
           </p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-right">
+        <div className="shrink-0 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-right">
           <p className="text-2xl font-black text-white">
             {worldStats.conqueredEmblems}/6
           </p>
@@ -143,7 +153,7 @@ function WorldProgressSection({ worldStats }: { worldStats: ProfileWorldStats })
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+      <div className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-3 text-sm">
         <div className="rounded-xl bg-slate-900/50 p-3">
           <p className="font-black text-white">{worldStats.answered}</p>
           <p className="text-xs text-slate-500">respondidas</p>
@@ -162,7 +172,7 @@ function WorldProgressSection({ worldStats }: { worldStats: ProfileWorldStats })
         </div>
       </div>
 
-      <div className="mt-5 grid gap-3 md:grid-cols-2">
+      <div className="mt-5 grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3">
         {worldStats.categories.map((categoryStats) => (
           <CategoryProgressCard key={categoryStats.categoryId} stats={categoryStats} />
         ))}
@@ -177,22 +187,28 @@ function AchievementCard({ achievement }: { achievement: PlayerAchievement }) {
     : "border-slate-700/70 bg-slate-900/50 text-slate-400";
 
   return (
-    <div className={`rounded-2xl border p-4 transition-all ${toneClass}`}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex gap-3">
+    <div className={`min-w-0 rounded-2xl border p-4 transition-all ${toneClass}`}>
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex min-w-0 gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-black/20 text-2xl">
             {achievement.unlocked ? achievement.icon : "🔒"}
           </div>
-          <div>
-            <h4 className="font-black text-white">{achievement.title}</h4>
-            <p className="mt-1 text-sm opacity-80">{achievement.description}</p>
+          <div className="min-w-0 flex-1">
+            <h4 className="break-words font-black leading-tight text-white">
+              {achievement.title}
+            </h4>
+            <p className="mt-1 break-words text-sm leading-snug opacity-80">
+              {achievement.description}
+            </p>
           </div>
         </div>
-        <span className="rounded-full bg-black/20 px-2 py-1 text-[10px] font-black uppercase tracking-wide">
+        <span className="w-fit shrink-0 rounded-full bg-black/20 px-2 py-1 text-[10px] font-black uppercase tracking-wide">
           {achievement.unlocked ? "Desbloqueada" : "Bloqueada"}
         </span>
       </div>
-      <p className="mt-3 text-xs font-bold opacity-80">{achievement.progressLabel}</p>
+      <p className="mt-3 break-words text-xs font-bold leading-snug opacity-80">
+        {achievement.progressLabel}
+      </p>
     </div>
   );
 }
@@ -222,45 +238,47 @@ export function ProfilePage({ progress, onProgressUpdate, onBack }: ProfilePageP
       }
     >
       <div className="space-y-6">
-        <Card className="overflow-hidden p-6" glow>
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex h-20 w-20 items-center justify-center rounded-3xl border border-violet-400/30 bg-gradient-to-br from-violet-600/30 to-indigo-600/20 text-4xl shadow-lg shadow-violet-950/30">
+        <Card className="min-w-0 overflow-hidden p-5 sm:p-6" glow>
+          <div className="flex min-w-0 flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center">
+              <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl border border-violet-400/30 bg-gradient-to-br from-violet-600/30 to-indigo-600/20 text-4xl shadow-lg shadow-violet-950/30">
                 🧙‍♂️
               </div>
-              <div>
-                <p className="text-sm font-bold uppercase tracking-[0.2em] text-violet-300">
+              <div className="min-w-0">
+                <p className="break-words text-sm font-bold uppercase tracking-[0.2em] text-violet-300">
                   Arena do Saber
                 </p>
-                <h2 className="mt-1 text-3xl font-black text-white">Estudante Lv. {progress.level}</h2>
-                <p className="mt-1 text-slate-400">
+                <h2 className="mt-1 break-words text-3xl font-black leading-tight text-white">
+                  Estudante Lv. {progress.level}
+                </h2>
+                <p className="mt-1 break-words leading-snug text-slate-400">
                   {progress.xp} XP total · {xpToNext} XP para o próximo nível
                 </p>
               </div>
             </div>
-            <div className="min-w-[220px] rounded-2xl border border-white/10 bg-white/5 p-4">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-400">Progresso do nível</span>
-                <span className="font-black text-white">{xpInLevel}%</span>
+            <div className="w-full rounded-2xl border border-white/10 bg-white/5 p-4 lg:max-w-xs">
+              <div className="flex min-w-0 items-center justify-between gap-3 text-sm">
+                <span className="min-w-0 break-words text-slate-400">Progresso do nível</span>
+                <span className="shrink-0 font-black text-white">{xpInLevel}%</span>
               </div>
               <MiniProgressBar value={xpInLevel} />
             </div>
           </div>
         </Card>
 
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <StatCard icon="🎮" label="Perguntas respondidas" value={summary.totalAnswered} />
+        <section className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-3">
+          <StatCard icon="🎮" label="Perguntas" value={summary.totalAnswered} helper="Respondidas" />
           <StatCard icon="✅" label="Acertos" value={summary.totalCorrect} />
           <StatCard icon="❌" label="Erros" value={summary.totalWrong} />
-          <StatCard icon="📈" label="Taxa de acerto" value={`${summary.accuracy}%`} />
-          <StatCard icon="🌍" label="Mundo mais estudado" value={summary.mostStudiedWorld} />
-          <StatCard icon="📚" label="Matérias com progresso" value={summary.categoriesWithProgress} />
+          <StatCard icon="📈" label="Acerto" value={`${summary.accuracy}%`} helper="Taxa geral" />
+          <StatCard icon="🌍" label="Mundo" value={summary.mostStudiedWorld} helper="Mais estudado" />
+          <StatCard icon="📚" label="Matérias" value={summary.categoriesWithProgress} helper="Com progresso" />
           <StatCard icon="🏅" label="Insígnias" value={summary.completedEmblemsCount} />
           <StatCard
             icon="📝"
-            label="Caderno de Resolução"
+            label="Caderno"
             value={summary.scratchpadCount}
-            helper="Anotações salvas localmente"
+            helper="Anotações salvas"
           />
         </section>
 
@@ -270,34 +288,36 @@ export function ProfilePage({ progress, onProgressUpdate, onBack }: ProfilePageP
           ))}
         </section>
 
-        <Card className="p-5">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
+        <Card className="min-w-0 p-5">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div className="min-w-0">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-300">
                 Conquistas
               </p>
-              <h3 className="mt-1 text-2xl font-black text-white">Mural do Jogador</h3>
-              <p className="mt-1 text-sm text-slate-400">
+              <h3 className="mt-1 break-words text-2xl font-black leading-tight text-white">
+                Mural do Jogador
+              </h3>
+              <p className="mt-1 break-words text-sm leading-snug text-slate-400">
                 {unlockedAchievements}/{achievements.length} conquistas desbloqueadas com dados reais do progresso local.
               </p>
             </div>
-            <div className="rounded-full border border-amber-400/30 bg-amber-500/10 px-4 py-2 text-sm font-black text-amber-200">
+            <div className="w-fit shrink-0 rounded-full border border-amber-400/30 bg-amber-500/10 px-4 py-2 text-sm font-black text-amber-200">
               {unlockedAchievements} desbloqueada(s)
             </div>
           </div>
 
-          <div className="mt-5 grid gap-3 md:grid-cols-2">
+          <div className="mt-5 grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-3">
             {achievements.map((achievement) => (
               <AchievementCard key={achievement.id} achievement={achievement} />
             ))}
           </div>
         </Card>
 
-        <Card className="p-5">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h3 className="font-black text-white">Dados locais</h3>
-              <p className="mt-1 text-sm text-slate-400">
+        <Card className="min-w-0 p-5">
+          <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <h3 className="break-words font-black text-white">Dados locais</h3>
+              <p className="mt-1 break-words text-sm leading-snug text-slate-400">
                 Esta tela usa apenas progresso salvo no navegador: XP, acertos, erros,
                 insígnias, histórico do Treino Solo e anotações do Caderno.
               </p>
