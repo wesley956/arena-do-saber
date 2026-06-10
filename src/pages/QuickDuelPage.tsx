@@ -144,7 +144,7 @@ export function QuickDuelPage({
           </div>
         </Card>
         <Card className="p-4">
-          <QuestionCard question={currentQuestion} onAnswer={handleAnswer} showTimer timerSeconds={30} />
+          <QuestionCard question={currentQuestion} onAnswer={handleAnswer} showTimer timerSeconds={30} hideScratchpad />
         </Card>
       </AppShell>
     );

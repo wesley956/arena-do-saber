@@ -1,6 +1,7 @@
 import { Question } from "../../types/game";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
+import { loadScratchpad } from "../../lib/scratchpad";
 
 interface QuestionResultProps {
   question: Question;
@@ -19,6 +20,8 @@ export function QuestionResult({
   onContinue,
   savedForReview = false,
 }: QuestionResultProps) {
+  // Recupera rascunho salvo (apenas para erros — ajuda o jogador a perceber onde raciocinou errado)
+  const previousScratchpad = !isCorrect ? loadScratchpad(question.id) : "";
   return (
     <div className="flex flex-col gap-4">
       {/* Result Banner */}
@@ -82,6 +85,18 @@ export function QuestionResult({
             ⚠️ Pegadinha
           </p>
           <p className="text-amber-200 text-sm leading-relaxed">{question.trap}</p>
+        </Card>
+      )}
+
+      {/* Rascunho anterior — ajuda o jogador a identificar onde errou o raciocínio */}
+      {!isCorrect && previousScratchpad && (
+        <Card className="p-4 border-indigo-800/40 bg-indigo-900/20">
+          <p className="text-indigo-400 text-xs mb-2 uppercase tracking-wider font-semibold">
+            📝 Seu rascunho
+          </p>
+          <pre className="text-indigo-200 text-sm leading-relaxed whitespace-pre-wrap font-mono break-words">
+            {previousScratchpad}
+          </pre>
         </Card>
       )}
 

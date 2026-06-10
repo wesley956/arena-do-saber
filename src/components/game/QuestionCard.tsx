@@ -4,12 +4,15 @@ import { getCategoryById } from "../../data/categories";
 import { AnswerOption } from "./AnswerOption";
 import { Button } from "../ui/Button";
 import { Badge } from "../ui/Badge";
+import { QuestionScratchpad } from "./QuestionScratchpad";
 
 interface QuestionCardProps {
   question: Question;
   onAnswer: (selectedId: string, isCorrect: boolean) => void;
   showTimer?: boolean;
   timerSeconds?: number;
+  /** Quando true, oculta o Caderno de Resolução (ex: duelo rápido) */
+  hideScratchpad?: boolean;
 }
 
 export function QuestionCard({
@@ -17,6 +20,7 @@ export function QuestionCard({
   onAnswer,
   showTimer = false,
   timerSeconds = 30,
+  hideScratchpad = false,
 }: QuestionCardProps) {
   const [selected, setSelected] = useState<string | null>(null);
   const [confirmed, setConfirmed] = useState(false);
@@ -103,6 +107,14 @@ export function QuestionCard({
           {question.statement}
         </p>
       </div>
+
+      {/* Caderno de Resolução */}
+      {!hideScratchpad && (
+        <QuestionScratchpad
+          questionId={question.id}
+          categoryId={question.categoryId}
+        />
+      )}
 
       {/* Alternatives */}
       <div className="flex flex-col gap-2">
