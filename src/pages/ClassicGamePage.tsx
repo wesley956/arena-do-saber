@@ -22,16 +22,59 @@ import {
   EMBLEM_THRESHOLD,
 } from "../lib/gameEngine";
 import { getBotAvatar, getBotName } from "../lib/bot";
+import { getNextQuestionForCategory } from "../lib/questionSelector";
 
-const CLASSIC_BADGE_GOAL_TITLE = "Insígnias de Sabedoria";
+const BADGE_CHALLENGE_SIZE = 3;
+const BADGE_CHALLENGE_PASSING_SCORE = 2;
+const CLASSIC_BADGE_CYCLE_OPTIONS = {
+  minFreshRatio: 0.0001,
+};
 
-function getClassicBadgeProgressLabel(progress: number): string {
+type BadgeChallengeState = {
+  categoryId: string;
+  questionIds: string[];
+  currentIndex: number;
+  correctCount: number;
+};
+
+type BadgeChallengeSummary = {
+  categoryId: string;
+  correctCount: number;
+  passed: boolean;
+  message: string;
+};
+
+function addUniqueId(items: string[], id: string): string[] {
+  return items.includes(id) ? items : [...items, id];
+}
+
+function addUniqueIds(items: string[], ids: string[]): string[] {
+  return ids.reduce((acc, id) => addUniqueId(acc, id), items);
+}
+
+function getBadgeChallengeResultMessage(correctCount: number): string {
+  if (correctCount === 3) return "Desafio perfeito! Insígnia conquistada!";
+  if (correctCount === 2) return "Desafio vencido! Insígnia conquistada!";
+  if (correctCount === 1) {
+    return "Desafio falhou. Continue treinando e tente novamente.";
+  }
+
+  return "Desafio falhou. A insígnia escapou desta vez.";
+}
+
+function getClassicBadgeStateLabel(
+  progress: number,
+  earned: boolean
+): string {
   const safeProgress = Math.min(Math.max(progress, 0), EMBLEM_THRESHOLD);
 
-  return safeProgress >= EMBLEM_THRESHOLD
-    ? "Conquistada"
-    : `${safeProgress}/${EMBLEM_THRESHOLD}`;
+  if (earned) return "Insígnia conquistada";
+  if (safeProgress >= EMBLEM_THRESHOLD) return "Desafio liberado";
+
+  return safeProgress + "/" + EMBLEM_THRESHOLD;
 }
+
+const CLASSIC_BADGE_GOAL_TITLE = "Insígnias de Sabedoria";
 
 interface ClassicGamePageProps {
   world: World;
@@ -58,6 +101,12 @@ export function ClassicGamePage({
   // FIX: estado para guardar o XP real da última resposta
   const [lastXP, setLastXP] = useState(0);
   const [lastBadgeMessage, setLastBadgeMessage] = useState<string | null>(null);
+  const [badgeChallenge, setBadgeChallenge] =
+    useState<BadgeChallengeState | null>(null);
+  const [badgeChallengeSummary, setBadgeChallengeSummary] =
+    useState<BadgeChallengeSummary | null>(null);
+  const [pendingBadgeChallengeCategoryId, setPendingBadgeChallengeCategoryId] =
+    useState<string | null>(null);
 
   const categories = getCategoriesByWorld(world);
   const currentQuestion = match.currentQuestionId
@@ -67,6 +116,12 @@ export function ClassicGamePage({
   const allPlayerBadgesEarned =
     categories.length > 0 &&
     categories.every((category) => match.playerEmblems.includes(category.id));
+  const activeBadgeChallengeCategory = badgeChallenge
+    ? categories.find((category) => category.id === badgeChallenge.categoryId)
+    : null;
+  const currentBadgeChallengeQuestionNumber = badgeChallenge
+    ? badgeChallenge.currentIndex + 1
+    : 0;
 
   // FIX: handleMatchEnd usa useCallback com dependências corretas
   const handleMatchEnd = useCallback(
@@ -103,8 +158,80 @@ export function ClassicGamePage({
     }
   }, [match.playerEmblems.length, match.botEmblems.length, match.round, handleMatchEnd]);
 
-  function handleSpin(categoryId: string) {
+
+  function getBadgeSafeAnswerMatch(
+    currentMatch: ClassicMatchState,
+    categoryId: string
+  ): ClassicMatchState {
+    if (currentMatch.playerEmblems.includes(categoryId)) return currentMatch;
+
+    return {
+      ...currentMatch,
+      playerEmblems: [...currentMatch.playerEmblems, categoryId],
+    };
+  }
+
+  function buildBadgeChallengeQuestionIds(categoryId: string): string[] {
+    const questionIds: string[] = [];
+
+    for (let index = 0; index < BADGE_CHALLENGE_SIZE; index += 1) {
+      const question = getNextQuestionForCategory(
+        categoryId,
+        [...match.askedQuestionIds, ...questionIds],
+        CLASSIC_BADGE_CYCLE_OPTIONS
+      );
+
+      if (!question || questionIds.includes(question.id)) break;
+      questionIds.push(question.id);
+    }
+
+    return questionIds;
+  }
+
+  function startBadgeChallenge(categoryId: string) {
+    const questionIds = buildBadgeChallengeQuestionIds(categoryId);
+
+    if (questionIds.length === 0) {
+      setLastBadgeMessage(
+        "Não há perguntas disponíveis para iniciar o Desafio da Insígnia."
+      );
+      return;
+    }
+
+    setBadgeChallenge({
+      categoryId,
+      questionIds,
+      currentIndex: 0,
+      correctCount: 0,
+    });
+    setBadgeChallengeSummary(null);
+    setPendingBadgeChallengeCategoryId(null);
     setLastBadgeMessage(null);
+
+    setMatch((prev) => ({
+      ...prev,
+      status: "question",
+      selectedCategoryId: categoryId,
+      currentQuestionId: questionIds[0],
+      askedQuestionIds: addUniqueIds(prev.askedQuestionIds, [questionIds[0]]),
+      lastAnswerCorrect: undefined,
+      lastXpGained: 0,
+    }));
+  }
+
+  function handleSpin(categoryId: string) {
+        setBadgeChallenge(null);
+    setBadgeChallengeSummary(null);
+setLastBadgeMessage(null);
+
+    const readyForBadgeChallenge =
+      (match.playerCategoryProgress[categoryId] ?? 0) >= EMBLEM_THRESHOLD &&
+      !match.playerEmblems.includes(categoryId);
+
+    if (readyForBadgeChallenge) {
+      startBadgeChallenge(categoryId);
+      return;
+    }
     const questionId = selectQuestion(categoryId, match.askedQuestionIds);
 
     if (!questionId) {
@@ -145,15 +272,71 @@ export function ClassicGamePage({
     }));
   }
 
+
+  function handleBadgeChallengeAnswer(_selectedId: string, isCorrect: boolean) {
+    if (!currentQuestion || !badgeChallenge) return;
+
+    const categoryId = badgeChallenge.categoryId;
+    const baseCategoryProgress = Math.max(
+      match.playerCategoryProgress[categoryId] ?? 0,
+      EMBLEM_THRESHOLD
+    );
+
+    const { match: rawUpdatedMatch, xpGained } = processPlayerAnswer(
+      getBadgeSafeAnswerMatch(match, categoryId),
+      currentQuestion.difficulty,
+      isCorrect
+    );
+
+    const updatedMatch: ClassicMatchState = {
+      ...rawUpdatedMatch,
+      playerEmblems: match.playerEmblems,
+      playerCategoryProgress: {
+        ...rawUpdatedMatch.playerCategoryProgress,
+        [categoryId]: baseCategoryProgress,
+      },
+      selectedCategoryId: categoryId,
+      currentQuestionId: currentQuestion.id,
+      status: "result",
+    };
+
+    const updatedChallenge: BadgeChallengeState = {
+      ...badgeChallenge,
+      correctCount: badgeChallenge.correctCount + (isCorrect ? 1 : 0),
+    };
+
+    setBadgeChallenge(updatedChallenge);
+    setLastXP(xpGained);
+
+    const newProgress = applyXPToProgress(
+      localProgress,
+      xpGained,
+      isCorrect,
+      isCorrect ? undefined : currentQuestion.id,
+      undefined,
+      categoryId
+    );
+
+    setLocalProgress(newProgress);
+    onProgressUpdate(newProgress);
+    setTotalXPGained((prev) => prev + xpGained);
+    setMatch(updatedMatch);
+  }
+
   function handleAnswer(_selectedId: string, isCorrect: boolean) {
     if (!currentQuestion) return;
+
+    if (badgeChallenge) {
+      handleBadgeChallengeAnswer(_selectedId, isCorrect);
+      return;
+    }
 
       const prevEmblems = match.playerEmblems.length;
   const previousCategoryProgress =
     match.playerCategoryProgress[currentQuestion.categoryId] ?? 0;
 
   const { match: rawUpdatedMatch, xpGained } = processPlayerAnswer(
-    match,
+    getBadgeSafeAnswerMatch(match, currentQuestion.categoryId),
     currentQuestion.difficulty,
     isCorrect
   );
@@ -166,6 +349,7 @@ export function ClassicGamePage({
 
   const updatedMatch: ClassicMatchState = {
     ...rawUpdatedMatch,
+    playerEmblems: match.playerEmblems,
     playerCategoryProgress: {
       ...rawUpdatedMatch.playerCategoryProgress,
       [currentQuestion.categoryId]: cappedCategoryProgress,
@@ -174,13 +358,23 @@ export function ClassicGamePage({
 
   const newEmblems = updatedMatch.playerEmblems.length;
   const emblemGained = newEmblems > prevEmblems;
+  const challengeUnlocked =
+    isCorrect &&
+    cappedCategoryProgress >= EMBLEM_THRESHOLD &&
+    !match.playerEmblems.includes(currentQuestion.categoryId);
+
+  setPendingBadgeChallengeCategoryId(
+    challengeUnlocked ? currentQuestion.categoryId : null
+  );
   const badgeCategory = categories.find(
     (category) => category.id === currentQuestion.categoryId
   );
 
   setLastBadgeMessage(
-    isCorrect && emblemGained
-      ? `Insígnia conquistada: ${badgeCategory?.emblemName ?? badgeCategory?.name ?? "categoria"}!`
+    challengeUnlocked
+      ? "Desafio da Insígnia liberado: " +
+        (badgeCategory?.emblemName ?? badgeCategory?.name ?? "categoria") +
+        "!"
       : null
   );
 
@@ -205,7 +399,88 @@ export function ClassicGamePage({
 
   // FIX: useCallback com match como dependência captura o estado correto
   const handleContinueAfterResult = useCallback(() => {
-    if (!match.lastAnswerCorrect) {
+        if (badgeChallenge) {
+      const nextIndex = badgeChallenge.currentIndex + 1;
+
+      if (nextIndex < badgeChallenge.questionIds.length) {
+        const nextQuestionId = badgeChallenge.questionIds[nextIndex];
+
+        setBadgeChallenge((prev) =>
+          prev ? { ...prev, currentIndex: nextIndex } : prev
+        );
+        setMatch((prev) => ({
+          ...prev,
+          status: "question",
+          selectedCategoryId: badgeChallenge.categoryId,
+          currentQuestionId: nextQuestionId,
+          askedQuestionIds: addUniqueIds(prev.askedQuestionIds, [nextQuestionId]),
+          lastAnswerCorrect: undefined,
+          lastXpGained: 0,
+        }));
+        return;
+      }
+
+      const passed = badgeChallenge.correctCount >= BADGE_CHALLENGE_PASSING_SCORE;
+      const resultMessage = getBadgeChallengeResultMessage(
+        badgeChallenge.correctCount
+      );
+
+      setBadgeChallengeSummary({
+        categoryId: badgeChallenge.categoryId,
+        correctCount: badgeChallenge.correctCount,
+        passed,
+        message: resultMessage,
+      });
+      setBadgeChallenge(null);
+      setPendingBadgeChallengeCategoryId(null);
+      setLastBadgeMessage(passed ? resultMessage : null);
+
+      if (passed && !localProgress.completedEmblems.includes(badgeChallenge.categoryId)) {
+        const progressWithBadge = {
+          ...localProgress,
+          completedEmblems: [
+            ...localProgress.completedEmblems,
+            badgeChallenge.categoryId,
+          ],
+        };
+        setLocalProgress(progressWithBadge);
+        onProgressUpdate(progressWithBadge);
+      }
+
+      setMatch((currentMatch) => {
+        const nextMatch: ClassicMatchState = {
+          ...currentMatch,
+          status: "idle",
+          selectedCategoryId: undefined,
+          currentQuestionId: undefined,
+          lastAnswerCorrect: undefined,
+          lastXpGained: 0,
+          playerEmblems: passed
+            ? addUniqueId(currentMatch.playerEmblems, badgeChallenge.categoryId)
+            : currentMatch.playerEmblems,
+          playerCategoryProgress: {
+            ...currentMatch.playerCategoryProgress,
+            [badgeChallenge.categoryId]: EMBLEM_THRESHOLD,
+          },
+        };
+
+        const checked = checkVictory(nextMatch);
+        if (checked.status === "finished") {
+          setTimeout(() => handleMatchEnd(checked), 0);
+        }
+
+        return checked;
+      });
+      return;
+    }
+
+    if (pendingBadgeChallengeCategoryId) {
+      const categoryId = pendingBadgeChallengeCategoryId;
+      setPendingBadgeChallengeCategoryId(null);
+      startBadgeChallenge(categoryId);
+      return;
+    }
+if (!match.lastAnswerCorrect) {
       // Player errou -> turno do bot
       setShowBotTurnNotice(true);
       setBotThinking(true);
@@ -237,7 +512,14 @@ export function ClassicGamePage({
         lastXpGained: 0,
       }));
     }
-  }, [match.lastAnswerCorrect, handleMatchEnd]);
+  }, [
+    match.lastAnswerCorrect,
+    handleMatchEnd,
+    badgeChallenge,
+    pendingBadgeChallengeCategoryId,
+    localProgress,
+    onProgressUpdate,
+  ]);
 
   // -------------------------------------------------------
   // RENDER
@@ -367,6 +649,8 @@ export function ClassicGamePage({
               EMBLEM_THRESHOLD
             );
             const earned = match.playerEmblems.includes(category.id);
+            const challengeReady =
+              progressValue >= EMBLEM_THRESHOLD && !earned;
 
             return (
               <div
@@ -396,8 +680,17 @@ export function ClassicGamePage({
                       : "bg-slate-800 text-slate-300"
                   }`}
                 >
-                  {getClassicBadgeProgressLabel(progressValue)}
+                  {getClassicBadgeStateLabel(progressValue, earned)}
                 </div>
+                        {challengeReady && match.status === "idle" && (
+                  <button
+                    type="button"
+                    onClick={() => startBadgeChallenge(category.id)}
+                    className="mt-2 w-full rounded-full bg-amber-500/15 px-2 py-1 text-[10px] font-black uppercase text-amber-300 hover:bg-amber-500/25"
+                  >
+                    Iniciar Desafio
+                  </button>
+                )}
               </div>
             );
           })}
@@ -482,6 +775,33 @@ export function ClassicGamePage({
       )}
 
 
+      {badgeChallengeSummary && (
+        <Card
+          className={
+            "p-4 mb-4 border " +
+            (badgeChallengeSummary.passed
+              ? "border-emerald-700/50 bg-emerald-900/20"
+              : "border-amber-700/50 bg-amber-950/20")
+          }
+        >
+          <p
+            className={
+              "text-sm font-black " +
+              (badgeChallengeSummary.passed
+                ? "text-emerald-300"
+                : "text-amber-300")
+            }
+          >
+            {badgeChallengeSummary.message}
+          </p>
+          <p className="text-xs text-slate-300 mt-1">
+            Resultado do desafio: {badgeChallengeSummary.correctCount}/
+            {BADGE_CHALLENGE_SIZE} acertos.
+          </p>
+        </Card>
+      )}
+
+
       {/* IDLE: Roleta */}
       {match.status === "idle" && (
         <Card className="p-4">
@@ -495,6 +815,25 @@ export function ClassicGamePage({
           />
         </Card>
       )}
+
+      {badgeChallenge && currentQuestion && (
+        <Card className="p-4 mb-4 border-amber-600/50 bg-amber-950/20">
+          <p className="text-xs uppercase tracking-wide text-amber-300 font-black">
+            Desafio da Insígnia — Pergunta {currentBadgeChallengeQuestionNumber}/
+            {BADGE_CHALLENGE_SIZE}
+          </p>
+          <h2 className="text-white font-black text-lg mt-1">
+            {activeBadgeChallengeCategory?.emblemName ??
+              activeBadgeChallengeCategory?.name ??
+              "Insígnia"}
+          </h2>
+          <p className="text-xs text-slate-300 mt-1">
+            Acerte pelo menos {BADGE_CHALLENGE_PASSING_SCORE} de {BADGE_CHALLENGE_SIZE}. Acertos no desafio: {badgeChallenge.correctCount}/
+            {BADGE_CHALLENGE_SIZE}
+          </p>
+        </Card>
+      )}
+
 
       {/* QUESTION: Pergunta */}
       {match.status === "question" && currentQuestion && (
