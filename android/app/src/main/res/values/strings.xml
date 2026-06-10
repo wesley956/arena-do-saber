@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Arena do Saber</string>
+    <string name="title_activity_main">Arena do Saber</string>
+    <string name="package_name">com.wesley956.arenadosaber</string>
+    <string name="custom_url_scheme">com.wesley956.arenadosaber</string>
+</resources>

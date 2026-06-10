@@ -6,3 +6,11 @@ dist/
 _patch_stabilize/
 files.zip
 .DS_Store
+
+# Android / Capacitor local builds
+android/local.properties
+android/.gradle/
+android/build/
+android/app/build/
+*.apk
+*.aab
