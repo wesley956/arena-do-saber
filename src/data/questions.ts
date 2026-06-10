@@ -434,7 +434,7 @@ export const QUESTIONS: Question[] = [
     categoryId: "contest-portugues",
     subject: "Português",
     topic: "Semântica",
-    difficulty: "medium",
+    difficulty: "easy",
     statement:
       "Qual recurso de coesão textual está sendo utilizado em: 'João estudou muito. Ele passou no concurso.'",
     alternatives: [
@@ -585,16 +585,17 @@ export const QUESTIONS: Question[] = [
     subject: "Atualidades",
     topic: "Geopolítica",
     difficulty: "medium",
-    statement: "O G20 é um grupo composto por quantos países membros?",
+    statement: "Atualmente, a composição do G20 inclui:",
     alternatives: [
-      { id: "a", text: "15 países" },
-      { id: "b", text: "18 países" },
-      { id: "c", text: "20 países" },
-      { id: "d", text: "19 países + a União Europeia" },
+      { id: "a", text: "19 países apenas" },
+      { id: "b", text: "20 países soberanos" },
+      { id: "c", text: "19 países, a União Europeia e a União Africana" },
+      { id: "d", text: "Apenas os países do BRICS e da União Europeia" },
     ],
-    correctAlternativeId: "d",
+    correctAlternativeId: "c",
     explanation:
-      "O G20 é formado por 19 países (Argentina, Austrália, Brasil, Canadá, China, França, Alemanha, Índia, Indonésia, Itália, Japão, México, Rússia, Arábia Saudita, África do Sul, Coreia do Sul, Turquia, Reino Unido, EUA) mais a União Europeia.",
+      "O G20 reúne 19 países, além da União Europeia e da União Africana. A pegadinha é lembrar que o nome G20 permaneceu, mesmo com a inclusão de organizações regionais como membros.",
+    trap: "Não confunda o nome G20 com uma contagem simples de 20 países soberanos.",
     tags: ["G20", "geopolítica", "relações internacionais"],
   },
   {
@@ -623,17 +624,19 @@ export const QUESTIONS: Question[] = [
     subject: "Atualidades",
     topic: "Economia",
     difficulty: "hard",
-    statement: "O que é o BRICS?",
+    statement:
+      "Na formação original do acrônimo BRICS, após a entrada da África do Sul, quais países formavam o grupo?",
     alternatives: [
-      { id: "a", text: "Um acordo de livre comércio entre países europeus" },
-      { id: "b", text: "Um grupo de economias emergentes: Brasil, Rússia, Índia, China e África do Sul" },
-      { id: "c", text: "Uma organização financeira criada pelo FMI" },
-      { id: "d", text: "Um bloco militar formado após a Guerra Fria" },
+      { id: "a", text: "Brasil, Reino Unido, Índia, Chile e Suécia" },
+      { id: "b", text: "Brasil, Rússia, Índia, China e África do Sul" },
+      { id: "c", text: "Bolívia, Romênia, Indonésia, Canadá e Singapura" },
+      { id: "d", text: "Brasil, Rússia, Itália, China e Espanha" },
     ],
     correctAlternativeId: "b",
     explanation:
-      "BRICS é um acrônimo para Brasil, Russia, India, China e South Africa (África do Sul). É um grupo de economias emergentes de grande influência global, com reuniões periódicas de cúpula.",
-    tags: ["BRICS", "economia global", "geopolítica"],
+      "O acrônimo BRICS ficou conhecido com Brasil, Rússia, Índia, China e África do Sul. Atualmente o grupo tem outros membros, então a pergunta foca na formação original do acrônimo após a entrada da África do Sul.",
+    trap: "Cuidado: o grupo BRICS foi expandido, mas a sigla nasceu associada a esses cinco países.",
+    tags: ["BRICS", "economia global", "geopolítica", "origem"],
   },
 
   // ============================================================
@@ -762,6 +765,537 @@ export const QUESTIONS: Question[] = [
     explanation:
       "A revogação é a extinção de um ato administrativo válido por razões de conveniência e oportunidade (mérito administrativo). Já a anulação ocorre por razões de ilegalidade. A revogação é ato discricionário; a anulação, vinculado.",
     tags: ["revogação", "anulação", "ato administrativo", "direito administrativo"],
+  },
+
+  // ============================================================
+  // ESCOLA — PORTUGUÊS (novas: 004 e 005)
+  // ============================================================
+  {
+    id: "school-port-004",
+    world: "school",
+    categoryId: "school-portugues",
+    subject: "Português",
+    topic: "Pontuação",
+    difficulty: "easy",
+    statement:
+      "Qual sinal de pontuação é usado para separar itens de uma enumeração?",
+    alternatives: [
+      { id: "a", text: "Ponto final (.)" },
+      { id: "b", text: "Vírgula (,)" },
+      { id: "c", text: "Ponto e vírgula (;)" },
+      { id: "d", text: "Dois-pontos (:)" },
+    ],
+    correctAlternativeId: "b",
+    explanation:
+      "A vírgula é o sinal usado para separar elementos de uma enumeração. Ex.: 'Comprei pão, leite, ovos e café.' Os dois-pontos introduzem a enumeração, mas não a separam.",
+    tags: ["pontuação", "vírgula", "gramática"],
+  },
+  {
+    id: "school-port-005",
+    world: "school",
+    categoryId: "school-portugues",
+    subject: "Português",
+    topic: "Verbos",
+    difficulty: "medium",
+    statement:
+      "Assinale a alternativa em que o verbo está no pretérito perfeito do indicativo:",
+    alternatives: [
+      { id: "a", text: "Ela cantava todas as noites." },
+      { id: "b", text: "Ela cantará na festa." },
+      { id: "c", text: "Ela cantou ontem à noite." },
+      { id: "d", text: "Ela cante agora." },
+    ],
+    correctAlternativeId: "c",
+    explanation:
+      "O pretérito perfeito indica ação concluída no passado. 'Cantou' é a forma do pretérito perfeito. 'Cantava' é pretérito imperfeito; 'cantará' é futuro do presente; 'cante' é presente do subjuntivo.",
+    trap: "Não confunda 'cantava' (imperfeito, ação habitual no passado) com 'cantou' (perfeito, ação concluída).",
+    tags: ["verbo", "pretérito perfeito", "tempo verbal"],
+  },
+
+  // ============================================================
+  // ESCOLA — MATEMÁTICA (novas: 004 e 005)
+  // ============================================================
+  {
+    id: "school-mat-004",
+    world: "school",
+    categoryId: "school-matematica",
+    subject: "Matemática",
+    topic: "Porcentagem",
+    difficulty: "easy",
+    statement: "Quanto é 25% de 200?",
+    alternatives: [
+      { id: "a", text: "25" },
+      { id: "b", text: "40" },
+      { id: "c", text: "50" },
+      { id: "d", text: "75" },
+    ],
+    correctAlternativeId: "c",
+    explanation:
+      "25% equivale a 25/100 = 1/4. Então 25% de 200 = 200 ÷ 4 = 50. Outra forma: 200 × 0,25 = 50.",
+    tags: ["porcentagem", "cálculo", "matemática básica"],
+  },
+  {
+    id: "school-mat-005",
+    world: "school",
+    categoryId: "school-matematica",
+    subject: "Matemática",
+    topic: "Regra de Três",
+    difficulty: "medium",
+    statement:
+      "Se 3 cadernos custam R$ 12,00, quanto custam 7 cadernos do mesmo tipo?",
+    alternatives: [
+      { id: "a", text: "R$ 24,00" },
+      { id: "b", text: "R$ 28,00" },
+      { id: "c", text: "R$ 30,00" },
+      { id: "d", text: "R$ 32,00" },
+    ],
+    correctAlternativeId: "b",
+    explanation:
+      "Regra de três simples e direta: 3 cadernos → R$ 12,00. Logo 1 caderno → R$ 4,00. Portanto, 7 cadernos → 7 × 4 = R$ 28,00.",
+    tags: ["regra de três", "proporcionalidade", "matemática básica"],
+  },
+
+  // ============================================================
+  // ESCOLA — CIÊNCIAS (novas: 004 e 005)
+  // ============================================================
+  {
+    id: "school-cien-004",
+    world: "school",
+    categoryId: "school-ciencias",
+    subject: "Ciências",
+    topic: "Estados Físicos da Matéria",
+    difficulty: "easy",
+    statement:
+      "Quando a água líquida se transforma em vapor, esse processo é chamado de:",
+    alternatives: [
+      { id: "a", text: "Fusão" },
+      { id: "b", text: "Solidificação" },
+      { id: "c", text: "Evaporação" },
+      { id: "d", text: "Condensação" },
+    ],
+    correctAlternativeId: "c",
+    explanation:
+      "A evaporação (ou vaporização) é a passagem do estado líquido para o gasoso. A fusão é de sólido para líquido; solidificação é o inverso; condensação é de gás para líquido.",
+    trap: "Não confunda evaporação (líquido → gás) com condensação (gás → líquido).",
+    tags: ["estados físicos", "mudança de estado", "água"],
+  },
+  {
+    id: "school-cien-005",
+    world: "school",
+    categoryId: "school-ciencias",
+    subject: "Ciências",
+    topic: "Corpo Humano",
+    difficulty: "medium",
+    statement: "Qual é o órgão responsável por bombear o sangue para todo o corpo?",
+    alternatives: [
+      { id: "a", text: "Pulmão" },
+      { id: "b", text: "Fígado" },
+      { id: "c", text: "Rim" },
+      { id: "d", text: "Coração" },
+    ],
+    correctAlternativeId: "d",
+    explanation:
+      "O coração é o órgão central do sistema circulatório, responsável por bombear o sangue para todos os tecidos do corpo através das artérias e receber o sangue de volta pelas veias.",
+    tags: ["corpo humano", "coração", "sistema circulatório"],
+  },
+
+  // ============================================================
+  // ESCOLA — HISTÓRIA (novas: 004 e 005)
+  // ============================================================
+  {
+    id: "school-hist-004",
+    world: "school",
+    categoryId: "school-historia",
+    subject: "História",
+    topic: "República Brasileira",
+    difficulty: "easy",
+    statement: "Quem proclamou a República no Brasil?",
+    alternatives: [
+      { id: "a", text: "Dom Pedro II" },
+      { id: "b", text: "Getúlio Vargas" },
+      { id: "c", text: "Marechal Deodoro da Fonseca" },
+      { id: "d", text: "Tiradentes" },
+    ],
+    correctAlternativeId: "c",
+    explanation:
+      "A República foi proclamada em 15 de novembro de 1889 pelo Marechal Deodoro da Fonseca, com apoio do Exército e de setores da elite agrária, encerrando o período imperial.",
+    trap: "Cuidado para não confundir com Dom Pedro I (Independência, 1822) ou Dom Pedro II (último imperador, deposto em 1889).",
+    tags: ["república", "Deodoro da Fonseca", "1889"],
+  },
+  {
+    id: "school-hist-005",
+    world: "school",
+    categoryId: "school-historia",
+    subject: "História",
+    topic: "Escravidão no Brasil",
+    difficulty: "medium",
+    statement: "Em que ano foi abolida a escravidão no Brasil?",
+    alternatives: [
+      { id: "a", text: "1870" },
+      { id: "b", text: "1880" },
+      { id: "c", text: "1888" },
+      { id: "d", text: "1889" },
+    ],
+    correctAlternativeId: "c",
+    explanation:
+      "A Lei Áurea, assinada pela Princesa Isabel em 13 de maio de 1888, aboliu oficialmente a escravidão no Brasil. O Brasil foi o último país das Américas a abolir a escravidão.",
+    tags: ["escravidão", "Lei Áurea", "Princesa Isabel", "1888"],
+  },
+
+  // ============================================================
+  // ESCOLA — GEOGRAFIA (novas: 004 e 005)
+  // ============================================================
+  {
+    id: "school-geo-004",
+    world: "school",
+    categoryId: "school-geografia",
+    subject: "Geografia",
+    topic: "Pontos Cardeais",
+    difficulty: "easy",
+    statement:
+      "Quando você está de frente para o norte, qual ponto cardinal fica à sua direita?",
+    alternatives: [
+      { id: "a", text: "Sul" },
+      { id: "b", text: "Oeste" },
+      { id: "c", text: "Leste" },
+      { id: "d", text: "Nordeste" },
+    ],
+    correctAlternativeId: "c",
+    explanation:
+      "Quando estamos voltados para o Norte: à direita fica o Leste, à esquerda fica o Oeste, e atrás fica o Sul. Uma forma de lembrar: 'Norte, Leste, Sul, Oeste' (NESO), sentido horário.",
+    tags: ["pontos cardeais", "orientação", "geografia"],
+  },
+  {
+    id: "school-geo-005",
+    world: "school",
+    categoryId: "school-geografia",
+    subject: "Geografia",
+    topic: "Regiões do Brasil",
+    difficulty: "medium",
+    statement: "Quantas regiões o IBGE divide o território brasileiro?",
+    alternatives: [
+      { id: "a", text: "4 regiões" },
+      { id: "b", text: "5 regiões" },
+      { id: "c", text: "6 regiões" },
+      { id: "d", text: "7 regiões" },
+    ],
+    correctAlternativeId: "b",
+    explanation:
+      "O IBGE divide o Brasil em 5 regiões geográficas: Norte, Nordeste, Centro-Oeste, Sudeste e Sul. Cada região agrupa estados com características físicas, econômicas e culturais semelhantes.",
+    tags: ["regiões", "IBGE", "divisão regional", "Brasil"],
+  },
+
+  // ============================================================
+  // ESCOLA — INGLÊS (novas: 004 e 005)
+  // ============================================================
+  {
+    id: "school-ing-004",
+    world: "school",
+    categoryId: "school-ingles",
+    subject: "Inglês",
+    topic: "Verbo To Be",
+    difficulty: "easy",
+    statement: "Complete the sentence: 'They ___ students.'",
+    alternatives: [
+      { id: "a", text: "is" },
+      { id: "b", text: "am" },
+      { id: "c", text: "are" },
+      { id: "d", text: "be" },
+    ],
+    correctAlternativeId: "c",
+    explanation:
+      "O verbo 'to be' no presente para o pronome 'they' (eles/elas) é 'are'. Resumo: I am / You are / He-She-It is / We-They are.",
+    trap: "Cuidado: 'is' é para he/she/it (terceira pessoa do singular), não para 'they' (plural).",
+    tags: ["verbo to be", "gramática", "inglês básico"],
+  },
+  {
+    id: "school-ing-005",
+    world: "school",
+    categoryId: "school-ingles",
+    subject: "Inglês",
+    topic: "Pronomes",
+    difficulty: "medium",
+    statement:
+      "Choose the correct pronoun: '___ is my book. Please give it to ___.'",
+    alternatives: [
+      { id: "a", text: "This / I" },
+      { id: "b", text: "This / me" },
+      { id: "c", text: "That / I" },
+      { id: "d", text: "It / me" },
+    ],
+    correctAlternativeId: "b",
+    explanation:
+      "'This' (este/esta) é pronome demonstrativo para algo próximo. Após o verbo 'give to', usamos o pronome objeto 'me', não o pronome sujeito 'I'. 'Give it to me' = dê para mim.",
+    trap: "Pronomes sujeito (I, you, he) são usados antes do verbo. Pronomes objeto (me, you, him) são usados depois do verbo ou preposição.",
+    tags: ["pronomes", "demonstrativos", "pronomes objeto"],
+  },
+
+  // ============================================================
+  // CONCURSO — PORTUGUÊS (novas: 004 e 005)
+  // ============================================================
+  {
+    id: "contest-port-004",
+    world: "contest",
+    categoryId: "contest-portugues",
+    subject: "Português",
+    topic: "Crase",
+    difficulty: "easy",
+    statement:
+      "Em qual das frases abaixo o uso da crase está correto?",
+    alternatives: [
+      { id: "a", text: "Fui à escola de manhã." },
+      { id: "b", text: "Entreguei o relatório à ele." },
+      { id: "c", text: "Estava à frente à porta." },
+      { id: "d", text: "Chegou à pé no trabalho." },
+    ],
+    correctAlternativeId: "a",
+    explanation:
+      "A crase ocorre quando há fusão da preposição 'a' com o artigo 'a' que antecede substantivo feminino. 'À escola' = a (prep.) + a (artigo) + escola. Nas demais: 'à ele' está errado (pronomes pessoais não admitem artigo); 'à pé' está errado (locução adverbial masculina).",
+    trap: "Não se usa crase antes de pronomes pessoais, palavras masculinas (salvo exceções) nem antes de verbos.",
+    tags: ["crase", "gramática", "uso da crase"],
+  },
+  {
+    id: "contest-port-005",
+    world: "contest",
+    categoryId: "contest-portugues",
+    subject: "Português",
+    topic: "Concordância Verbal",
+    difficulty: "medium",
+    statement:
+      "Assinale a alternativa com concordância verbal correta:",
+    alternatives: [
+      { id: "a", text: "Fazem dois anos que ele saiu." },
+      { id: "b", text: "Faz dois anos que ele saiu." },
+      { id: "c", text: "Fez dois anos que ele saiu." },
+      { id: "d", text: "Faziam dois anos que ele saiu." },
+    ],
+    correctAlternativeId: "b",
+    explanation:
+      "Quando o verbo 'fazer' indica tempo decorrido, é impessoal e fica no singular: 'Faz dois anos'. O sujeito é inexistente (verbo impessoal), por isso não concorda com 'dois anos'.",
+    trap: "O erro mais comum é usar 'Fazem dois anos', concordando o verbo com 'dois anos' como se fosse o sujeito.",
+    tags: ["concordância verbal", "verbo fazer", "impessoal"],
+  },
+
+  // ============================================================
+  // CONCURSO — MATEMÁTICA / LÓGICA (novas: 004 e 005)
+  // ============================================================
+  {
+    id: "contest-mat-004",
+    world: "contest",
+    categoryId: "contest-matematica",
+    subject: "Matemática / Raciocínio Lógico",
+    topic: "Proporção",
+    difficulty: "easy",
+    statement:
+      "Em uma turma, a relação de homens para mulheres é 2:3. Se há 15 mulheres, quantos homens há na turma?",
+    alternatives: [
+      { id: "a", text: "8" },
+      { id: "b", text: "9" },
+      { id: "c", text: "10" },
+      { id: "d", text: "12" },
+    ],
+    correctAlternativeId: "c",
+    explanation:
+      "Se a proporção é 2:3, para cada 3 mulheres há 2 homens. Com 15 mulheres: 15 ÷ 3 = 5 grupos. Homens = 5 × 2 = 10.",
+    tags: ["proporção", "razão", "raciocínio lógico"],
+  },
+  {
+    id: "contest-mat-005",
+    world: "contest",
+    categoryId: "contest-matematica",
+    subject: "Matemática / Raciocínio Lógico",
+    topic: "Lógica — Negação",
+    difficulty: "medium",
+    statement:
+      "A negação da proposição 'Todos os servidores chegaram no horário' é:",
+    alternatives: [
+      { id: "a", text: "Nenhum servidor chegou no horário." },
+      { id: "b", text: "Alguns servidores não chegaram no horário." },
+      { id: "c", text: "A maioria dos servidores chegou no horário." },
+      { id: "d", text: "Todos os servidores chegaram atrasados." },
+    ],
+    correctAlternativeId: "b",
+    explanation:
+      "A negação de 'Todo A é B' é 'Existe (pelo menos um) A que não é B', ou seja, 'Algum A não é B'. Portanto: 'Alguns servidores NÃO chegaram no horário.'",
+    trap: "Cuidado: a negação de 'todos' não é 'nenhum'. A negação de 'todos' é 'algum... não'.",
+    tags: ["lógica", "negação", "proposição", "quantificadores"],
+  },
+
+  // ============================================================
+  // CONCURSO — INFORMÁTICA (novas: 004 e 005)
+  // ============================================================
+  {
+    id: "contest-info-004",
+    world: "contest",
+    categoryId: "contest-informatica",
+    subject: "Informática",
+    topic: "Atalhos de Teclado",
+    difficulty: "easy",
+    statement:
+      "Qual atalho de teclado é usado para copiar um texto selecionado no Windows?",
+    alternatives: [
+      { id: "a", text: "Ctrl + X" },
+      { id: "b", text: "Ctrl + V" },
+      { id: "c", text: "Ctrl + C" },
+      { id: "d", text: "Ctrl + Z" },
+    ],
+    correctAlternativeId: "c",
+    explanation:
+      "Ctrl + C copia o conteúdo selecionado para a área de transferência. Ctrl + X recorta, Ctrl + V cola e Ctrl + Z desfaz a última ação.",
+    tags: ["atalhos", "Windows", "teclado"],
+  },
+  {
+    id: "contest-info-005",
+    world: "contest",
+    categoryId: "contest-informatica",
+    subject: "Informática",
+    topic: "Arquivos e Pastas",
+    difficulty: "medium",
+    statement:
+      "Qual extensão indica que um arquivo é um documento do Microsoft Word?",
+    alternatives: [
+      { id: "a", text: ".xls" },
+      { id: "b", text: ".ppt" },
+      { id: "c", text: ".pdf" },
+      { id: "d", text: ".docx" },
+    ],
+    correctAlternativeId: "d",
+    explanation:
+      "A extensão .docx é o formato padrão do Microsoft Word (Office 2007 em diante). .xls e .xlsx são do Excel; .ppt e .pptx são do PowerPoint; .pdf é um formato de documento portátil.",
+    tags: ["extensão de arquivo", "Word", "Office"],
+  },
+
+  // ============================================================
+  // CONCURSO — ATUALIDADES (novas: 004 e 005)
+  // ============================================================
+  {
+    id: "contest-atual-004",
+    world: "contest",
+    categoryId: "contest-atualidades",
+    subject: "Atualidades",
+    topic: "Fake News e Desinformação",
+    difficulty: "easy",
+    statement:
+      "O que são 'fake news'?",
+    alternatives: [
+      { id: "a", text: "Notícias publicadas apenas em redes sociais" },
+      { id: "b", text: "Informações falsas divulgadas como se fossem verdadeiras" },
+      { id: "c", text: "Notícias sobre países estrangeiros" },
+      { id: "d", text: "Reportagens sem identificação de autoria" },
+    ],
+    correctAlternativeId: "b",
+    explanation:
+      "Fake news são informações falsas, distorcidas ou enganosas deliberadamente fabricadas e divulgadas como se fossem verdadeiras. Podem causar danos sociais sérios, especialmente quando viralizadas em redes sociais.",
+    tags: ["fake news", "desinformação", "mídia digital"],
+  },
+  {
+    id: "contest-atual-005",
+    world: "contest",
+    categoryId: "contest-atualidades",
+    subject: "Atualidades",
+    topic: "Sustentabilidade",
+    difficulty: "medium",
+    statement:
+      "O conceito de 'desenvolvimento sustentável' significa:",
+    alternatives: [
+      { id: "a", text: "Crescimento econômico sem qualquer limite" },
+      { id: "b", text: "Atender às necessidades do presente sem comprometer as gerações futuras" },
+      { id: "c", text: "Proibir o uso de recursos naturais" },
+      { id: "d", text: "Substituir toda energia fóssil por nuclear" },
+    ],
+    correctAlternativeId: "b",
+    explanation:
+      "O desenvolvimento sustentável, definido pelo Relatório Brundtland (1987), é aquele que satisfaz as necessidades do presente sem comprometer a capacidade das gerações futuras de satisfazerem as suas próprias necessidades.",
+    tags: ["sustentabilidade", "desenvolvimento sustentável", "meio ambiente"],
+  },
+
+  // ============================================================
+  // CONCURSO — LEGISLAÇÃO (novas: 004 e 005)
+  // ============================================================
+  {
+    id: "contest-leg-004",
+    world: "contest",
+    categoryId: "contest-legislacao",
+    subject: "Legislação / Direito",
+    topic: "Hierarquia das Leis",
+    difficulty: "easy",
+    statement:
+      "Qual é a lei suprema do ordenamento jurídico brasileiro, à qual todas as demais leis devem se conformar?",
+    alternatives: [
+      { id: "a", text: "Código Civil" },
+      { id: "b", text: "Lei de Introdução às Normas do Direito Brasileiro" },
+      { id: "c", text: "Constituição Federal" },
+      { id: "d", text: "Código Penal" },
+    ],
+    correctAlternativeId: "c",
+    explanation:
+      "A Constituição Federal é a norma fundamental do Estado brasileiro. Todas as demais leis (ordinárias, complementares, decretos etc.) devem estar de acordo com ela, sob pena de inconstitucionalidade.",
+    tags: ["Constituição Federal", "hierarquia", "ordenamento jurídico"],
+  },
+  {
+    id: "contest-leg-005",
+    world: "contest",
+    categoryId: "contest-legislacao",
+    subject: "Legislação / Direito",
+    topic: "Cidadania e Direitos",
+    difficulty: "medium",
+    statement:
+      "Segundo a Constituição Federal de 1988, são direitos sociais, entre outros:",
+    alternatives: [
+      { id: "a", text: "Trabalho, saúde, educação e moradia" },
+      { id: "b", text: "Voto, liberdade de expressão e sigilo da correspondência" },
+      { id: "c", text: "Imposto de renda, previdência e assistência social" },
+      { id: "d", text: "Jurisdição, ampla defesa e contraditório" },
+    ],
+    correctAlternativeId: "a",
+    explanation:
+      "O artigo 6° da CF/88 prevê os direitos sociais: educação, saúde, alimentação, trabalho, moradia, transporte, lazer, segurança, previdência social, proteção à maternidade e à infância, e assistência aos desamparados.",
+    tags: ["direitos sociais", "art. 6°", "CF/88"],
+  },
+
+  // ============================================================
+  // CONCURSO — CONHECIMENTOS ESPECÍFICOS (novas: 004 e 005)
+  // ============================================================
+  {
+    id: "contest-esp-004",
+    world: "contest",
+    categoryId: "contest-especificos",
+    subject: "Conhecimentos Específicos",
+    topic: "Atendimento ao Público",
+    difficulty: "easy",
+    statement:
+      "Qual postura é considerada adequada no atendimento ao público em órgãos públicos?",
+    alternatives: [
+      { id: "a", text: "Resolver apenas os problemas que o chefe determinar" },
+      { id: "b", text: "Tratar os cidadãos com cordialidade, clareza e respeito" },
+      { id: "c", text: "Priorizar o atendimento de conhecidos pessoais" },
+      { id: "d", text: "Negar informações para preservar a privacidade do órgão" },
+    ],
+    correctAlternativeId: "b",
+    explanation:
+      "O atendimento ao público deve ser pautado por cordialidade, respeito, clareza e impessoalidade. O servidor público é um agente do Estado a serviço da coletividade, e tratar todos com igualdade é obrigação legal e ética.",
+    tags: ["atendimento", "serviço público", "ética"],
+  },
+  {
+    id: "contest-esp-005",
+    world: "contest",
+    categoryId: "contest-especificos",
+    subject: "Conhecimentos Específicos",
+    topic: "Ética no Serviço Público",
+    difficulty: "medium",
+    statement:
+      "O uso de cargo público para obter vantagens pessoais é conhecido como:",
+    alternatives: [
+      { id: "a", text: "Nepotismo" },
+      { id: "b", text: "Advocacia administrativa" },
+      { id: "c", text: "Abuso de poder" },
+      { id: "d", text: "Desvio de finalidade" },
+    ],
+    correctAlternativeId: "c",
+    explanation:
+      "O abuso de poder ocorre quando o agente público usa seu cargo ou função para obter vantagens pessoais indevidas, ultrapassando os limites de suas atribuições legais. É conduta que viola os princípios da moralidade e da impessoalidade.",
+    trap: "O nepotismo refere-se especificamente à nomeação de parentes. O abuso de poder é mais amplo.",
+    tags: ["ética", "abuso de poder", "serviço público"],
   },
 ];
 
