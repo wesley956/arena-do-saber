@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PlayerProgress, World, SoloSession } from "../types/game";
 import { AppShell } from "../components/layout/AppShell";
 import { Header } from "../components/layout/Header";
@@ -17,6 +17,8 @@ interface SoloTrainingPageProps {
   progress: PlayerProgress;
   onProgressUpdate: (p: PlayerProgress) => void;
   onBack: () => void;
+  /** Quando vem do Mapa de Estudos, pula a seleção e inicia direto na categoria */
+  preselectedCategoryId?: string;
 }
 
 type Phase = "select" | "question" | "result" | "done";
@@ -26,6 +28,7 @@ export function SoloTrainingPage({
   progress,
   onProgressUpdate,
   onBack,
+  preselectedCategoryId,
 }: SoloTrainingPageProps) {
   const categories = getCategoriesByWorld(world);
 
@@ -34,6 +37,14 @@ export function SoloTrainingPage({
   const [localProgress, setLocalProgress] = useState<PlayerProgress>(progress);
   const [lastCorrect, setLastCorrect] = useState(false);
   const [lastXP, setLastXP] = useState(0);
+
+  // Se veio do Mapa de Estudos com categoria pré-selecionada, auto-inicia
+  useEffect(() => {
+    if (preselectedCategoryId && phase === "select") {
+      startSession(preselectedCategoryId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const currentCategory = session?.categoryId
     ? getCategoryById(session.categoryId)
@@ -46,7 +57,6 @@ export function SoloTrainingPage({
   function startSession(categoryId: string) {
     const question = getRandomQuestion(categoryId, []);
     if (!question) {
-      // Sem perguntas para essa categoria — feedback simples
       return;
     }
     setSession({
@@ -95,21 +105,18 @@ export function SoloTrainingPage({
   function handleContinue() {
     if (!session) return;
 
-    // Verifica se terminou (10 questões por sessão)
     const total = session.correct + session.wrong;
     if (total >= 10) {
       setPhase("done");
       return;
     }
 
-    // Próxima pergunta
     const nextQuestion = getRandomQuestion(
       session.categoryId,
       session.askedQuestionIds
     );
 
     if (!nextQuestion) {
-      // Esgotou perguntas da categoria
       setPhase("done");
       return;
     }
@@ -230,7 +237,7 @@ export function SoloTrainingPage({
             🔄 Estudar outra matéria
           </Button>
           <Button onClick={onBack} fullWidth size="md" variant="ghost">
-            🏠 Voltar ao início
+            ← Voltar
           </Button>
         </div>
       </AppShell>
@@ -293,7 +300,7 @@ export function SoloTrainingPage({
     );
   }
 
-  // Fallback
+  // Fallback / loading (enquanto o useEffect dispara o startSession)
   return (
     <AppShell
       header={

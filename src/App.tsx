@@ -7,6 +7,7 @@ import { SoloTrainingPage } from "./pages/SoloTrainingPage";
 import { ReviewErrorsPage } from "./pages/ReviewErrorsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { QuickDuelPage } from "./pages/QuickDuelPage";
+import { StudyMapPage } from "./pages/StudyMapPage";
 import { GameMode, ClassicMatchState, PlayerProgress, World } from "./types/game";
 import { loadProgress, saveProgress } from "./lib/storage";
 
@@ -18,7 +19,8 @@ export type AppScreen =
   | "solo"
   | "review"
   | "profile"
-  | "duel";
+  | "duel"
+  | "studyMap";
 
 export default function App() {
   const [screen, setScreen] = useState<AppScreen>("home");
@@ -28,6 +30,10 @@ export default function App() {
   const [lastMatchSummary, setLastMatchSummary] = useState<string | null>(null);
   // Track whether review was opened directly from home (so Back returns home, not mode)
   const [reviewFromHome, setReviewFromHome] = useState(false);
+  // Track whether review/solo was opened from the study map
+  const [fromStudyMap, setFromStudyMap] = useState(false);
+  // Pre-selected category for solo training (from study map)
+  const [preselectedCategoryId, setPreselectedCategoryId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     saveProgress(progress);
@@ -41,6 +47,8 @@ export default function App() {
   function goHome() {
     setPreferredMode(null);
     setLastMatchSummary(null);
+    setFromStudyMap(false);
+    setPreselectedCategoryId(undefined);
     setScreen("home");
   }
 
@@ -76,6 +84,35 @@ export default function App() {
     // Progress was already saved by onProgressUpdate during the match; reload from storage to sync.
     setProgress(loadProgress());
     setScreen("home");
+  }
+
+  // ── Mapa de Estudos ───────────────────────────────────────────
+
+  function handleTrainCategory(world: World, categoryId: string) {
+    setSelectedWorld(world);
+    setPreselectedCategoryId(categoryId);
+    setFromStudyMap(true);
+    setScreen("solo");
+  }
+
+  function handleReviewFromMap(world: World) {
+    setSelectedWorld(world);
+    setFromStudyMap(true);
+    setReviewFromHome(false);
+    setScreen("review");
+  }
+
+  // ── Screens ───────────────────────────────────────────────────
+
+  if (screen === "studyMap") {
+    return (
+      <StudyMapPage
+        progress={progress}
+        onBack={goHome}
+        onTrainCategory={handleTrainCategory}
+        onReviewErrors={handleReviewFromMap}
+      />
+    );
   }
 
   if (screen === "world") {
@@ -117,7 +154,16 @@ export default function App() {
         world={selectedWorld}
         progress={progress}
         onProgressUpdate={updateProgress}
-        onBack={() => setScreen("mode")}
+        onBack={() => {
+          setPreselectedCategoryId(undefined);
+          if (fromStudyMap) {
+            setFromStudyMap(false);
+            setScreen("studyMap");
+          } else {
+            setScreen("mode");
+          }
+        }}
+        preselectedCategoryId={preselectedCategoryId}
       />
     );
   }
@@ -127,7 +173,16 @@ export default function App() {
       <ReviewErrorsPage
         progress={progress}
         onProgressUpdate={updateProgress}
-        onBack={() => reviewFromHome ? goHome() : setScreen("mode")}
+        onBack={() => {
+          if (fromStudyMap) {
+            setFromStudyMap(false);
+            setScreen("studyMap");
+          } else if (reviewFromHome) {
+            goHome();
+          } else {
+            setScreen("mode");
+          }
+        }}
       />
     );
   }
@@ -167,6 +222,7 @@ export default function App() {
         onReview={() => { setReviewFromHome(true); setScreen("review"); }}
         onProfile={() => setScreen("profile")}
         onDuel={() => openWorldSelect("duel")}
+        onStudyMap={() => setScreen("studyMap")}
       />
     </div>
   );

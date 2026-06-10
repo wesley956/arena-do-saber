@@ -13,6 +13,7 @@ interface HomePageProps {
   onReview: () => void;
   onProfile: () => void;
   onDuel: () => void;
+  onStudyMap: () => void;
 }
 
 export function HomePage({
@@ -22,6 +23,7 @@ export function HomePage({
   onReview,
   onProfile,
   onDuel,
+  onStudyMap,
 }: HomePageProps) {
   const xpInLevel = xpProgressInLevel(progress.xp);
   const toNext = xpToNextLevel(progress.xp);
@@ -111,7 +113,7 @@ export function HomePage({
       </Button>
 
       {/* Secondary actions */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-2 gap-3 mb-3">
         <Button onClick={onSolo} fullWidth size="lg" variant="secondary">
           📖 Treino Solo
         </Button>
@@ -119,6 +121,17 @@ export function HomePage({
           ⚡ Duelo Rápido
         </Button>
       </div>
+
+      {/* Mapa de Estudos — destaque visual */}
+      <Button
+        onClick={onStudyMap}
+        fullWidth
+        size="lg"
+        variant="ghost"
+        className="mb-3 border-indigo-700/60 text-indigo-300 hover:bg-indigo-900/20 hover:border-indigo-500"
+      >
+        🗺️ Mapa de Estudos
+      </Button>
 
       {/* Review */}
       {hasErrors ? (
