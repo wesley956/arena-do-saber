@@ -9,6 +9,7 @@ import { QuestionResult } from "../components/game/QuestionResult";
 import { getCategoriesByWorld, getCategoryById } from "../data/categories";
 import { getQuestionById } from "../data/questions";
 import { getNextQuestionForCategory } from "../lib/questionSelector";
+import { addSoloTrainingSeenQuestion, getSoloTrainingSeenQuestionIds, mergeSoloTrainingSeenQuestionIds } from "../lib/soloTrainingHistory";
 import { applyXPToProgress } from "../lib/gameEngine";
 import { getXPForAnswer } from "../lib/xp";
 
@@ -59,7 +60,12 @@ export function SoloTrainingPage({
       : null;
 
   function startSession(categoryId: string) {
-    const question = getNextQuestionForCategory(categoryId, [], SOLO_QUESTION_CYCLE_OPTIONS);
+    const persistedSeenQuestionIds = getSoloTrainingSeenQuestionIds(categoryId);
+  const question = getNextQuestionForCategory(
+    categoryId,
+    persistedSeenQuestionIds,
+    SOLO_QUESTION_CYCLE_OPTIONS
+  );
     if (!question) {
       return;
     }
@@ -68,7 +74,7 @@ export function SoloTrainingPage({
       categoryId,
       correct: 0,
       wrong: 0,
-      askedQuestionIds: [question.id],
+      askedQuestionIds: addSoloTrainingSeenQuestion(categoryId, question.id),
       currentQuestionId: question.id,
       status: "active",
     });
@@ -77,6 +83,8 @@ export function SoloTrainingPage({
 
   function handleAnswer(_selectedId: string, isCorrect: boolean) {
     if (!session || !currentQuestion) return;
+
+  addSoloTrainingSeenQuestion(session.categoryId, currentQuestion.id);
 
     const xpGained = isCorrect ? getXPForAnswer(currentQuestion.difficulty) : 0;
     setLastXP(xpGained);
@@ -115,9 +123,14 @@ export function SoloTrainingPage({
       return;
     }
 
-    const nextQuestion = getNextQuestionForCategory(
+    const seenQuestionIds = mergeSoloTrainingSeenQuestionIds(
     session.categoryId,
-    session.askedQuestionIds,
+    session.askedQuestionIds
+  );
+
+  const nextQuestion = getNextQuestionForCategory(
+    session.categoryId,
+    seenQuestionIds,
     SOLO_QUESTION_CYCLE_OPTIONS
   );
 
@@ -131,7 +144,7 @@ export function SoloTrainingPage({
         ? {
             ...prev,
             currentQuestionId: nextQuestion.id,
-            askedQuestionIds: [...prev.askedQuestionIds, nextQuestion.id],
+            askedQuestionIds: addSoloTrainingSeenQuestion(session.categoryId, nextQuestion.id),
           }
         : prev
     );
