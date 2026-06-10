@@ -5,19 +5,19 @@ const ROOT = process.cwd();
 const QUESTION_BANK_DIR = path.join(ROOT, "src", "data", "questionBank");
 
 const EXPECTED_CATEGORIES = {
-  "school-portugues": { world: "school", min: 5 },
-  "school-matematica": { world: "school", min: 5 },
-  "school-ciencias": { world: "school", min: 5 },
-  "school-historia": { world: "school", min: 5 },
-  "school-geografia": { world: "school", min: 5 },
-  "school-ingles": { world: "school", min: 5 },
+  "school-portugues": { world: "school", min: 15 },
+  "school-matematica": { world: "school", min: 15 },
+  "school-ciencias": { world: "school", min: 15 },
+  "school-historia": { world: "school", min: 15 },
+  "school-geografia": { world: "school", min: 15 },
+  "school-ingles": { world: "school", min: 15 },
 
-  "contest-portugues": { world: "contest", min: 5 },
-  "contest-matematica": { world: "contest", min: 5 },
-  "contest-informatica": { world: "contest", min: 5 },
-  "contest-atualidades": { world: "contest", min: 5 },
-  "contest-legislacao": { world: "contest", min: 5 },
-  "contest-especificos": { world: "contest", min: 5 },
+  "contest-portugues": { world: "contest", min: 15 },
+  "contest-matematica": { world: "contest", min: 15 },
+  "contest-informatica": { world: "contest", min: 15 },
+  "contest-atualidades": { world: "contest", min: 15 },
+  "contest-legislacao": { world: "contest", min: 15 },
+  "contest-especificos": { world: "contest", min: 15 },
 };
 
 const VALID_DIFFICULTIES = new Set(["easy", "medium", "hard"]);
