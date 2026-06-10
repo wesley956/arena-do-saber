@@ -26,6 +26,8 @@ export default function App() {
   const [selectedWorld, setSelectedWorld] = useState<World>("school");
   const [preferredMode, setPreferredMode] = useState<GameMode | null>(null);
   const [lastMatchSummary, setLastMatchSummary] = useState<string | null>(null);
+  // Track whether review was opened directly from home (so Back returns home, not mode)
+  const [reviewFromHome, setReviewFromHome] = useState(false);
 
   useEffect(() => {
     saveProgress(progress);
@@ -60,7 +62,7 @@ export default function App() {
     if (mode === "classic") setScreen("classic");
     if (mode === "solo") setScreen("solo");
     if (mode === "duel") setScreen("duel");
-    if (mode === "review") setScreen("review");
+    if (mode === "review") { setReviewFromHome(false); setScreen("review"); }
   }
 
   function handleClassicEnd(match: ClassicMatchState, totalXP: number) {
@@ -71,6 +73,7 @@ export default function App() {
         ? "Empate"
         : "Derrota";
     setLastMatchSummary(`${winner} na partida clássica · +${totalXP} XP`);
+    // Progress was already saved by onProgressUpdate during the match; reload from storage to sync.
     setProgress(loadProgress());
     setScreen("home");
   }
@@ -124,7 +127,7 @@ export default function App() {
       <ReviewErrorsPage
         progress={progress}
         onProgressUpdate={updateProgress}
-        onBack={() => setScreen("mode")}
+        onBack={() => reviewFromHome ? goHome() : setScreen("mode")}
       />
     );
   }
@@ -161,7 +164,7 @@ export default function App() {
         progress={progress}
         onPlay={() => openWorldSelect()}
         onSolo={() => openWorldSelect("solo")}
-        onReview={() => setScreen("review")}
+        onReview={() => { setReviewFromHome(true); setScreen("review"); }}
         onProfile={() => setScreen("profile")}
         onDuel={() => openWorldSelect("duel")}
       />

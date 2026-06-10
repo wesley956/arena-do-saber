@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { PlayerProgress, Question, World } from "../types/game";
 import { AppShell } from "../components/layout/AppShell";
 import { Header } from "../components/layout/Header";
@@ -34,6 +34,9 @@ export function QuickDuelPage({
   const [lastCorrect, setLastCorrect] = useState(false);
   const [lastXP, setLastXP] = useState(0);
   const [localProgress, setLocalProgress] = useState(progress);
+  // Refs to always read the latest scores inside finishDuel (avoids stale closure)
+  const playerScoreRef = useRef(0);
+  const botScoreRef = useRef(0);
 
   const currentQuestion = questions[index] ?? null;
 
@@ -43,6 +46,8 @@ export function QuickDuelPage({
     setIndex(0);
     setPlayerScore(0);
     setBotScore(0);
+    playerScoreRef.current = 0;
+    botScoreRef.current = 0;
     setPhase(selected.length > 0 ? "question" : "finished");
   }
 
@@ -64,8 +69,14 @@ export function QuickDuelPage({
     setLastXP(xpGained);
     setLocalProgress(nextProgress);
     onProgressUpdate(nextProgress);
-    if (isCorrect) setPlayerScore((value) => value + 1);
-    if (botCorrect) setBotScore((value) => value + 1);
+    if (isCorrect) {
+      playerScoreRef.current += 1;
+      setPlayerScore((value) => value + 1);
+    }
+    if (botCorrect) {
+      botScoreRef.current += 1;
+      setBotScore((value) => value + 1);
+    }
     setPhase("result");
   }
 
@@ -80,8 +91,11 @@ export function QuickDuelPage({
 
   function finishDuel() {
     setPhase("finished");
+    // Use refs to read the definitive scores (avoids stale closure from async setState)
+    const finalPlayerScore = playerScoreRef.current;
+    const finalBotScore = botScoreRef.current;
     setLocalProgress((current) => {
-      if (playerScore > botScore) {
+      if (finalPlayerScore > finalBotScore) {
         const bonus = getXPForEvent("duel_win");
         const next = {
           ...current,

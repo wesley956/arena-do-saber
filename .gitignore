@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+.env.local
+*.bak
+_patch_stabilize/
+files.zip
+.DS_Store
