@@ -8,7 +8,7 @@ import { QuestionCard } from "../components/game/QuestionCard";
 import { QuestionResult } from "../components/game/QuestionResult";
 import { getCategoriesByWorld, getCategoryById } from "../data/categories";
 import { getQuestionById } from "../data/questions";
-import { getRandomQuestion } from "../lib/questionSelector";
+import { getNextQuestionForCategory } from "../lib/questionSelector";
 import { applyXPToProgress } from "../lib/gameEngine";
 import { getXPForAnswer } from "../lib/xp";
 
@@ -22,6 +22,10 @@ interface SoloTrainingPageProps {
 }
 
 type Phase = "select" | "question" | "result" | "done";
+
+const SOLO_QUESTION_CYCLE_OPTIONS = {
+  minFreshRatio: 0.0001,
+};
 
 export function SoloTrainingPage({
   world,
@@ -55,7 +59,7 @@ export function SoloTrainingPage({
       : null;
 
   function startSession(categoryId: string) {
-    const question = getRandomQuestion(categoryId, []);
+    const question = getNextQuestionForCategory(categoryId, [], SOLO_QUESTION_CYCLE_OPTIONS);
     if (!question) {
       return;
     }
@@ -111,10 +115,11 @@ export function SoloTrainingPage({
       return;
     }
 
-    const nextQuestion = getRandomQuestion(
-      session.categoryId,
-      session.askedQuestionIds
-    );
+    const nextQuestion = getNextQuestionForCategory(
+    session.categoryId,
+    session.askedQuestionIds,
+    SOLO_QUESTION_CYCLE_OPTIONS
+  );
 
     if (!nextQuestion) {
       setPhase("done");
