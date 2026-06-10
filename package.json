@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "verify": "npm run typecheck && npm run build"
+    "verify": "npm run typecheck && npm run validate:questions && npm run build",
+    "validate:questions": "node scripts/validate-questions.mjs"
   },
   "dependencies": {
     "clsx": "2.1.1",
