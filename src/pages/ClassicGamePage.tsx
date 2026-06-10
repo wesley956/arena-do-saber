@@ -56,10 +56,10 @@ function getBadgeChallengeResultMessage(correctCount: number): string {
   if (correctCount === 3) return "Desafio perfeito! Insígnia conquistada!";
   if (correctCount === 2) return "Desafio vencido! Insígnia conquistada!";
   if (correctCount === 1) {
-    return "Desafio falhou. Continue treinando e tente novamente.";
+    return "Quase! Você precisa acertar pelo menos 2. Tente novamente.";
   }
 
-  return "Desafio falhou. A insígnia escapou desta vez.";
+  return "A insígnia escapou desta vez. Continue tentando.";
 }
 
 function getClassicBadgeStateLabel(
@@ -68,11 +68,68 @@ function getClassicBadgeStateLabel(
 ): string {
   const safeProgress = Math.min(Math.max(progress, 0), EMBLEM_THRESHOLD);
 
-  if (earned) return "Insígnia conquistada";
+  if (earned) return "Conquistada";
   if (safeProgress >= EMBLEM_THRESHOLD) return "Desafio liberado";
 
   return safeProgress + "/" + EMBLEM_THRESHOLD;
 }
+
+function getClassicBadgeCardClassName(
+  progress: number,
+  earned: boolean,
+  active: boolean
+): string {
+  const safeProgress = Math.min(Math.max(progress, 0), EMBLEM_THRESHOLD);
+  const base =
+    "rounded-xl border p-3 transition-all duration-200" +
+    (active ? " ring-2 ring-violet-400/70" : "");
+
+  if (earned) {
+    return base +
+      " border-emerald-400/70 bg-emerald-950/35 shadow-lg shadow-emerald-950/20";
+  }
+
+  if (safeProgress >= EMBLEM_THRESHOLD) {
+    return base +
+      " border-amber-400/70 bg-amber-950/35 shadow-lg shadow-amber-950/20 animate-pulse";
+  }
+
+  if (safeProgress === 2) {
+    return base + " border-violet-500/60 bg-violet-950/25";
+  }
+
+  if (safeProgress === 1) {
+    return base + " border-sky-500/50 bg-sky-950/20";
+  }
+
+  return base + " border-slate-700/60 bg-slate-900/50 opacity-90";
+}
+
+function getClassicBadgePillClassName(progress: number, earned: boolean): string {
+  const safeProgress = Math.min(Math.max(progress, 0), EMBLEM_THRESHOLD);
+  const base = "text-[11px] font-black rounded-full px-2 py-1 text-center";
+
+  if (earned) return base + " bg-emerald-500/15 text-emerald-300";
+  if (safeProgress >= EMBLEM_THRESHOLD) {
+    return base + " bg-amber-500/20 text-amber-200";
+  }
+  if (safeProgress === 2) return base + " bg-violet-500/15 text-violet-200";
+  if (safeProgress === 1) return base + " bg-sky-500/15 text-sky-200";
+
+  return base + " bg-slate-800 text-slate-300";
+}
+
+function getClassicBadgeHint(progress: number, earned: boolean): string {
+  const safeProgress = Math.min(Math.max(progress, 0), EMBLEM_THRESHOLD);
+
+  if (earned) return "Domínio confirmado";
+  if (safeProgress >= EMBLEM_THRESHOLD) return "Pronto para o desafio";
+  if (safeProgress === 2) return "Falta 1 acerto";
+  if (safeProgress === 1) return "Continue avançando";
+
+  return "Ainda bloqueada";
+}
+
 
 const CLASSIC_BADGE_GOAL_TITLE = "Insígnias de Sabedoria";
 
@@ -372,9 +429,9 @@ setLastBadgeMessage(null);
 
   setLastBadgeMessage(
     challengeUnlocked
-      ? "Desafio da Insígnia liberado: " +
+      ? "Desafio da Insígnia liberado! Você dominou o básico de " +
         (badgeCategory?.emblemName ?? badgeCategory?.name ?? "categoria") +
-        "!"
+        ". Encare o desafio para conquistar a insígnia."
       : null
   );
 
@@ -628,7 +685,7 @@ if (!match.lastAnswerCorrect) {
               {CLASSIC_BADGE_GOAL_TITLE}
             </h2>
             <p className="text-xs text-slate-400 mt-1">
-              Acerte 3 perguntas em cada categoria para conquistar as 6 insígnias.
+              Acerte 3 perguntas para liberar o desafio. Vença 2 de 3 para conquistar cada insígnia.
             </p>
           </div>
 
@@ -651,15 +708,14 @@ if (!match.lastAnswerCorrect) {
             const earned = match.playerEmblems.includes(category.id);
             const challengeReady =
               progressValue >= EMBLEM_THRESHOLD && !earned;
+            const isCurrentCategory =
+              match.selectedCategoryId === category.id ||
+              badgeChallenge?.categoryId === category.id;
 
             return (
               <div
                 key={category.id}
-                className={`rounded-xl border p-3 ${
-                  earned
-                    ? "border-emerald-500/60 bg-emerald-950/30"
-                    : "border-slate-700/60 bg-slate-900/50"
-                }`}
+                className={getClassicBadgeCardClassName(progressValue, earned, isCurrentCategory)}
               >
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">{earned ? "✅" : category.icon || "🏅"}</span>
@@ -674,21 +730,21 @@ if (!match.lastAnswerCorrect) {
                 </div>
 
                 <div
-                  className={`text-[11px] font-black rounded-full px-2 py-1 text-center ${
-                    earned
-                      ? "bg-emerald-500/15 text-emerald-300"
-                      : "bg-slate-800 text-slate-300"
-                  }`}
+                  className={getClassicBadgePillClassName(progressValue, earned)}
                 >
                   {getClassicBadgeStateLabel(progressValue, earned)}
                 </div>
-                        {challengeReady && match.status === "idle" && (
+                        <p className="mt-1 text-center text-[10px] font-semibold text-slate-400">
+                {getClassicBadgeHint(progressValue, earned)}
+              </p>
+
+              {challengeReady && match.status === "idle" && (
                   <button
                     type="button"
                     onClick={() => startBadgeChallenge(category.id)}
-                    className="mt-2 w-full rounded-full bg-amber-500/15 px-2 py-1 text-[10px] font-black uppercase text-amber-300 hover:bg-amber-500/25"
+                    className="mt-2 w-full rounded-full bg-amber-500/20 px-2 py-1.5 text-[10px] font-black uppercase text-amber-200 shadow-sm shadow-amber-950/30 hover:bg-amber-500/30"
                   >
-                    Iniciar Desafio
+                    Iniciar Desafio da Insígnia
                   </button>
                 )}
               </div>
@@ -757,50 +813,78 @@ if (!match.lastAnswerCorrect) {
 
       {(lastBadgeMessage || allPlayerBadgesEarned) && (
         <Card
-          className={`p-4 mb-4 border-emerald-700/50 ${
-            allPlayerBadgesEarned ? "bg-violet-900/30" : "bg-emerald-900/20"
-          }`}
-        >
-          <p className="text-sm font-black text-emerald-300">
-            {allPlayerBadgesEarned
-              ? "Você conquistou todas as Insígnias de Sabedoria!"
-              : "Insígnia conquistada!"}
-          </p>
-          <p className="text-xs text-slate-300 mt-1">
-            {allPlayerBadgesEarned
-              ? "As 6 categorias do mundo foram dominadas. Continue para finalizar a partida."
-              : lastBadgeMessage}
-          </p>
-        </Card>
-      )}
-
-
-      {badgeChallengeSummary && (
-        <Card
           className={
-            "p-4 mb-4 border " +
-            (badgeChallengeSummary.passed
-              ? "border-emerald-700/50 bg-emerald-900/20"
-              : "border-amber-700/50 bg-amber-950/20")
+            "p-4 mb-4 border shadow-lg " +
+            (allPlayerBadgesEarned
+              ? "border-violet-400/70 bg-violet-950/40 shadow-violet-950/30"
+              : lastBadgeMessage?.startsWith("Desafio da Insígnia liberado")
+                ? "border-amber-400/60 bg-amber-950/30 shadow-amber-950/20 animate-pulse"
+                : "border-emerald-500/60 bg-emerald-950/30 shadow-emerald-950/20")
           }
         >
           <p
             className={
               "text-sm font-black " +
-              (badgeChallengeSummary.passed
-                ? "text-emerald-300"
-                : "text-amber-300")
+              (allPlayerBadgesEarned
+                ? "text-violet-200"
+                : lastBadgeMessage?.startsWith("Desafio da Insígnia liberado")
+                  ? "text-amber-200"
+                  : "text-emerald-300")
             }
           >
-            {badgeChallengeSummary.message}
+            {allPlayerBadgesEarned
+              ? "Você conquistou todas as Insígnias de Sabedoria!"
+              : lastBadgeMessage?.startsWith("Desafio da Insígnia liberado")
+                ? "Desafio da Insígnia liberado!"
+                : "Insígnia conquistada!"}
           </p>
           <p className="text-xs text-slate-300 mt-1">
-            Resultado do desafio: {badgeChallengeSummary.correctCount}/
-            {BADGE_CHALLENGE_SIZE} acertos.
+            {allPlayerBadgesEarned
+              ? "A Arena reconhece seu domínio neste mundo. Continue para finalizar a partida."
+              : lastBadgeMessage}
           </p>
         </Card>
       )}
 
+      {badgeChallengeSummary && (
+        <Card
+          className={
+            "p-4 mb-4 border shadow-lg " +
+            (badgeChallengeSummary.passed
+              ? "border-emerald-500/60 bg-emerald-950/30 shadow-emerald-950/20"
+              : "border-amber-500/60 bg-amber-950/30 shadow-amber-950/20")
+          }
+        >
+          <div className="flex items-start gap-3">
+            <span className="text-2xl">
+              {badgeChallengeSummary.passed ? "🏆" : "⚔️"}
+            </span>
+            <div className="min-w-0">
+              <p
+                className={
+                  "text-sm font-black " +
+                  (badgeChallengeSummary.passed
+                    ? "text-emerald-300"
+                    : "text-amber-300")
+                }
+              >
+                {badgeChallengeSummary.message}
+              </p>
+              <p className="text-xs text-slate-300 mt-1">
+                Resultado do desafio: {badgeChallengeSummary.correctCount}/
+                {BADGE_CHALLENGE_SIZE} acertos. Meta: {BADGE_CHALLENGE_PASSING_SCORE}/
+                {BADGE_CHALLENGE_SIZE}.
+              </p>
+              {!badgeChallengeSummary.passed && (
+                <p className="text-[11px] text-slate-400 mt-2">
+                  O progresso 3/3 foi mantido. Quando esta categoria aparecer de novo,
+                  tente o desafio novamente.
+                </p>
+              )}
+            </div>
+          </div>
+        </Card>
+      )}
 
       {/* IDLE: Roleta */}
       {match.status === "idle" && (
@@ -817,23 +901,46 @@ if (!match.lastAnswerCorrect) {
       )}
 
       {badgeChallenge && currentQuestion && (
-        <Card className="p-4 mb-4 border-amber-600/50 bg-amber-950/20">
-          <p className="text-xs uppercase tracking-wide text-amber-300 font-black">
-            Desafio da Insígnia — Pergunta {currentBadgeChallengeQuestionNumber}/
-            {BADGE_CHALLENGE_SIZE}
-          </p>
-          <h2 className="text-white font-black text-lg mt-1">
-            {activeBadgeChallengeCategory?.emblemName ??
-              activeBadgeChallengeCategory?.name ??
-              "Insígnia"}
-          </h2>
-          <p className="text-xs text-slate-300 mt-1">
-            Acerte pelo menos {BADGE_CHALLENGE_PASSING_SCORE} de {BADGE_CHALLENGE_SIZE}. Acertos no desafio: {badgeChallenge.correctCount}/
-            {BADGE_CHALLENGE_SIZE}
-          </p>
+        <Card className="p-4 mb-4 border-amber-500/60 bg-amber-950/30 shadow-lg shadow-amber-950/20">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-amber-300 font-black">
+                Desafio da Insígnia
+              </p>
+              <h2 className="text-white font-black text-lg mt-1">
+                {activeBadgeChallengeCategory?.emblemName ??
+                  activeBadgeChallengeCategory?.name ??
+                  "Insígnia"}
+              </h2>
+              <p className="text-xs text-slate-300 mt-1">
+                Acerte pelo menos {BADGE_CHALLENGE_PASSING_SCORE} de {BADGE_CHALLENGE_SIZE} para conquistar a insígnia.
+              </p>
+            </div>
+            <div className="rounded-full bg-amber-500/20 px-3 py-1 text-[11px] font-black text-amber-200 shrink-0">
+              Pergunta {currentBadgeChallengeQuestionNumber}/{BADGE_CHALLENGE_SIZE}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 mt-3">
+            <div className="rounded-xl bg-slate-950/40 border border-slate-700/60 p-2 text-center">
+              <p className="text-[10px] uppercase font-black text-slate-500">
+                Acertos do desafio
+              </p>
+              <p className="text-lg font-black text-emerald-300">
+                {badgeChallenge.correctCount}/{BADGE_CHALLENGE_SIZE}
+              </p>
+            </div>
+            <div className="rounded-xl bg-slate-950/40 border border-slate-700/60 p-2 text-center">
+              <p className="text-[10px] uppercase font-black text-slate-500">
+                Regra
+              </p>
+              <p className="text-xs font-black text-amber-200">
+                2 de 3 conquista
+              </p>
+            </div>
+          </div>
         </Card>
       )}
-
 
       {/* QUESTION: Pergunta */}
       {match.status === "question" && currentQuestion && (
