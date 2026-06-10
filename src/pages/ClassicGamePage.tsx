@@ -23,6 +23,16 @@ import {
 } from "../lib/gameEngine";
 import { getBotAvatar, getBotName } from "../lib/bot";
 
+const CLASSIC_BADGE_GOAL_TITLE = "Insígnias de Sabedoria";
+
+function getClassicBadgeProgressLabel(progress: number): string {
+  const safeProgress = Math.min(Math.max(progress, 0), EMBLEM_THRESHOLD);
+
+  return safeProgress >= EMBLEM_THRESHOLD
+    ? "Conquistada"
+    : `${safeProgress}/${EMBLEM_THRESHOLD}`;
+}
+
 interface ClassicGamePageProps {
   world: World;
   progress: PlayerProgress;
@@ -47,11 +57,16 @@ export function ClassicGamePage({
   const [botThinking, setBotThinking] = useState(false);
   // FIX: estado para guardar o XP real da última resposta
   const [lastXP, setLastXP] = useState(0);
+  const [lastBadgeMessage, setLastBadgeMessage] = useState<string | null>(null);
 
   const categories = getCategoriesByWorld(world);
   const currentQuestion = match.currentQuestionId
     ? getQuestionById(match.currentQuestionId)
     : null;
+  const playerBadgeCount = match.playerEmblems.length;
+  const allPlayerBadgesEarned =
+    categories.length > 0 &&
+    categories.every((category) => match.playerEmblems.includes(category.id));
 
   // FIX: handleMatchEnd usa useCallback com dependências corretas
   const handleMatchEnd = useCallback(
@@ -89,6 +104,7 @@ export function ClassicGamePage({
   }, [match.playerEmblems.length, match.botEmblems.length, match.round, handleMatchEnd]);
 
   function handleSpin(categoryId: string) {
+    setLastBadgeMessage(null);
     const questionId = selectQuestion(categoryId, match.askedQuestionIds);
 
     if (!questionId) {
@@ -132,15 +148,41 @@ export function ClassicGamePage({
   function handleAnswer(_selectedId: string, isCorrect: boolean) {
     if (!currentQuestion) return;
 
-    const prevEmblems = match.playerEmblems.length;
-    const { match: updatedMatch, xpGained } = processPlayerAnswer(
-      match,
-      currentQuestion.difficulty,
-      isCorrect
-    );
+      const prevEmblems = match.playerEmblems.length;
+  const previousCategoryProgress =
+    match.playerCategoryProgress[currentQuestion.categoryId] ?? 0;
 
-    const newEmblems = updatedMatch.playerEmblems.length;
-    const emblemGained = newEmblems > prevEmblems;
+  const { match: rawUpdatedMatch, xpGained } = processPlayerAnswer(
+    match,
+    currentQuestion.difficulty,
+    isCorrect
+  );
+
+  const cappedCategoryProgress = Math.min(
+    rawUpdatedMatch.playerCategoryProgress[currentQuestion.categoryId] ??
+      previousCategoryProgress,
+    EMBLEM_THRESHOLD
+  );
+
+  const updatedMatch: ClassicMatchState = {
+    ...rawUpdatedMatch,
+    playerCategoryProgress: {
+      ...rawUpdatedMatch.playerCategoryProgress,
+      [currentQuestion.categoryId]: cappedCategoryProgress,
+    },
+  };
+
+  const newEmblems = updatedMatch.playerEmblems.length;
+  const emblemGained = newEmblems > prevEmblems;
+  const badgeCategory = categories.find(
+    (category) => category.id === currentQuestion.categoryId
+  );
+
+  setLastBadgeMessage(
+    isCorrect && emblemGained
+      ? `Insígnia conquistada: ${badgeCategory?.emblemName ?? badgeCategory?.name ?? "categoria"}!`
+      : null
+  );
 
     // FIX: salvar XP real no estado local
     setLastXP(xpGained);
@@ -216,7 +258,14 @@ export function ClassicGamePage({
               ? "🤝"
               : "😔"}
           </div>
-          <p className="text-slate-400 text-sm">Finalizando partida...</p>
+          <p className="text-white font-black text-xl mb-2">
+          {match.winner === "player"
+            ? "Você conquistou todas as Insígnias de Sabedoria!"
+            : match.winner === "draw"
+              ? "Partida encerrada em empate."
+              : "Partida encerrada."}
+        </p>
+        <p className="text-slate-400 text-sm">Finalizando partida...</p>
         </div>
       </AppShell>
     );
@@ -286,6 +335,75 @@ export function ClassicGamePage({
         </div>
       </Card>
 
+      {/* Objetivo: Insígnias de Sabedoria */}
+      <Card className="p-4 mb-4 border-violet-700/40 bg-violet-950/20">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div>
+            <p className="text-xs uppercase tracking-wide text-violet-300 font-black">
+              Objetivo da partida
+            </p>
+            <h2 className="text-white font-black text-lg">
+              {CLASSIC_BADGE_GOAL_TITLE}
+            </h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Acerte 3 perguntas em cada categoria para conquistar as 6 insígnias.
+            </p>
+          </div>
+
+          <div className="text-right shrink-0">
+            <div className="text-2xl font-black text-violet-300">
+              {playerBadgeCount}/{categories.length}
+            </div>
+            <div className="text-[10px] text-slate-500 font-bold uppercase">
+              conquistadas
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {categories.map((category) => {
+            const progressValue = Math.min(
+              match.playerCategoryProgress[category.id] ?? 0,
+              EMBLEM_THRESHOLD
+            );
+            const earned = match.playerEmblems.includes(category.id);
+
+            return (
+              <div
+                key={category.id}
+                className={`rounded-xl border p-3 ${
+                  earned
+                    ? "border-emerald-500/60 bg-emerald-950/30"
+                    : "border-slate-700/60 bg-slate-900/50"
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">{earned ? "✅" : category.icon || "🏅"}</span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-black text-white truncate">
+                      {category.emblemName}
+                    </p>
+                    <p className="text-[10px] text-slate-500 truncate">
+                      {category.name}
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  className={`text-[11px] font-black rounded-full px-2 py-1 text-center ${
+                    earned
+                      ? "bg-emerald-500/15 text-emerald-300"
+                      : "bg-slate-800 text-slate-300"
+                  }`}
+                >
+                  {getClassicBadgeProgressLabel(progressValue)}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+
       {/* Emblems */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <Card className="p-3">
@@ -343,6 +461,26 @@ export function ClassicGamePage({
           </div>
         </Card>
       )}
+
+      {(lastBadgeMessage || allPlayerBadgesEarned) && (
+        <Card
+          className={`p-4 mb-4 border-emerald-700/50 ${
+            allPlayerBadgesEarned ? "bg-violet-900/30" : "bg-emerald-900/20"
+          }`}
+        >
+          <p className="text-sm font-black text-emerald-300">
+            {allPlayerBadgesEarned
+              ? "Você conquistou todas as Insígnias de Sabedoria!"
+              : "Insígnia conquistada!"}
+          </p>
+          <p className="text-xs text-slate-300 mt-1">
+            {allPlayerBadgesEarned
+              ? "As 6 categorias do mundo foram dominadas. Continue para finalizar a partida."
+              : lastBadgeMessage}
+          </p>
+        </Card>
+      )}
+
 
       {/* IDLE: Roleta */}
       {match.status === "idle" && (
