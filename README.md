@@ -289,3 +289,22 @@ Ideias para evolução do projeto:
 ## 📄 Licença
 
 Este projeto ainda não possui uma licença definida no repositório. Antes de distribuir publicamente, escolha uma licença compatível com o objetivo do projeto.
+
+## PWA / App instalável
+
+O Arena do Saber agora possui suporte básico a PWA. Após o deploy, por exemplo no Vercel, o jogo pode ser aberto pelo navegador e instalado no celular como aplicativo.
+
+O suporte inclui:
+
+- manifest em `public/manifest.webmanifest`;
+- ícones em `public/icons/`;
+- service worker em `public/sw.js`;
+- registro seguro do service worker apenas em build de produção;
+- botão discreto "Instalar app" quando o navegador disponibilizar o evento de instalação.
+
+Para testar localmente o build de produção:
+
+```bash
+npm run build
+npm run preview
+```
