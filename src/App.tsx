@@ -10,6 +10,7 @@ import { QuickDuelPage } from "./pages/QuickDuelPage";
 import { StudyMapPage } from "./pages/StudyMapPage";
 import { AboutPage } from "./pages/AboutPage";
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
+import { EmblemsPage } from "./pages/EmblemsPage";
 import { OnboardingModal } from "./components/OnboardingModal";
 import { PwaInstallPrompt } from "./components/PwaInstallPrompt";
 import { GameMode, ClassicMatchState, PlayerProgress, World } from "./types/game";
@@ -23,6 +24,7 @@ export type AppScreen =
   | "solo"
   | "review"
   | "profile"
+  | "emblems"
   | "duel"
   | "studyMap"
   | "about"
@@ -194,6 +196,10 @@ export default function App() {
     return <ProfilePage progress={progress} onBack={goHome} onProgressUpdate={setProgress} />;
   }
 
+  if (screen === "emblems") {
+    return <EmblemsPage progress={progress} onBack={goHome} />;
+  }
+
   if (screen === "duel") {
     return (
       <QuickDuelPage
@@ -249,6 +255,7 @@ export default function App() {
           setScreen("review");
         }}
         onProfile={() => setScreen("profile")}
+        onEmblems={() => setScreen("emblems")}
         onDuel={() => openWorldSelect("duel")}
         onStudyMap={() => setScreen("studyMap")}
         onAbout={() => setScreen("about")}

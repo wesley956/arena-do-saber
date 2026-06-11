@@ -13,6 +13,7 @@ interface HomePageProps {
   onSolo: () => void;
   onReview: () => void;
   onProfile: () => void;
+  onEmblems: () => void;
   onDuel: () => void;
   onStudyMap: () => void;
   onAbout: () => void;
@@ -25,6 +26,7 @@ export function HomePage({
   onSolo,
   onReview,
   onProfile,
+  onEmblems,
   onDuel,
   onStudyMap,
   onAbout,
@@ -35,7 +37,9 @@ export function HomePage({
   const accuracy = getAccuracyRate(progress);
   const hasErrors = progress.wrongQuestionIds.length > 0;
   const completedEmblemSet = new Set(progress.completedEmblems);
-  const emblemPreview = ALL_CATEGORIES;
+  const completedEmblemCount = progress.completedEmblems.length;
+  const totalEmblems = ALL_CATEGORIES.length;
+  const emblemPreview = ALL_CATEGORIES.slice(0, 4);
 
   return (
     <AppShell>
@@ -139,101 +143,99 @@ export function HomePage({
           </Card>
         </section>
 
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-indigo-400/40 bg-indigo-950/30 p-3 shadow-lg shadow-indigo-950/20">
-            <div className="mb-2 flex items-start gap-2">
-              <span className="text-xl" aria-hidden="true">🗺️</span>
-              <div className="min-w-0">
-                <p className="text-sm font-black text-indigo-100">
-                  Mapa de Estudos
-                </p>
-                <p className="text-xs leading-snug text-slate-300">
-                  Veja seu progresso por matéria e escolha onde treinar.
-                </p>
-              </div>
-            </div>
-            <Button variant="secondary" onClick={onStudyMap} fullWidth>
-              Abrir Mapa de Estudos
-            </Button>
-          </div>
-          <Button variant="secondary" onClick={onDuel} fullWidth>
-            ⚡ Duelo Rápido Local
-          </Button>
-          <Button variant="ghost" onClick={onReview} fullWidth>
-            {hasErrors
-              ? `Revisar Erros (${progress.wrongQuestionIds.length})`
-              : "Revisão dos Erros"}
-          </Button>
-          <Button variant="ghost" onClick={onProfile} fullWidth>
-            🏆 Perfil / Conquistas
-          </Button>
+        <section className="grid grid-cols-2 gap-3">
+          {[
+            {
+              icon: "🗺️",
+              title: "Mapa",
+              helper: "Progresso por matéria",
+              action: onStudyMap,
+              tone: "border-indigo-400/40 bg-indigo-950/25 text-indigo-100",
+            },
+            {
+              icon: "⚡",
+              title: "Duelo",
+              helper: "Partida local rápida",
+              action: onDuel,
+              tone: "border-amber-400/40 bg-amber-950/20 text-amber-100",
+            },
+            {
+              icon: "📘",
+              title: hasErrors ? "Revisar" : "Revisão",
+              helper: hasErrors
+                ? `${progress.wrongQuestionIds.length} erro(s) salvo(s)`
+                : "Sem erros pendentes",
+              action: onReview,
+              tone: "border-rose-400/40 bg-rose-950/20 text-rose-100",
+            },
+            {
+              icon: "🏆",
+              title: "Perfil",
+              helper: "Nível e conquistas",
+              action: onProfile,
+              tone: "border-violet-400/40 bg-violet-950/25 text-violet-100",
+            },
+          ].map((item) => (
+            <button
+              key={item.title}
+              type="button"
+              onClick={item.action}
+              className={`min-h-[92px] rounded-2xl border p-3 text-left shadow-lg shadow-slate-950/20 transition-all hover:-translate-y-0.5 hover:bg-slate-800/70 focus:outline-none focus:ring-2 focus:ring-violet-300/70 focus:ring-offset-2 focus:ring-offset-slate-950 ${item.tone}`}
+            >
+              <span className="text-2xl" aria-hidden="true">
+                {item.icon}
+              </span>
+              <span className="mt-2 block text-base font-black leading-tight">
+                {item.title}
+              </span>
+              <span className="mt-1 block text-xs leading-snug text-slate-300">
+                {item.helper}
+              </span>
+            </button>
+          ))}
         </section>
 
-        <Card className="p-4 sm:p-5">
-          <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h2 className="text-lg font-black text-white">
-                Insígnias para conquistar
+        <Card className="p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <p className="text-xs font-black uppercase tracking-wide text-amber-200">
+                Coleção de Insígnias
+              </p>
+              <h2 className="mt-1 text-lg font-black text-white">
+                {completedEmblemCount}/{totalEmblems} conquistadas
               </h2>
-              <p className="text-sm leading-relaxed text-slate-300">
-                Complete desafios por matéria e transforme progresso em troféus.
+              <p className="mt-1 text-sm leading-relaxed text-slate-300">
+                Veja todas as insígnias bloqueadas e conquistadas em uma área própria.
               </p>
             </div>
-            <p className="text-xs font-black uppercase tracking-wide text-amber-200">
-              {progress.completedEmblems.length}/{emblemPreview.length} conquistadas
-            </p>
+
+            <Button variant="secondary" onClick={onEmblems}>
+              Ver coleção →
+            </Button>
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-4 flex flex-wrap gap-2">
             {emblemPreview.map((category) => {
               const earned = completedEmblemSet.has(category.id);
 
               return (
-                <div
+                <span
                   key={category.id}
-                  className={`min-w-0 rounded-2xl border p-3 transition-all ${
+                  className={`flex h-10 w-10 items-center justify-center rounded-2xl border text-lg ${
                     earned
-                      ? `${category.borderClass} bg-amber-500/10 shadow-lg shadow-amber-950/20`
-                      : "border-slate-700/70 bg-slate-900/60 opacity-85"
+                      ? `${category.borderClass} ${category.bgClass} text-white`
+                      : "border-slate-700 bg-slate-900 text-slate-400"
                   }`}
+                  title={category.emblemName}
                 >
-                  <div className="flex items-start gap-2">
-                    <span
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-lg ${
-                        earned
-                          ? `${category.bgClass} text-white`
-                          : "bg-slate-800 text-slate-400"
-                      }`}
-                      aria-hidden="true"
-                    >
-                      {earned ? category.icon : "🔒"}
-                    </span>
-
-                    <div className="min-w-0">
-                      <p
-                        className={`truncate text-sm font-black ${
-                          earned ? "text-amber-100" : "text-slate-200"
-                        }`}
-                      >
-                        {category.emblemName}
-                      </p>
-                      <p className="truncate text-xs font-semibold text-slate-400">
-                        {category.world === "school"
-                          ? "Mundo Escola"
-                          : "Mundo Concurso"}{" "}
-                        · {category.name}
-                      </p>
-                    </div>
-                  </div>
-
-                  <p className="mt-2 line-clamp-2 text-xs leading-snug text-slate-300">
-                    {earned
-                      ? "Conquistada! Continue jogando para dominar ainda mais."
-                      : category.emblemDescription}
-                  </p>
-                </div>
+                  {earned ? category.icon : "🔒"}
+                </span>
               );
             })}
+
+            <span className="flex h-10 items-center rounded-2xl border border-slate-700 bg-slate-900 px-3 text-xs font-black text-slate-300">
+              +{Math.max(totalEmblems - emblemPreview.length, 0)}
+            </span>
           </div>
         </Card>
 
