@@ -339,3 +339,32 @@ O APK geralmente fica em:
 android/app/build/outputs/apk/debug/
 ```
 
+## Checklist de Teste Beta
+
+Use este roteiro ao enviar o APK ou PWA para amigos testarem:
+
+1. Abrir o app e passar pelo onboarding inicial.
+2. Conferir se a Home aparece com os botões compactos.
+3. Abrir a Coleção de Insígnias.
+4. Entrar na Partida Clássica.
+5. Escolher Mundo Escola e girar a roleta.
+6. Responder pelo menos uma pergunta certa e uma errada.
+7. Testar o Desafio da Insígnia quando ele aparecer.
+8. Entrar no Mundo Concurso e repetir uma rodada rápida.
+9. Abrir o Treino Solo e trocar de matéria.
+10. Abrir o Mapa de Estudos.
+11. Abrir a Revisão dos Erros.
+12. Fechar e abrir o app novamente para conferir se o progresso local foi salvo.
+
+Modelo de feedback para testers:
+
+Arena do Saber — Feedback do Beta
+Versão:
+Celular/modelo:
+Android:
+Tela onde aconteceu:
+O que eu estava fazendo:
+O que aconteceu:
+O que eu esperava:
+Conseguiu repetir o erro? Sim/Não
+Print ou vídeo, se tiver:

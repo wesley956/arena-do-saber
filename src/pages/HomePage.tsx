@@ -6,6 +6,7 @@ import { ProgressBar } from "../components/game/ProgressBar";
 import { xpProgressInLevel, xpToNextLevel } from "../lib/xp";
 import { getAccuracyRate } from "../lib/stats";
 import { ALL_CATEGORIES } from "../data/categories";
+import { APP_VERSION } from "../lib/appVersion";
 
 interface HomePageProps {
   progress: PlayerProgress;
@@ -14,6 +15,7 @@ interface HomePageProps {
   onReview: () => void;
   onProfile: () => void;
   onEmblems: () => void;
+  onFeedback: () => void;
   onDuel: () => void;
   onStudyMap: () => void;
   onAbout: () => void;
@@ -27,6 +29,7 @@ export function HomePage({
   onReview,
   onProfile,
   onEmblems,
+  onFeedback,
   onDuel,
   onStudyMap,
   onAbout,
@@ -241,7 +244,7 @@ export function HomePage({
 
         <footer className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900/50 p-4 text-center text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <p className="leading-relaxed">
-            Arena do Saber Beta · Escola + Concurso · PWA/APK preparado
+            Arena do Saber Beta {APP_VERSION} · Escola + Concurso · PWA/APK preparado
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             <button
@@ -250,6 +253,13 @@ export function HomePage({
               className="rounded-full px-3 py-2 font-bold text-slate-300 underline-offset-4 hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300"
             >
               Sobre
+            </button>
+            <button
+              type="button"
+              onClick={onFeedback}
+              className="rounded-full px-3 py-2 font-bold text-emerald-200 underline-offset-4 hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+            >
+              Feedback Beta
             </button>
             <button
               type="button"
