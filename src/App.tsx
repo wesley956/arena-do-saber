@@ -8,6 +8,10 @@ import { ReviewErrorsPage } from "./pages/ReviewErrorsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { QuickDuelPage } from "./pages/QuickDuelPage";
 import { StudyMapPage } from "./pages/StudyMapPage";
+import { AboutPage } from "./pages/AboutPage";
+import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
+import { OnboardingModal } from "./components/OnboardingModal";
+import { PwaInstallPrompt } from "./components/PwaInstallPrompt";
 import { GameMode, ClassicMatchState, PlayerProgress, World } from "./types/game";
 import { loadProgress, saveProgress } from "./lib/storage";
 
@@ -20,7 +24,9 @@ export type AppScreen =
   | "review"
   | "profile"
   | "duel"
-  | "studyMap";
+  | "studyMap"
+  | "about"
+  | "privacy";
 
 export default function App() {
   const [screen, setScreen] = useState<AppScreen>("home");
@@ -28,11 +34,8 @@ export default function App() {
   const [selectedWorld, setSelectedWorld] = useState<World>("school");
   const [preferredMode, setPreferredMode] = useState<GameMode | null>(null);
   const [lastMatchSummary, setLastMatchSummary] = useState<string | null>(null);
-  // Track whether review was opened directly from home (so Back returns home, not mode)
   const [reviewFromHome, setReviewFromHome] = useState(false);
-  // Track whether review/solo was opened from the study map
   const [fromStudyMap, setFromStudyMap] = useState(false);
-  // Pre-selected category for solo training (from study map)
   const [preselectedCategoryId, setPreselectedCategoryId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
@@ -59,6 +62,7 @@ export default function App() {
 
   function handleWorldSelected(world: World) {
     setSelectedWorld(world);
+
     if (preferredMode === "classic") setScreen("classic");
     else if (preferredMode === "solo") setScreen("solo");
     else if (preferredMode === "duel") setScreen("duel");
@@ -70,7 +74,10 @@ export default function App() {
     if (mode === "classic") setScreen("classic");
     if (mode === "solo") setScreen("solo");
     if (mode === "duel") setScreen("duel");
-    if (mode === "review") { setReviewFromHome(false); setScreen("review"); }
+    if (mode === "review") {
+      setReviewFromHome(false);
+      setScreen("review");
+    }
   }
 
   function handleClassicEnd(match: ClassicMatchState, totalXP: number) {
@@ -78,15 +85,13 @@ export default function App() {
       match.winner === "player"
         ? "Vitória"
         : match.winner === "draw"
-        ? "Empate"
-        : "Derrota";
+          ? "Empate"
+          : "Derrota";
+
     setLastMatchSummary(`${winner} na partida clássica · +${totalXP} XP`);
-    // Progress was already saved by onProgressUpdate during the match; reload from storage to sync.
     setProgress(loadProgress());
     setScreen("home");
   }
-
-  // ── Mapa de Estudos ───────────────────────────────────────────
 
   function handleTrainCategory(world: World, categoryId: string) {
     setSelectedWorld(world);
@@ -101,8 +106,6 @@ export default function App() {
     setReviewFromHome(false);
     setScreen("review");
   }
-
-  // ── Screens ───────────────────────────────────────────────────
 
   if (screen === "studyMap") {
     return (
@@ -188,13 +191,7 @@ export default function App() {
   }
 
   if (screen === "profile") {
-    return (
-      <ProfilePage
-        progress={progress}
-        onProgressUpdate={updateProgress}
-        onBack={goHome}
-      />
-    );
+    return <ProfilePage progress={progress} onBack={goHome} onProgressUpdate={setProgress} />;
   }
 
   if (screen === "duel") {
@@ -208,22 +205,55 @@ export default function App() {
     );
   }
 
+  if (screen === "about") {
+    return (
+      <AboutPage
+        progress={progress}
+        onBack={goHome}
+        onPrivacy={() => setScreen("privacy")}
+      />
+    );
+  }
+
+  if (screen === "privacy") {
+    return (
+      <PrivacyPolicyPage
+        progress={progress}
+        onBack={() => setScreen("about")}
+        onHome={goHome}
+      />
+    );
+  }
+
   return (
-    <div>
+    <>
+      <OnboardingModal />
+      <PwaInstallPrompt />
+
       {lastMatchSummary && (
-        <div className="fixed left-1/2 top-4 z-50 -translate-x-1/2 rounded-full border border-violet-500/50 bg-slate-900/95 px-4 py-2 text-sm font-bold text-violet-200 shadow-xl shadow-violet-950/40">
+        <div
+          className="fixed left-1/2 top-4 z-50 max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-full border border-emerald-400/40 bg-emerald-950/90 px-4 py-2 text-center text-sm font-black text-emerald-100 shadow-lg shadow-emerald-950/40"
+          role="status"
+          aria-live="polite"
+        >
           {lastMatchSummary}
         </div>
       )}
+
       <HomePage
         progress={progress}
-        onPlay={() => openWorldSelect()}
+        onPlay={() => openWorldSelect("classic")}
         onSolo={() => openWorldSelect("solo")}
-        onReview={() => { setReviewFromHome(true); setScreen("review"); }}
+        onReview={() => {
+          setReviewFromHome(true);
+          setScreen("review");
+        }}
         onProfile={() => setScreen("profile")}
         onDuel={() => openWorldSelect("duel")}
         onStudyMap={() => setScreen("studyMap")}
+        onAbout={() => setScreen("about")}
+        onPrivacy={() => setScreen("privacy")}
       />
-    </div>
+    </>
   );
 }

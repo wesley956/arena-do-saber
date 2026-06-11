@@ -17,7 +17,8 @@ function isRunningStandalone() {
 }
 
 export function PwaInstallPrompt() {
-  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [installPrompt, setInstallPrompt] =
+    useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
@@ -46,7 +47,6 @@ export function PwaInstallPrompt() {
 
   async function handleInstallClick() {
     const promptEvent = installPrompt;
-
     if (!promptEvent) return;
 
     setInstallPrompt(null);
@@ -63,7 +63,7 @@ export function PwaInstallPrompt() {
     <button
       type="button"
       onClick={handleInstallClick}
-      className="fixed bottom-4 right-4 z-50 rounded-2xl border border-white/20 bg-violet-700 px-4 py-3 text-sm font-bold text-white shadow-2xl shadow-violet-950/40 transition hover:scale-[1.02] hover:bg-violet-600 focus:outline-none focus:ring-2 focus:ring-violet-300"
+      className="fixed bottom-4 right-4 z-40 min-h-[44px] max-w-[calc(100vw-2rem)] rounded-full border border-violet-400/40 bg-violet-600 px-4 py-3 text-sm font-black text-white shadow-xl shadow-violet-950/40 transition hover:bg-violet-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
       aria-label="Instalar Arena do Saber como aplicativo"
     >
       📲 Instalar app

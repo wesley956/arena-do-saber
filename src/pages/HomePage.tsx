@@ -14,6 +14,8 @@ interface HomePageProps {
   onProfile: () => void;
   onDuel: () => void;
   onStudyMap: () => void;
+  onAbout: () => void;
+  onPrivacy: () => void;
 }
 
 export function HomePage({
@@ -24,6 +26,8 @@ export function HomePage({
   onProfile,
   onDuel,
   onStudyMap,
+  onAbout,
+  onPrivacy,
 }: HomePageProps) {
   const xpInLevel = xpProgressInLevel(progress.xp);
   const toNext = xpToNextLevel(progress.xp);
@@ -32,147 +36,163 @@ export function HomePage({
 
   return (
     <AppShell>
-      {/* Hero Section */}
-      <div className="text-center py-6 mb-2">
-        <div className="text-5xl mb-3 animate-pulse">⚔️</div>
-        <h1 className="text-3xl font-black bg-gradient-to-r from-violet-400 via-indigo-300 to-blue-400 bg-clip-text text-transparent mb-2">
-          Arena do Saber
-        </h1>
-        <p className="text-slate-400 text-sm max-w-xs mx-auto">
-          Estude, compita e conquiste emblemas no maior quiz educacional!
-        </p>
-      </div>
-
-      {/* Player Card */}
-      <Card className="p-4 mb-4" glow>
-        <div className="flex items-center gap-3 mb-3">
-          <button
-            onClick={onProfile}
-            className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-700 flex items-center justify-center text-2xl flex-shrink-0 border border-violet-500/50 hover:opacity-80 transition-opacity"
-          >
-            🧑‍🎓
-          </button>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-white">Estudante</span>
-              <span className="text-xs bg-violet-900/60 text-violet-300 border border-violet-700 px-1.5 py-0.5 rounded-full font-bold">
-                Lv. {progress.level}
-              </span>
-              {progress.streak > 1 && (
-                <span className="text-xs text-orange-400 font-bold">
-                  🔥 {progress.streak}
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-1 text-xs text-slate-400 mt-0.5">
-              <span className="text-amber-400 font-bold">⚡ {progress.xp} XP</span>
-              <span>·</span>
-              <span>{toNext} XP para Lv. {progress.level + 1}</span>
-            </div>
+      <main className="mx-auto flex w-full max-w-5xl flex-col gap-5 px-3 pb-8 pt-4 sm:px-4">
+        <section className="text-center">
+          <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-violet-500 to-indigo-700 text-4xl shadow-xl shadow-violet-950/40">
+            ⚔️
           </div>
-          <button
-            onClick={onProfile}
-            className="text-slate-400 hover:text-white transition-colors text-sm"
-          >
-            Ver perfil →
-          </button>
-        </div>
-        <ProgressBar
-          value={xpInLevel}
-          max={100}
-          colorClass="bg-violet-500"
-          height="sm"
-        />
-
-        {/* Mini stats */}
-        <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-slate-700/50">
-          <div className="text-center">
-            <div className="text-emerald-400 font-bold text-base">{progress.totalCorrect}</div>
-            <div className="text-slate-500 text-xs">Acertos</div>
-          </div>
-          <div className="text-center border-x border-slate-700/50">
-            <div className="text-violet-400 font-bold text-base">{accuracy}%</div>
-            <div className="text-slate-500 text-xs">Precisão</div>
-          </div>
-          <div className="text-center">
-            <div className="text-amber-400 font-bold text-base">{progress.completedEmblems.length}</div>
-            <div className="text-slate-500 text-xs">Emblemas</div>
-          </div>
-        </div>
-      </Card>
-
-      {/* Main CTA */}
-      <Button
-        onClick={onPlay}
-        fullWidth
-        size="xl"
-        variant="primary"
-        className="mb-3"
-      >
-        🎲 Jogar Agora
-      </Button>
-
-      {/* Secondary actions */}
-      <div className="grid grid-cols-2 gap-3 mb-3">
-        <Button onClick={onSolo} fullWidth size="lg" variant="secondary">
-          📖 Treino Solo
-        </Button>
-        <Button onClick={onDuel} fullWidth size="lg" variant="secondary">
-          ⚡ Duelo Rápido
-        </Button>
-      </div>
-
-      {/* Mapa de Estudos — destaque visual */}
-      <Button
-        onClick={onStudyMap}
-        fullWidth
-        size="lg"
-        variant="ghost"
-        className="mb-3 border-indigo-700/60 text-indigo-300 hover:bg-indigo-900/20 hover:border-indigo-500"
-      >
-        🗺️ Mapa de Estudos
-      </Button>
-
-      {/* Review */}
-      {hasErrors ? (
-        <Button
-          onClick={onReview}
-          fullWidth
-          size="md"
-          variant="ghost"
-          className="mb-4 border-red-800/50 text-red-400 hover:bg-red-900/20"
-        >
-          🔖 Revisar Erros ({progress.wrongQuestionIds.length})
-        </Button>
-      ) : (
-        <Button onClick={onReview} fullWidth size="md" variant="ghost" className="mb-4">
-          🔖 Revisão dos Erros
-        </Button>
-      )}
-
-      {/* Emblems summary */}
-      {progress.completedEmblems.length > 0 && (
-        <Card className="p-4">
-          <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-3">
-            🏆 Seus Emblemas
+          <p className="mb-2 inline-flex rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-black uppercase tracking-wide text-emerald-200">
+            Versão Beta · Progresso salvo neste dispositivo
           </p>
-          <div className="flex flex-wrap gap-2">
-            {progress.completedEmblems.map((id) => (
-              <span
-                key={id}
-                className="text-xs bg-amber-900/40 text-amber-300 border border-amber-800 rounded-full px-2.5 py-1 font-semibold"
-              >
-                🏅 {id.split("-").slice(1).join(" ")}
-              </span>
-            ))}
+          <h1 className="text-4xl font-black leading-tight text-white sm:text-5xl">
+            Arena do Saber
+          </h1>
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
+            Estude, compita e conquiste insígnias em um quiz educacional com
+            roleta, desafios e treino inteligente.
+          </p>
+        </section>
+
+        <Card className="p-4 sm:p-5" glow>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-2xl">
+                🧑‍🎓
+              </div>
+              <div className="min-w-0">
+                <h2 className="truncate text-lg font-black text-white">
+                  Estudante Lv. {progress.level}
+                </h2>
+                <p className="text-sm text-slate-300">
+                  ⚡ {progress.xp} XP · {toNext} XP para Lv. {progress.level + 1}
+                </p>
+              </div>
+            </div>
+            <Button variant="secondary" onClick={onProfile}>
+              Ver perfil →
+            </Button>
+          </div>
+
+          <div className="mt-4">
+            <ProgressBar
+              value={xpInLevel}
+              max={Math.max(xpInLevel + toNext, 1)}
+              label="Progresso de nível"
+              showLabel
+            />
           </div>
         </Card>
-      )}
 
-      {/* Footer note */}
-      <p className="text-center text-slate-600 text-xs mt-6">
-        Arena do Saber MVP v1.0 · Escola + Concurso
-      </p>
+        <section className="grid gap-3 sm:grid-cols-3">
+          <Card className="p-4 text-center">
+            <p className="text-2xl font-black text-emerald-300">
+              {progress.totalCorrect}
+            </p>
+            <p className="text-sm text-slate-400">Acertos</p>
+          </Card>
+          <Card className="p-4 text-center">
+            <p className="text-2xl font-black text-violet-300">{accuracy}%</p>
+            <p className="text-sm text-slate-400">Precisão</p>
+          </Card>
+          <Card className="p-4 text-center">
+            <p className="text-2xl font-black text-amber-300">
+              {progress.completedEmblems.length}
+            </p>
+            <p className="text-sm text-slate-400">Insígnias</p>
+          </Card>
+        </section>
+
+        <section className="grid gap-3 md:grid-cols-2">
+          <Card className="p-5">
+            <h2 className="text-xl font-black leading-tight text-white">
+              🎡 Partida Clássica
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              Gire a roleta, avance nas categorias, libere desafios e conquiste
+              as 6 Insígnias de Sabedoria.
+            </p>
+            <Button className="mt-4" fullWidth size="lg" onClick={onPlay}>
+              Jogar Agora
+            </Button>
+          </Card>
+
+          <Card className="p-5">
+            <h2 className="text-xl font-black leading-tight text-white">
+              🎯 Treino Solo
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+              Estude sem pressão por matéria. O ciclo de perguntas reduz
+              repetições e lembra seu histórico local.
+            </p>
+            <Button
+              className="mt-4"
+              fullWidth
+              variant="secondary"
+              size="lg"
+              onClick={onSolo}
+            >
+              Treinar Agora
+            </Button>
+          </Card>
+        </section>
+
+        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Button variant="secondary" onClick={onStudyMap} fullWidth>
+            🗺️ Mapa de Estudos
+          </Button>
+          <Button variant="secondary" onClick={onDuel} fullWidth>
+            ⚡ Duelo Rápido Local
+          </Button>
+          <Button variant="ghost" onClick={onReview} fullWidth>
+            {hasErrors
+              ? `Revisar Erros (${progress.wrongQuestionIds.length})`
+              : "Revisão dos Erros"}
+          </Button>
+          <Button variant="ghost" onClick={onProfile} fullWidth>
+            🏆 Perfil / Conquistas
+          </Button>
+        </section>
+
+        {progress.completedEmblems.length > 0 && (
+          <Card className="p-4">
+            <h2 className="mb-3 text-lg font-black text-white">
+              Suas Insígnias
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {progress.completedEmblems.map((id) => (
+                <span
+                  key={id}
+                  className="rounded-full bg-amber-500/15 px-3 py-1 text-xs font-bold text-amber-200"
+                >
+                  {id.split("-").slice(1).join(" ")}
+                </span>
+              ))}
+            </div>
+          </Card>
+        )}
+
+        <footer className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900/50 p-4 text-center text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:text-left">
+          <p className="leading-relaxed">
+            Arena do Saber Beta · Escola + Concurso · PWA/APK preparado
+          </p>
+          <div className="flex flex-wrap justify-center gap-2">
+            <button
+              type="button"
+              onClick={onAbout}
+              className="rounded-full px-3 py-2 font-bold text-slate-300 underline-offset-4 hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300"
+            >
+              Sobre
+            </button>
+            <button
+              type="button"
+              onClick={onPrivacy}
+              className="rounded-full px-3 py-2 font-bold text-slate-300 underline-offset-4 hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300"
+            >
+              Privacidade
+            </button>
+          </div>
+        </footer>
+      </main>
     </AppShell>
   );
 }

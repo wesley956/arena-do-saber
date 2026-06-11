@@ -308,3 +308,34 @@ Para testar localmente o build de produção:
 npm run build
 npm run preview
 ```
+
+## 🧪 Polimento pré-beta
+
+Esta versão inclui ajustes de preparação para testes públicos:
+
+- onboarding inicial exibido apenas no primeiro acesso;
+- tela **Sobre o Arena do Saber**;
+- tela **Política de Privacidade** simples;
+- microcopy mais clara na Home;
+- indicação de **Versão Beta**;
+- melhorias leves de responsividade e toque em botões/cards;
+- ajustes básicos de acessibilidade, como foco visível e nomes acessíveis em botões;
+- reforço de que o progresso fica salvo localmente no dispositivo.
+
+### Gerar APK debug
+
+Após sincronizar o Capacitor/Android, o APK debug pode ser gerado com:
+
+```bash
+npm run build
+npx cap sync android
+cd android
+./gradlew assembleDebug
+```
+
+O APK geralmente fica em:
+
+```txt
+android/app/build/outputs/apk/debug/
+```
+
