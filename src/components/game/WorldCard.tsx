@@ -24,7 +24,7 @@ const WORLD_DATA = {
     description:
       "Treine para concursos com perguntas por matéria, explicações e revisão dos erros.",
     subjects: ["Português", "Mat./Lógica", "Informática", "Atualidades", "Legislação", "Específicos"],
-    gradient: "from-amber-600/30 via-orange-700/20 to-red-800/30",
+    gradient: "from-amber-600/30 via-yellow-700/20 to-orange-800/30",
     border: "border-amber-500/50",
     accent: "text-amber-400",
     badge: "bg-amber-900/60 text-amber-300 border-amber-700",
