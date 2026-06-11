@@ -196,7 +196,7 @@ export function SoloTrainingPage({
                 </div>
                 <div className="text-xs text-slate-400">{cat.description}</div>
               </div>
-              <span className="text-slate-500">›</span>
+              <span className="text-slate-400">›</span>
             </button>
           ))}
         </div>

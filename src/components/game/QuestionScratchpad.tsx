@@ -157,7 +157,7 @@ export function QuestionScratchpad({ questionId, categoryId }: QuestionScratchpa
             {text.length} car.
           </span>
         ) : (
-          <span className="text-slate-600 text-xs">Abrir ▾</span>
+          <span className="text-slate-400 text-xs">Abrir ▾</span>
         )}
       </button>
     );
@@ -174,14 +174,14 @@ export function QuestionScratchpad({ questionId, categoryId }: QuestionScratchpa
         </div>
         <div className="flex items-center gap-2">
           {savedAt && (
-            <span className="text-xs text-slate-500 flex items-center gap-1">
+            <span className="text-xs text-slate-400 flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
               salvo
             </span>
           )}
           <button
             onClick={() => setIsOpen(false)}
-            className="text-slate-500 hover:text-slate-300 text-sm px-1 transition-colors"
+            className="text-slate-400 hover:text-slate-300 text-sm px-1 transition-colors"
             aria-label="Fechar caderno"
           >
             ✕
@@ -228,7 +228,7 @@ export function QuestionScratchpad({ questionId, categoryId }: QuestionScratchpa
           value={text}
           onChange={handleChange}
           placeholder={"Escreva seus cálculos, raciocínio ou anotações aqui...\nEx: 25% de 200 → 0,25 × 200 = 50"}
-          className="w-full h-32 resize-none rounded-lg bg-slate-800/80 border border-slate-700 text-slate-200 text-sm leading-relaxed p-3 placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 font-mono transition-colors"
+          className="w-full h-32 resize-none rounded-lg bg-slate-800/80 border border-slate-700 text-slate-200 text-sm leading-relaxed p-3 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/30 font-mono transition-colors"
           maxLength={MAX_CHARS}
           autoFocus
           spellCheck={false}
@@ -236,13 +236,13 @@ export function QuestionScratchpad({ questionId, categoryId }: QuestionScratchpa
 
         {/* Rodapé */}
         <div className="flex items-center justify-between mt-1.5">
-          <span className="text-xs text-slate-600">
+          <span className="text-xs text-slate-400">
             {text.length}/{MAX_CHARS}
           </span>
           <button
             onClick={handleClear}
             disabled={!hasContent}
-            className="text-xs text-slate-500 hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="text-xs text-slate-400 hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
           >
             🗑 Limpar
           </button>

@@ -25,7 +25,7 @@ export function Header({
       {onBack && (
         <button
           onClick={onBack}
-          className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-all flex-shrink-0"
+          className="w-11 h-11 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-700 transition-all flex-shrink-0"
           aria-label="Voltar"
         >
           ←
@@ -65,7 +65,7 @@ export function Header({
           <div className="text-xs text-amber-400 font-bold">
             ⚡{progress.xp}
           </div>
-          <div className="text-xs text-slate-500">
+          <div className="text-xs text-slate-400">
             Lv.{progress.level}
           </div>
         </div>

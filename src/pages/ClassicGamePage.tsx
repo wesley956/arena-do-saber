@@ -107,7 +107,7 @@ function getClassicBadgeCardClassName(
 
 function getClassicBadgePillClassName(progress: number, earned: boolean): string {
   const safeProgress = Math.min(Math.max(progress, 0), EMBLEM_THRESHOLD);
-  const base = "text-[11px] font-black rounded-full px-2 py-1 text-center";
+  const base = "text-xs font-black rounded-full px-2 py-1 text-center";
 
   if (earned) return base + " bg-emerald-500/15 text-emerald-300";
   if (safeProgress >= EMBLEM_THRESHOLD) {
@@ -631,12 +631,12 @@ if (!match.lastAnswerCorrect) {
             <div className="text-lg font-black text-violet-400">
               {match.playerEmblems.length}
             </div>
-            <div className="text-xs text-slate-500">emblemas</div>
+            <div className="text-xs text-slate-400">emblemas</div>
           </div>
 
           {/* VS */}
           <div className="flex flex-col items-center">
-            <div className="text-slate-500 text-xs font-bold mb-1">
+            <div className="text-slate-400 text-xs font-bold mb-1">
               Rodada {match.round}/{match.maxRounds}
             </div>
             <div className="text-slate-400 font-black text-lg">VS</div>
@@ -658,7 +658,7 @@ if (!match.lastAnswerCorrect) {
             <div className="text-lg font-black text-red-400">
               {match.botEmblems.length}
             </div>
-            <div className="text-xs text-slate-500">emblemas</div>
+            <div className="text-xs text-slate-400">emblemas</div>
           </div>
         </div>
 
@@ -693,7 +693,7 @@ if (!match.lastAnswerCorrect) {
             <div className="text-2xl font-black text-violet-300">
               {playerBadgeCount}/{categories.length}
             </div>
-            <div className="text-[10px] text-slate-500 font-bold uppercase">
+            <div className="text-xs text-slate-400 font-bold uppercase">
               conquistadas
             </div>
           </div>
@@ -723,7 +723,7 @@ if (!match.lastAnswerCorrect) {
                     <p className="text-xs font-black text-white truncate">
                       {category.emblemName}
                     </p>
-                    <p className="text-[10px] text-slate-500 truncate">
+                    <p className="text-xs text-slate-400 truncate">
                       {category.name}
                     </p>
                   </div>
@@ -734,7 +734,7 @@ if (!match.lastAnswerCorrect) {
                 >
                   {getClassicBadgeStateLabel(progressValue, earned)}
                 </div>
-                        <p className="mt-1 text-center text-[10px] font-semibold text-slate-400">
+                        <p className="mt-1 text-center text-xs font-semibold text-slate-400">
                 {getClassicBadgeHint(progressValue, earned)}
               </p>
 
@@ -742,7 +742,7 @@ if (!match.lastAnswerCorrect) {
                   <button
                     type="button"
                     onClick={() => startBadgeChallenge(category.id)}
-                    className="mt-2 w-full rounded-full bg-amber-500/20 px-2 py-1.5 text-[10px] font-black uppercase text-amber-200 shadow-sm shadow-amber-950/30 hover:bg-amber-500/30"
+                    className="mt-2 w-full rounded-full bg-amber-500/20 px-2 py-1.5 text-xs font-black uppercase text-amber-200 shadow-sm shadow-amber-950/30 hover:bg-amber-500/30"
                   >
                     Iniciar Desafio da Insígnia
                   </button>
@@ -756,7 +756,7 @@ if (!match.lastAnswerCorrect) {
       {/* Emblems */}
       <div className="grid grid-cols-2 gap-3 mb-4">
         <Card className="p-3">
-          <p className="text-xs text-slate-500 mb-2 text-center font-semibold">
+          <p className="text-xs text-slate-400 mb-2 text-center font-semibold">
             Seus Emblemas
           </p>
           <EmblemGrid
@@ -768,7 +768,7 @@ if (!match.lastAnswerCorrect) {
           />
         </Card>
         <Card className="p-3">
-          <p className="text-xs text-slate-500 mb-2 text-center font-semibold">
+          <p className="text-xs text-slate-400 mb-2 text-center font-semibold">
             Emblemas do Bot
           </p>
           <EmblemGrid
@@ -876,7 +876,7 @@ if (!match.lastAnswerCorrect) {
                 {BADGE_CHALLENGE_SIZE}.
               </p>
               {!badgeChallengeSummary.passed && (
-                <p className="text-[11px] text-slate-400 mt-2">
+                <p className="text-xs text-slate-400 mt-2">
                   O progresso 3/3 foi mantido. Quando esta categoria aparecer de novo,
                   tente o desafio novamente.
                 </p>
@@ -916,14 +916,14 @@ if (!match.lastAnswerCorrect) {
                 Acerte pelo menos {BADGE_CHALLENGE_PASSING_SCORE} de {BADGE_CHALLENGE_SIZE} para conquistar a insígnia.
               </p>
             </div>
-            <div className="rounded-full bg-amber-500/20 px-3 py-1 text-[11px] font-black text-amber-200 shrink-0">
+            <div className="rounded-full bg-amber-500/20 px-3 py-1 text-xs font-black text-amber-200 shrink-0">
               Pergunta {currentBadgeChallengeQuestionNumber}/{BADGE_CHALLENGE_SIZE}
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2 mt-3">
             <div className="rounded-xl bg-slate-950/40 border border-slate-700/60 p-2 text-center">
-              <p className="text-[10px] uppercase font-black text-slate-500">
+              <p className="text-xs uppercase font-black text-slate-400">
                 Acertos do desafio
               </p>
               <p className="text-lg font-black text-emerald-300">
@@ -931,7 +931,7 @@ if (!match.lastAnswerCorrect) {
               </p>
             </div>
             <div className="rounded-xl bg-slate-950/40 border border-slate-700/60 p-2 text-center">
-              <p className="text-[10px] uppercase font-black text-slate-500">
+              <p className="text-xs uppercase font-black text-slate-400">
                 Regra
               </p>
               <p className="text-xs font-black text-amber-200">

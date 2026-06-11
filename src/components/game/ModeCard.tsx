@@ -67,7 +67,7 @@ export function ModeCard({ mode, onClick, disabled = false }: ModeCardProps) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`
+      className={`group 
         w-full text-left rounded-2xl border-2 ${data.border} bg-gradient-to-br ${data.gradient}
         p-4 transition-all duration-200 active:scale-[0.98]
         ${disabled ? "opacity-40 cursor-not-allowed" : "hover:scale-[1.01] hover:shadow-lg cursor-pointer"}

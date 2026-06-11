@@ -56,14 +56,14 @@ function StatCard({
           {icon}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="break-words text-[10px] font-bold uppercase leading-tight tracking-wide text-slate-500 sm:text-xs">
+          <p className="break-words text-xs font-bold uppercase leading-tight tracking-wide text-slate-400 sm:text-xs">
             {label}
           </p>
           <p className="mt-1 break-words text-xl font-black leading-tight text-white sm:text-2xl">
             {value}
           </p>
           {helper && (
-            <p className="mt-1 break-words text-[11px] leading-snug text-slate-400 sm:text-xs">
+            <p className="mt-1 break-words text-xs leading-snug text-slate-400 sm:text-xs">
               {helper}
             </p>
           )}
@@ -104,7 +104,7 @@ function CategoryProgressCard({ stats }: { stats: ProfileCategoryStats }) {
           <p className="mt-1 break-words text-xs leading-snug text-slate-400">{activityLabel}</p>
         </div>
         {stats.hasEmblem && (
-          <span className="shrink-0 rounded-full border border-amber-400/40 bg-amber-500/15 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-amber-200">
+          <span className="shrink-0 rounded-full border border-amber-400/40 bg-amber-500/15 px-2 py-1 text-xs font-black uppercase tracking-wide text-amber-200">
             Insígnia
           </span>
         )}
@@ -115,15 +115,15 @@ function CategoryProgressCard({ stats }: { stats: ProfileCategoryStats }) {
       <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
         <div className="rounded-xl bg-slate-800/70 p-2">
           <p className="font-black text-emerald-300">{stats.correct}</p>
-          <p className="text-slate-500">acertos</p>
+          <p className="text-slate-400">acertos</p>
         </div>
         <div className="rounded-xl bg-slate-800/70 p-2">
           <p className="font-black text-rose-300">{stats.wrong}</p>
-          <p className="text-slate-500">erros</p>
+          <p className="text-slate-400">erros</p>
         </div>
         <div className="rounded-xl bg-slate-800/70 p-2">
           <p className="font-black text-indigo-300">{stats.accuracy}%</p>
-          <p className="text-slate-500">taxa</p>
+          <p className="text-slate-400">taxa</p>
         </div>
       </div>
     </div>
@@ -156,19 +156,19 @@ function WorldProgressSection({ worldStats }: { worldStats: ProfileWorldStats })
       <div className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-3 text-sm">
         <div className="rounded-xl bg-slate-900/50 p-3">
           <p className="font-black text-white">{worldStats.answered}</p>
-          <p className="text-xs text-slate-500">respondidas</p>
+          <p className="text-xs text-slate-400">respondidas</p>
         </div>
         <div className="rounded-xl bg-slate-900/50 p-3">
           <p className="font-black text-emerald-300">{worldStats.correct}</p>
-          <p className="text-xs text-slate-500">acertos</p>
+          <p className="text-xs text-slate-400">acertos</p>
         </div>
         <div className="rounded-xl bg-slate-900/50 p-3">
           <p className="font-black text-rose-300">{worldStats.wrong}</p>
-          <p className="text-xs text-slate-500">erros</p>
+          <p className="text-xs text-slate-400">erros</p>
         </div>
         <div className="rounded-xl bg-slate-900/50 p-3">
           <p className="font-black text-indigo-300">{worldStats.accuracy}%</p>
-          <p className="text-xs text-slate-500">taxa</p>
+          <p className="text-xs text-slate-400">taxa</p>
         </div>
       </div>
 
@@ -202,7 +202,7 @@ function AchievementCard({ achievement }: { achievement: PlayerAchievement }) {
             </p>
           </div>
         </div>
-        <span className="w-fit shrink-0 rounded-full bg-black/20 px-2 py-1 text-[10px] font-black uppercase tracking-wide">
+        <span className="w-fit shrink-0 rounded-full bg-black/20 px-2 py-1 text-xs font-black uppercase tracking-wide">
           {achievement.unlocked ? "Desbloqueada" : "Bloqueada"}
         </span>
       </div>

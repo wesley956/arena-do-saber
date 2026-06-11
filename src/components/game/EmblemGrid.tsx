@@ -88,7 +88,7 @@ export function EmblemGrid({
             {s.label !== "hidden" && (
               <span
                 className={`${s.label} text-center leading-tight truncate ${
-                  earned ? "text-slate-200 font-semibold" : "text-slate-500"
+                  earned ? "text-slate-200 font-semibold" : "text-slate-400"
                 }`}
               >
                 {cat.shortName}

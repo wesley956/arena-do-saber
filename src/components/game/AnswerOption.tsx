@@ -33,7 +33,7 @@ export function AnswerOption({
     stateClass =
       "bg-red-900/70 border-red-400 text-red-100 shadow-lg shadow-red-900/30";
   } else if (wrong && !selected) {
-    stateClass = "bg-slate-800/40 border-slate-700 text-slate-500 opacity-60";
+    stateClass = "bg-slate-800/40 border-slate-700 text-slate-400 opacity-60";
   }
 
   return (

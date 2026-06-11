@@ -101,7 +101,7 @@ function CategoryCard({
             </span>
           </div>
           {/* Contador de perguntas */}
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-400 mt-0.5">
             {stats.total} {stats.total === 1 ? "pergunta" : "perguntas"} disponíveis
           </p>
         </div>
@@ -142,15 +142,15 @@ function CategoryCard({
       <div className="grid grid-cols-3 gap-2 mb-3 text-center">
         <div className="bg-slate-900/60 rounded-lg py-1.5 px-1">
           <div className={`font-bold text-sm ${textClass}`}>{stats.correct}</div>
-          <div className="text-slate-500 text-xs">Acertos</div>
+          <div className="text-slate-400 text-xs">Acertos</div>
         </div>
         <div className="bg-slate-900/60 rounded-lg py-1.5 px-1">
           <div className="font-bold text-sm text-rose-400">{stats.errors}</div>
-          <div className="text-slate-500 text-xs">Erros</div>
+          <div className="text-slate-400 text-xs">Erros</div>
         </div>
         <div className="bg-slate-900/60 rounded-lg py-1.5 px-1">
           <div className="font-bold text-sm text-violet-400">{stats.dominancePercent}%</div>
-          <div className="text-slate-500 text-xs">Domínio</div>
+          <div className="text-slate-400 text-xs">Domínio</div>
         </div>
       </div>
 
@@ -276,21 +276,21 @@ export function StudyMapPage({
           <div>
             <div className="text-amber-400 font-black text-xl">
               {totalEmblems}
-              <span className="text-slate-500 text-xs font-normal">/{totalCategories}</span>
+              <span className="text-slate-400 text-xs font-normal">/{totalCategories}</span>
             </div>
-            <div className="text-slate-500 text-xs mt-0.5">Emblemas</div>
+            <div className="text-slate-400 text-xs mt-0.5">Emblemas</div>
           </div>
           <div className="border-x border-slate-700/50">
             <div className="text-emerald-400 font-black text-xl">
               {progress.totalCorrect}
             </div>
-            <div className="text-slate-500 text-xs mt-0.5">Total Acertos</div>
+            <div className="text-slate-400 text-xs mt-0.5">Total Acertos</div>
           </div>
           <div>
             <div className="text-rose-400 font-black text-xl">
               {progress.wrongQuestionIds.length}
             </div>
-            <div className="text-slate-500 text-xs mt-0.5">Para Revisar</div>
+            <div className="text-slate-400 text-xs mt-0.5">Para Revisar</div>
           </div>
         </div>
       </Card>
@@ -388,7 +388,7 @@ export function StudyMapPage({
         </Card>
       )}
 
-      <p className="text-center text-slate-600 text-xs mt-2">
+      <p className="text-center text-slate-400 text-xs mt-2">
         Treino por matéria · progresso salvo localmente
       </p>
     </AppShell>

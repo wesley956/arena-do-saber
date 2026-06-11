@@ -48,7 +48,7 @@ export function ModeSelectPage({
       </div>
 
       {progress.wrongQuestionIds.length === 0 && (
-        <p className="text-xs text-slate-500 text-center mt-3">
+        <p className="text-xs text-slate-400 text-center mt-3">
           🔖 A revisão de erros ficará disponível após você errar algumas perguntas.
         </p>
       )}

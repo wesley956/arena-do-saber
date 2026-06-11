@@ -80,7 +80,7 @@ export function QuestionCard({
             <div className="text-xs text-slate-400 font-semibold">
               {question.subject}
             </div>
-            <div className="text-xs text-slate-500">{question.topic}</div>
+            <div className="text-xs text-slate-400">{question.topic}</div>
           </div>
         </div>
         <div className="flex items-center gap-2">

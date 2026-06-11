@@ -156,15 +156,15 @@ export function ReviewErrorsPage({
         <div className="grid grid-cols-3 gap-2 text-center">
           <div>
             <div className="text-2xl font-black text-red-400">{progress.wrongQuestionIds.length}</div>
-            <div className="text-xs text-slate-500">Erros</div>
+            <div className="text-xs text-slate-400">Erros</div>
           </div>
           <div className="border-x border-slate-700/60">
             <div className="text-2xl font-black text-emerald-400">{progress.masteredQuestionIds.length}</div>
-            <div className="text-xs text-slate-500">Dominadas</div>
+            <div className="text-xs text-slate-400">Dominadas</div>
           </div>
           <div>
             <div className="text-2xl font-black text-violet-400">{reviewQuestions.length}</div>
-            <div className="text-xs text-slate-500">Pendentes</div>
+            <div className="text-xs text-slate-400">Pendentes</div>
           </div>
         </div>
       </Card>
