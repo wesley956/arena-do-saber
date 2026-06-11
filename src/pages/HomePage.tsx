@@ -5,6 +5,7 @@ import { Card } from "../components/ui/Card";
 import { ProgressBar } from "../components/game/ProgressBar";
 import { xpProgressInLevel, xpToNextLevel } from "../lib/xp";
 import { getAccuracyRate } from "../lib/stats";
+import { ALL_CATEGORIES } from "../data/categories";
 
 interface HomePageProps {
   progress: PlayerProgress;
@@ -33,6 +34,8 @@ export function HomePage({
   const toNext = xpToNextLevel(progress.xp);
   const accuracy = getAccuracyRate(progress);
   const hasErrors = progress.wrongQuestionIds.length > 0;
+  const completedEmblemSet = new Set(progress.completedEmblems);
+  const emblemPreview = ALL_CATEGORIES;
 
   return (
     <AppShell>
@@ -166,23 +169,73 @@ export function HomePage({
           </Button>
         </section>
 
-        {progress.completedEmblems.length > 0 && (
-          <Card className="p-4">
-            <h2 className="mb-3 text-lg font-black text-white">
-              Suas Insígnias
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {progress.completedEmblems.map((id) => (
-                <span
-                  key={id}
-                  className="rounded-full bg-amber-500/15 px-3 py-1 text-xs font-bold text-amber-200"
-                >
-                  {id.split("-").slice(1).join(" ")}
-                </span>
-              ))}
+        <Card className="p-4 sm:p-5">
+          <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h2 className="text-lg font-black text-white">
+                Insígnias para conquistar
+              </h2>
+              <p className="text-sm leading-relaxed text-slate-300">
+                Complete desafios por matéria e transforme progresso em troféus.
+              </p>
             </div>
-          </Card>
-        )}
+            <p className="text-xs font-black uppercase tracking-wide text-amber-200">
+              {progress.completedEmblems.length}/{emblemPreview.length} conquistadas
+            </p>
+          </div>
+
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {emblemPreview.map((category) => {
+              const earned = completedEmblemSet.has(category.id);
+
+              return (
+                <div
+                  key={category.id}
+                  className={`min-w-0 rounded-2xl border p-3 transition-all ${
+                    earned
+                      ? `${category.borderClass} bg-amber-500/10 shadow-lg shadow-amber-950/20`
+                      : "border-slate-700/70 bg-slate-900/60 opacity-85"
+                  }`}
+                >
+                  <div className="flex items-start gap-2">
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-lg ${
+                        earned
+                          ? `${category.bgClass} text-white`
+                          : "bg-slate-800 text-slate-400"
+                      }`}
+                      aria-hidden="true"
+                    >
+                      {earned ? category.icon : "🔒"}
+                    </span>
+
+                    <div className="min-w-0">
+                      <p
+                        className={`truncate text-sm font-black ${
+                          earned ? "text-amber-100" : "text-slate-200"
+                        }`}
+                      >
+                        {category.emblemName}
+                      </p>
+                      <p className="truncate text-xs font-semibold text-slate-400">
+                        {category.world === "school"
+                          ? "Mundo Escola"
+                          : "Mundo Concurso"}{" "}
+                        · {category.name}
+                      </p>
+                    </div>
+                  </div>
+
+                  <p className="mt-2 line-clamp-2 text-xs leading-snug text-slate-300">
+                    {earned
+                      ? "Conquistada! Continue jogando para dominar ainda mais."
+                      : category.emblemDescription}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </Card>
 
         <footer className="flex flex-col gap-3 rounded-2xl border border-slate-800 bg-slate-900/50 p-4 text-center text-xs text-slate-400 sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <p className="leading-relaxed">
