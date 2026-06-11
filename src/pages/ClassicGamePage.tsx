@@ -62,75 +62,6 @@ function getBadgeChallengeResultMessage(correctCount: number): string {
   return "A insígnia escapou desta vez. Continue tentando.";
 }
 
-function getClassicBadgeStateLabel(
-  progress: number,
-  earned: boolean
-): string {
-  const safeProgress = Math.min(Math.max(progress, 0), EMBLEM_THRESHOLD);
-
-  if (earned) return "Conquistada";
-  if (safeProgress >= EMBLEM_THRESHOLD) return "Desafio liberado";
-
-  return safeProgress + "/" + EMBLEM_THRESHOLD;
-}
-
-function getClassicBadgeCardClassName(
-  progress: number,
-  earned: boolean,
-  active: boolean
-): string {
-  const safeProgress = Math.min(Math.max(progress, 0), EMBLEM_THRESHOLD);
-  const base =
-    "rounded-xl border p-3 transition-all duration-200" +
-    (active ? " ring-2 ring-violet-400/70" : "");
-
-  if (earned) {
-    return base +
-      " border-emerald-400/70 bg-emerald-950/35 shadow-lg shadow-emerald-950/20";
-  }
-
-  if (safeProgress >= EMBLEM_THRESHOLD) {
-    return base +
-      " border-amber-400/70 bg-amber-950/35 shadow-lg shadow-amber-950/20 animate-pulse";
-  }
-
-  if (safeProgress === 2) {
-    return base + " border-violet-500/60 bg-violet-950/25";
-  }
-
-  if (safeProgress === 1) {
-    return base + " border-sky-500/50 bg-sky-950/20";
-  }
-
-  return base + " border-slate-700/60 bg-slate-900/50 opacity-90";
-}
-
-function getClassicBadgePillClassName(progress: number, earned: boolean): string {
-  const safeProgress = Math.min(Math.max(progress, 0), EMBLEM_THRESHOLD);
-  const base = "text-xs font-black rounded-full px-2 py-1 text-center";
-
-  if (earned) return base + " bg-emerald-500/15 text-emerald-300";
-  if (safeProgress >= EMBLEM_THRESHOLD) {
-    return base + " bg-amber-500/20 text-amber-200";
-  }
-  if (safeProgress === 2) return base + " bg-violet-500/15 text-violet-200";
-  if (safeProgress === 1) return base + " bg-sky-500/15 text-sky-200";
-
-  return base + " bg-slate-800 text-slate-300";
-}
-
-function getClassicBadgeHint(progress: number, earned: boolean): string {
-  const safeProgress = Math.min(Math.max(progress, 0), EMBLEM_THRESHOLD);
-
-  if (earned) return "Domínio confirmado";
-  if (safeProgress >= EMBLEM_THRESHOLD) return "Pronto para o desafio";
-  if (safeProgress === 2) return "Falta 1 acerto";
-  if (safeProgress === 1) return "Continue avançando";
-
-  return "Ainda bloqueada";
-}
-
-
 const CLASSIC_BADGE_GOAL_TITLE = "Insígnias de Sabedoria";
 
 interface ClassicGamePageProps {
@@ -610,6 +541,16 @@ if (!match.lastAnswerCorrect) {
     );
   }
 
+  const readyBadgeCategories = categories.filter((category) => {
+    const progressValue = Math.min(
+      match.playerCategoryProgress[category.id] ?? 0,
+      EMBLEM_THRESHOLD
+    );
+    const earned = match.playerEmblems.includes(category.id);
+
+    return progressValue >= EMBLEM_THRESHOLD && !earned;
+  });
+
   return (
     <AppShell
       header={
@@ -674,112 +615,47 @@ if (!match.lastAnswerCorrect) {
         </div>
       </Card>
 
-      {/* Objetivo: Insígnias de Sabedoria */}
-      <Card className="p-4 mb-4 border-violet-700/40 bg-violet-950/20">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div>
-            <p className="text-xs uppercase tracking-wide text-violet-300 font-black">
-              Objetivo da partida
-            </p>
-            <h2 className="text-white font-black text-lg">
-              {CLASSIC_BADGE_GOAL_TITLE}
-            </h2>
-            <p className="text-xs text-slate-400 mt-1">
-              Acerte 3 perguntas para liberar o desafio. Vença 2 de 3 para conquistar cada insígnia.
-            </p>
-          </div>
-
-          <div className="text-right shrink-0">
-            <div className="text-2xl font-black text-violet-300">
-              {playerBadgeCount}/{categories.length}
-            </div>
-            <div className="text-xs text-slate-400 font-bold uppercase">
-              conquistadas
-            </div>
-          </div>
+      {/* Meta compacta da partida */}
+      <div className="mb-3 flex items-center justify-between gap-3 rounded-2xl border border-violet-700/30 bg-violet-950/15 px-3 py-2">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-black text-white">
+            {CLASSIC_BADGE_GOAL_TITLE}
+          </p>
+          <p className="text-xs text-slate-400">
+            3 acertos liberam desafio · vença 2 de 3
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {categories.map((category) => {
-            const progressValue = Math.min(
-              match.playerCategoryProgress[category.id] ?? 0,
-              EMBLEM_THRESHOLD
-            );
-            const earned = match.playerEmblems.includes(category.id);
-            const challengeReady =
-              progressValue >= EMBLEM_THRESHOLD && !earned;
-            const isCurrentCategory =
-              match.selectedCategoryId === category.id ||
-              badgeChallenge?.categoryId === category.id;
-
-            return (
-              <div
-                key={category.id}
-                className={getClassicBadgeCardClassName(progressValue, earned, isCurrentCategory)}
-              >
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xl">{earned ? "✅" : category.icon || "🏅"}</span>
-                  <div className="min-w-0">
-                    <p className="text-xs font-black text-white truncate">
-                      {category.emblemName}
-                    </p>
-                    <p className="text-xs text-slate-400 truncate">
-                      {category.name}
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  className={getClassicBadgePillClassName(progressValue, earned)}
-                >
-                  {getClassicBadgeStateLabel(progressValue, earned)}
-                </div>
-                        <p className="mt-1 text-center text-xs font-semibold text-slate-400">
-                {getClassicBadgeHint(progressValue, earned)}
-              </p>
-
-              {challengeReady && match.status === "idle" && (
-                  <button
-                    type="button"
-                    onClick={() => startBadgeChallenge(category.id)}
-                    className="mt-2 w-full rounded-full bg-amber-500/20 px-2 py-1.5 text-xs font-black uppercase text-amber-200 shadow-sm shadow-amber-950/30 hover:bg-amber-500/30"
-                  >
-                    Iniciar Desafio da Insígnia
-                  </button>
-                )}
-              </div>
-            );
-          })}
+        <div className="shrink-0 rounded-full bg-violet-500/15 px-3 py-1 text-sm font-black text-violet-200">
+          {playerBadgeCount}/{categories.length}
         </div>
-      </Card>
-
-      {/* Emblems */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <Card className="p-3">
-          <p className="text-xs text-slate-400 mb-2 text-center font-semibold">
-            Seus Emblemas
-          </p>
-          <EmblemGrid
-            categories={categories}
-            earnedIds={match.playerEmblems}
-            progress={match.playerCategoryProgress}
-            size="sm"
-            threshold={EMBLEM_THRESHOLD}
-          />
-        </Card>
-        <Card className="p-3">
-          <p className="text-xs text-slate-400 mb-2 text-center font-semibold">
-            Emblemas do Bot
-          </p>
-          <EmblemGrid
-            categories={categories}
-            earnedIds={match.botEmblems}
-            progress={match.botCategoryProgress}
-            size="sm"
-            threshold={EMBLEM_THRESHOLD}
-          />
-        </Card>
       </div>
+
+      {readyBadgeCategories.length > 0 && match.status === "idle" && (
+        <Card className="mb-3 border-amber-500/40 bg-amber-950/20 p-3">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="text-sm font-black text-amber-100">
+              🏅 Desafio de insígnia disponível
+            </p>
+            <p className="text-xs font-bold text-amber-200">
+              {readyBadgeCategories.length}
+            </p>
+          </div>
+
+          <div className="grid gap-2 sm:grid-cols-2">
+            {readyBadgeCategories.map((category) => (
+              <button
+                key={category.id}
+                type="button"
+                onClick={() => startBadgeChallenge(category.id)}
+                className="rounded-2xl border border-amber-400/40 bg-amber-500/15 px-3 py-2 text-left text-xs font-black text-amber-100 transition-all hover:bg-amber-500/25 focus:outline-none focus:ring-2 focus:ring-amber-300/70 focus:ring-offset-2 focus:ring-offset-slate-950"
+              >
+                {category.icon} Iniciar desafio · {category.shortName}
+              </button>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* Bot turn notice */}
       {showBotTurnNotice && (
@@ -987,6 +863,34 @@ if (!match.lastAnswerCorrect) {
           />
         </div>
       )}
+      {/* Emblems: fica no final para não empurrar a roleta no mobile */}
+      <div className="mt-4 grid grid-cols-2 gap-3">
+        <Card className="p-3">
+          <p className="text-xs text-slate-400 mb-2 text-center font-semibold">
+            Seus Emblemas
+          </p>
+          <EmblemGrid
+            categories={categories}
+            earnedIds={match.playerEmblems}
+            progress={match.playerCategoryProgress}
+            size="sm"
+            threshold={EMBLEM_THRESHOLD}
+          />
+        </Card>
+        <Card className="p-3">
+          <p className="text-xs text-slate-400 mb-2 text-center font-semibold">
+            Emblemas do Bot
+          </p>
+          <EmblemGrid
+            categories={categories}
+            earnedIds={match.botEmblems}
+            progress={match.botCategoryProgress}
+            size="sm"
+            threshold={EMBLEM_THRESHOLD}
+          />
+        </Card>
+      </div>
+
     </AppShell>
   );
 }
