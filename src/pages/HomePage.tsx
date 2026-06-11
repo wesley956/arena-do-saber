@@ -137,9 +137,22 @@ export function HomePage({
         </section>
 
         <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Button variant="secondary" onClick={onStudyMap} fullWidth>
-            🗺️ Mapa de Estudos
-          </Button>
+          <div className="rounded-2xl border border-indigo-400/40 bg-indigo-950/30 p-3 shadow-lg shadow-indigo-950/20">
+            <div className="mb-2 flex items-start gap-2">
+              <span className="text-xl" aria-hidden="true">🗺️</span>
+              <div className="min-w-0">
+                <p className="text-sm font-black text-indigo-100">
+                  Mapa de Estudos
+                </p>
+                <p className="text-xs leading-snug text-slate-300">
+                  Veja seu progresso por matéria e escolha onde treinar.
+                </p>
+              </div>
+            </div>
+            <Button variant="secondary" onClick={onStudyMap} fullWidth>
+              Abrir Mapa de Estudos
+            </Button>
+          </div>
           <Button variant="secondary" onClick={onDuel} fullWidth>
             ⚡ Duelo Rápido Local
           </Button>

@@ -1,7 +1,6 @@
 import { Question } from "../../types/game";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
-import { loadScratchpad } from "../../lib/scratchpad";
 
 interface QuestionResultProps {
   question: Question;
@@ -20,93 +19,96 @@ export function QuestionResult({
   onContinue,
   savedForReview = false,
 }: QuestionResultProps) {
-  // Recupera rascunho salvo (apenas para erros — ajuda o jogador a perceber onde raciocinou errado)
-  const previousScratchpad = !isCorrect ? loadScratchpad(question.id) : "";
+  const correctAnswer = question.alternatives.find(
+    (a) => a.id === question.correctAlternativeId
+  )?.text;
+
   return (
     <div className="flex flex-col gap-4">
-      {/* Result Banner */}
       <div
-        className={`rounded-2xl p-4 text-center border-2 ${
+        className={`rounded-2xl p-5 text-center border-2 overflow-hidden relative ${
           isCorrect
-            ? "bg-emerald-900/40 border-emerald-500 shadow-lg shadow-emerald-900/20"
-            : "bg-red-900/40 border-red-500 shadow-lg shadow-red-900/20"
+            ? "bg-emerald-900/45 border-emerald-400 shadow-xl shadow-emerald-950/30"
+            : "bg-red-900/45 border-red-400 shadow-xl shadow-red-950/30"
         }`}
+        aria-live="polite"
       >
-        <div className="text-4xl mb-2">{isCorrect ? "🎉" : "😔"}</div>
+        <div
+          className={`mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl text-4xl ${
+            isCorrect
+              ? "bg-emerald-400/15 animate-bounce"
+              : "bg-red-400/15 animate-pulse"
+          }`}
+        >
+          {isCorrect ? "🎉" : "💡"}
+        </div>
+
         <h2
-          className={`text-xl font-bold mb-1 ${
-            isCorrect ? "text-emerald-300" : "text-red-300"
+          className={`text-2xl font-black mb-1 ${
+            isCorrect ? "text-emerald-200" : "text-red-200"
           }`}
         >
           {isCorrect ? "Resposta Correta!" : "Resposta Incorreta"}
         </h2>
 
-        {xpGained > 0 && (
-          <div className="inline-flex items-center gap-1.5 bg-amber-900/60 text-amber-300 border border-amber-700 rounded-full px-3 py-1 text-sm font-bold mt-1">
-            ⚡ +{xpGained} XP
-          </div>
-        )}
+        <p className="text-sm text-slate-300 mb-3">
+          {isCorrect
+            ? "Boa! Você avançou mais um passo no domínio do conteúdo."
+            : "Sem problema. Veja a resposta e use a explicação para aprender."}
+        </p>
 
-        {emblemGained && (
-          <div className="mt-2 inline-flex items-center gap-1.5 bg-violet-900/60 text-violet-300 border border-violet-600 rounded-full px-3 py-1 text-sm font-bold">
-            🏆 Emblema conquistado!
-          </div>
-        )}
+        <div className="flex flex-wrap justify-center gap-2">
+          {xpGained > 0 && (
+            <div className="inline-flex items-center gap-1.5 bg-amber-900/60 text-amber-200 border border-amber-600/70 rounded-full px-3 py-1.5 text-sm font-black">
+              ⚡ +{xpGained} XP
+            </div>
+          )}
+
+          {emblemGained && (
+            <div className="inline-flex items-center gap-1.5 bg-violet-900/70 text-violet-200 border border-violet-500/70 rounded-full px-3 py-1.5 text-sm font-black">
+              🏆 Emblema conquistado!
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Correct Answer (when wrong) */}
       {!isCorrect && (
-        <Card className="p-4">
-          <p className="text-slate-400 text-xs mb-2 uppercase tracking-wider font-semibold">
-            Resposta Correta
+        <Card className="p-4 border-emerald-800/40 bg-emerald-950/20">
+          <p className="text-emerald-300 text-xs mb-2 uppercase tracking-wider font-black">
+            Resposta correta
           </p>
-          <p className="text-emerald-300 font-semibold text-sm">
-            {question.alternatives.find(
-              (a) => a.id === question.correctAlternativeId
-            )?.text}
+          <p className="text-emerald-100 font-semibold text-base leading-relaxed">
+            {correctAnswer}
           </p>
         </Card>
       )}
 
-      {/* Explanation */}
       <Card className="p-4">
-        <p className="text-slate-400 text-xs mb-2 uppercase tracking-wider font-semibold">
+        <p className="text-slate-300 text-xs mb-2 uppercase tracking-wider font-black">
           📚 Explicação
         </p>
-        <p className="text-slate-200 text-sm leading-relaxed">
+        <p className="text-slate-100 text-base leading-relaxed">
           {question.explanation}
         </p>
       </Card>
 
-      {/* Trap (if exists and wrong) */}
       {!isCorrect && question.trap && (
         <Card className="p-4 border-amber-800/40 bg-amber-900/20">
-          <p className="text-amber-400 text-xs mb-2 uppercase tracking-wider font-semibold">
+          <p className="text-amber-300 text-xs mb-2 uppercase tracking-wider font-black">
             ⚠️ Pegadinha
           </p>
-          <p className="text-amber-200 text-sm leading-relaxed">{question.trap}</p>
-        </Card>
-      )}
-
-      {/* Rascunho anterior — ajuda o jogador a identificar onde errou o raciocínio */}
-      {!isCorrect && previousScratchpad && (
-        <Card className="p-4 border-indigo-800/40 bg-indigo-900/20">
-          <p className="text-indigo-400 text-xs mb-2 uppercase tracking-wider font-semibold">
-            📝 Seu rascunho
+          <p className="text-amber-100 text-base leading-relaxed">
+            {question.trap}
           </p>
-          <pre className="text-indigo-200 text-sm leading-relaxed whitespace-pre-wrap font-mono break-words">
-            {previousScratchpad}
-          </pre>
         </Card>
       )}
 
-      {/* Saved for review notice */}
       {!isCorrect && savedForReview && (
-        <div className="flex items-center gap-2 text-xs text-slate-400 bg-slate-800/60 rounded-xl p-3 border border-slate-700">
-          <span>🔖</span>
+        <div className="flex items-center gap-2 text-sm text-slate-300 bg-slate-800/70 rounded-xl p-3 border border-slate-700">
+          <span aria-hidden="true">🔖</span>
           <span>
             Pergunta salva para{" "}
-            <strong className="text-slate-300">Revisão dos Erros</strong>
+            <strong className="text-slate-100">Revisão dos Erros</strong>
           </span>
         </div>
       )}
