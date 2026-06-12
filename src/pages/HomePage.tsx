@@ -20,6 +20,7 @@ interface HomePageProps {
   onEmblems: () => void;
   onFeedback: () => void;
   onJourney: () => void;
+  onTracks: () => void;
   onRecommendedStart: () => void;
   onDuel: () => void;
   onStudyMap: () => void;
@@ -149,6 +150,7 @@ export function HomePage({
   onEmblems,
   onFeedback,
   onJourney,
+  onTracks,
   onRecommendedStart,
   onDuel,
   onStudyMap,
@@ -445,6 +447,12 @@ export function HomePage({
                     label: "Minha Jornada",
                     helper: journeyLabel,
                     action: onJourney,
+                  },
+                  {
+                    icon: "🗺️",
+                    label: "Trilhas Futuras",
+                    helper: "Alfabetização, escola, concursos e mais",
+                    action: onTracks,
                   },
                   {
                     icon: "🏆",

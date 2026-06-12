@@ -13,6 +13,7 @@ import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
 import { BetaFeedbackPage } from "./pages/BetaFeedbackPage";
 import { EmblemsPage } from "./pages/EmblemsPage";
 import { JourneySetupPage } from "./pages/JourneySetupPage";
+import { LearningTracksPage } from "./pages/LearningTracksPage";
 import { OnboardingModal } from "./components/OnboardingModal";
 import { PwaInstallPrompt } from "./components/PwaInstallPrompt";
 import { GameMode, ClassicMatchState, PlayerProgress, World } from "./types/game";
@@ -31,6 +32,7 @@ export type AppScreen =
   | "emblems"
   | "feedback"
   | "journey"
+  | "tracks"
   | "duel"
   | "studyMap"
   | "about"
@@ -143,6 +145,27 @@ export default function App() {
           onBack={playerProfile ? goHome : undefined}
         />
       </>
+    );
+  }
+
+  if (screen === "tracks") {
+    return (
+      <LearningTracksPage
+        progress={progress}
+        profile={playerProfile}
+        onBack={goHome}
+        onJourney={() => setScreen("journey")}
+        onStartSchool={() => {
+          setPreferredMode("solo");
+          setSelectedWorld("school");
+          setScreen("solo");
+        }}
+        onStartContest={() => {
+          setPreferredMode("solo");
+          setSelectedWorld("contest");
+          setScreen("solo");
+        }}
+      />
     );
   }
 
@@ -300,6 +323,7 @@ export default function App() {
         onEmblems={() => setScreen("emblems")}
         onFeedback={() => setScreen("feedback")}
         onJourney={() => setScreen("journey")}
+        onTracks={() => setScreen("tracks")}
         onRecommendedStart={handleRecommendedJourneyStart}
         onDuel={() => openWorldSelect("duel")}
         onStudyMap={() => setScreen("studyMap")}
