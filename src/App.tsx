@@ -75,6 +75,15 @@ export default function App() {
     setScreen("world");
   }
 
+  function handleRecommendedJourneyStart() {
+    setLastMatchSummary(null);
+    setPreferredMode("solo");
+    setSelectedWorld(playerProfile?.goal === "contest" ? "contest" : "school");
+    setFromStudyMap(false);
+    setPreselectedCategoryId(undefined);
+    setScreen("solo");
+  }
+
   function handleWorldSelected(world: World) {
     setSelectedWorld(world);
 
@@ -291,6 +300,7 @@ export default function App() {
         onEmblems={() => setScreen("emblems")}
         onFeedback={() => setScreen("feedback")}
         onJourney={() => setScreen("journey")}
+        onRecommendedStart={handleRecommendedJourneyStart}
         onDuel={() => openWorldSelect("duel")}
         onStudyMap={() => setScreen("studyMap")}
         onAbout={() => setScreen("about")}

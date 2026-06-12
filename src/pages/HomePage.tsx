@@ -20,6 +20,7 @@ interface HomePageProps {
   onEmblems: () => void;
   onFeedback: () => void;
   onJourney: () => void;
+  onRecommendedStart: () => void;
   onDuel: () => void;
   onStudyMap: () => void;
   onAbout: () => void;
@@ -77,6 +78,67 @@ function getJourneyLabel(profile: LocalPlayerProfile | null) {
   return "Conhecimentos gerais";
 }
 
+
+function getRecommendedPath(profile: LocalPlayerProfile | null) {
+  if (!profile) {
+    return {
+      icon: "🧭",
+      title: "Defina sua jornada",
+      description:
+        "Escolha seu objetivo para o Arena do Saber recomendar o melhor caminho de estudo.",
+      buttonLabel: "Definir jornada",
+      tone: "border-violet-400/30 bg-violet-950/20",
+      useJourneyButton: true,
+    };
+  }
+
+  if (profile.goal === "literacy") {
+    return {
+      icon: "🔤",
+      title: "Trilha: Alfabetização",
+      description:
+        "O app já guardou esse objetivo. Nas próximas fases, vamos adicionar conteúdos próprios para letras, sons, sílabas e palavras.",
+      buttonLabel: "Começar pela base escolar",
+      tone: "border-sky-400/30 bg-sky-950/20",
+      useJourneyButton: false,
+    };
+  }
+
+  if (profile.goal === "contest") {
+    return {
+      icon: "🎯",
+      title: getJourneyLabel(profile),
+      description:
+        "Sua Home agora entende seu foco. Comece treinando no Mundo Concurso e depois evoluiremos para trilhas por edital.",
+      buttonLabel: "Treinar concurso",
+      tone: "border-amber-400/30 bg-amber-950/20",
+      useJourneyButton: false,
+    };
+  }
+
+  if (profile.goal === "school") {
+    return {
+      icon: "🏫",
+      title: getJourneyLabel(profile),
+      description:
+        "Sua trilha foi ajustada para estudo escolar. Comece pelo Treino Solo para fortalecer as matérias.",
+      buttonLabel: "Treinar escola",
+      tone: "border-emerald-400/30 bg-emerald-950/20",
+      useJourneyButton: false,
+    };
+  }
+
+  return {
+    icon: "🧠",
+    title: "Trilha: Conhecimentos gerais",
+    description:
+      "Treine raciocínio, cultura geral e revisão usando os modos atuais do Arena do Saber.",
+    buttonLabel: "Começar treino",
+    tone: "border-violet-400/30 bg-violet-950/20",
+    useJourneyButton: false,
+  };
+}
+
 export function HomePage({
   progress,
   playerProfile,
@@ -87,6 +149,7 @@ export function HomePage({
   onEmblems,
   onFeedback,
   onJourney,
+  onRecommendedStart,
   onDuel,
   onStudyMap,
   onAbout,
@@ -102,6 +165,7 @@ export function HomePage({
   const totalEmblems = ALL_CATEGORIES.length;
   const playerName = playerProfile?.nickname?.trim() || "Estudante";
   const journeyLabel = getJourneyLabel(playerProfile);
+  const recommendedPath = getRecommendedPath(playerProfile);
 
   function openFromMenu(action: () => void) {
     setMenuOpen(false);
@@ -164,6 +228,50 @@ export function HomePage({
             <p className="mt-1 text-xs font-bold text-slate-300">Insígnias</p>
           </Card>
         </section>
+
+        <Card className={`p-4 ${recommendedPath.tone}`}>
+          <div className="flex items-start gap-3">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950/70 text-2xl">
+              {recommendedPath.icon}
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-black uppercase tracking-wide text-violet-200">
+                Caminho recomendado
+              </p>
+              <h2 className="mt-1 text-lg font-black leading-tight text-white">
+                {recommendedPath.title}
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-slate-300">
+                {recommendedPath.description}
+              </p>
+
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={
+                    recommendedPath.useJourneyButton
+                      ? onJourney
+                      : onRecommendedStart
+                  }
+                >
+                  {recommendedPath.buttonLabel}
+                </Button>
+
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={onJourney}
+                >
+                  Editar jornada
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Card>
+
 
         <section className="grid grid-cols-2 gap-3">
           <Card className="flex min-h-[180px] flex-col p-4" glow>
