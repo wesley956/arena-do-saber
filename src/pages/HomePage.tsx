@@ -282,7 +282,7 @@ export function HomePage({
                 🎡 Partida Clássica
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-slate-300">
-                Gire a roleta, vença desafios e conquiste insígnias.
+                Gire a roleta, vença desafios e entre no mundo recomendado pela sua jornada.
               </p>
             </div>
 
@@ -297,7 +297,7 @@ export function HomePage({
                 🎯 Treino Solo
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-slate-300">
-                Estude por matéria com ciclo inteligente de perguntas.
+                Estude por matéria começando pelo caminho ideal para seu objetivo.
               </p>
             </div>
 
@@ -384,7 +384,7 @@ export function HomePage({
                       Arena do Saber
                     </p>
                     <p className="text-xs font-bold text-slate-400">
-                      Menu do jogador
+                      {journeyLabel}
                     </p>
                   </div>
                 </div>

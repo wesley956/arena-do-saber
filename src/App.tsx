@@ -77,13 +77,35 @@ export default function App() {
     setScreen("world");
   }
 
+  function getPreferredWorldFromJourney(): World {
+    return playerProfile?.goal === "contest" ? "contest" : "school";
+  }
+
   function handleRecommendedJourneyStart() {
     setLastMatchSummary(null);
     setPreferredMode("solo");
-    setSelectedWorld(playerProfile?.goal === "contest" ? "contest" : "school");
+    setSelectedWorld(getPreferredWorldFromJourney());
     setFromStudyMap(false);
     setPreselectedCategoryId(undefined);
     setScreen("solo");
+  }
+
+  function handleSmartSoloStart() {
+    setLastMatchSummary(null);
+    setPreferredMode("solo");
+    setSelectedWorld(getPreferredWorldFromJourney());
+    setFromStudyMap(false);
+    setPreselectedCategoryId(undefined);
+    setScreen("solo");
+  }
+
+  function handleSmartClassicStart() {
+    setLastMatchSummary(null);
+    setPreferredMode("classic");
+    setSelectedWorld(getPreferredWorldFromJourney());
+    setFromStudyMap(false);
+    setPreselectedCategoryId(undefined);
+    setScreen("classic");
   }
 
   function handleWorldSelected(world: World) {
@@ -313,8 +335,8 @@ export default function App() {
       <HomePage
         progress={progress}
         playerProfile={playerProfile}
-        onPlay={() => openWorldSelect("classic")}
-        onSolo={() => openWorldSelect("solo")}
+        onPlay={handleSmartClassicStart}
+        onSolo={handleSmartSoloStart}
         onReview={() => {
           setReviewFromHome(true);
           setScreen("review");
