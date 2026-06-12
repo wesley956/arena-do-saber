@@ -31,9 +31,14 @@ export function AnswerOption({
 
   if (selected && !correct && !wrong) {
     stateClass =
-      "bg-violet-900/70 border-violet-400 text-white shadow-lg shadow-violet-950/30";
+      "bg-violet-900/80 border-violet-300 text-white shadow-xl shadow-violet-950/40 ring-2 ring-violet-300/25";
     labelClass =
-      "bg-violet-500 border-violet-300 text-white shadow-sm shadow-violet-950/30";
+      "bg-violet-400 border-violet-200 text-violet-950 shadow-sm shadow-violet-950/30";
+    indicator = (
+      <span className="rounded-full bg-violet-400/20 px-2.5 py-1 text-xs font-black text-violet-100 border border-violet-300/40">
+        Selecionada
+      </span>
+    );
   } else if (correct) {
     stateClass =
       "bg-emerald-900/75 border-emerald-400 text-emerald-50 shadow-lg shadow-emerald-900/30";

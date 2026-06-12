@@ -39,6 +39,25 @@ export function QuestionResult({
     vibrateError();
   }, [emblemGained, isCorrect]);
 
+  const resultIcon = emblemGained ? "🏆" : isCorrect ? "🎉" : "💡";
+  const resultTitle = emblemGained
+    ? "Insígnia conquistada!"
+    : isCorrect
+      ? "Resposta Correta!"
+      : "Resposta Incorreta";
+
+  const resultMessage = emblemGained
+    ? "Excelente! Você transformou domínio em conquista dentro da Arena."
+    : isCorrect
+      ? "Boa! Você avançou mais um passo no domínio do conteúdo."
+      : "Sem problema. Errar aqui também conta como treino.";
+
+  const continueLabel = emblemGained
+    ? "Continuar minha jornada →"
+    : isCorrect
+      ? "Manter sequência →"
+      : "Aprender e seguir →";
+
   return (
     <div className="flex flex-col gap-4">
       <div
@@ -56,7 +75,7 @@ export function QuestionResult({
               : "bg-red-400/15 animate-pulse"
           }`}
         >
-          {isCorrect ? "🎉" : "💡"}
+          {resultIcon}
         </div>
 
         <h2
@@ -64,13 +83,11 @@ export function QuestionResult({
             isCorrect ? "text-emerald-200" : "text-red-200"
           }`}
         >
-          {isCorrect ? "Resposta Correta!" : "Resposta Incorreta"}
+          {resultTitle}
         </h2>
 
         <p className="text-sm text-slate-300 mb-3">
-          {isCorrect
-            ? "Boa! Você avançou mais um passo no domínio do conteúdo."
-            : "Sem problema. Veja a resposta e use a explicação para aprender."}
+          {resultMessage}
         </p>
 
         <div className="flex flex-wrap justify-center gap-2">
@@ -81,8 +98,8 @@ export function QuestionResult({
           )}
 
           {emblemGained && (
-            <div className="inline-flex items-center gap-1.5 bg-violet-900/70 text-violet-200 border border-violet-500/70 rounded-full px-3 py-1.5 text-sm font-black">
-              🏆 Emblema conquistado!
+            <div className="inline-flex items-center gap-1.5 bg-violet-900/80 text-violet-100 border border-violet-400/80 rounded-full px-3 py-1.5 text-sm font-black shadow-lg shadow-violet-950/30">
+              🏆 Nova conquista desbloqueada
             </div>
           )}
         </div>
@@ -135,7 +152,7 @@ export function QuestionResult({
         size="lg"
         variant={isCorrect ? "success" : "secondary"}
       >
-        {isCorrect ? "Continuar →" : "Próxima Rodada →"}
+        {continueLabel}
       </Button>
     </div>
   );

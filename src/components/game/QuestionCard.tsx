@@ -70,6 +70,9 @@ export function QuestionCard({
     hard: "Difícil",
   };
 
+  const selectedIndex = question.alternatives.findIndex((alt) => alt.id === selected);
+  const selectedLabel = selectedIndex >= 0 ? String.fromCharCode(65 + selectedIndex) : null;
+
   return (
     <div className="flex flex-col gap-4">
       {/* Header */}
@@ -145,6 +148,13 @@ export function QuestionCard({
       </div>
 
       {/* Confirm button */}
+      {!confirmed && selectedLabel && (
+        <div className="rounded-2xl border border-violet-500/30 bg-violet-950/25 p-3 text-sm text-violet-100">
+          <strong>Alternativa {selectedLabel} selecionada.</strong>{" "}
+          Confirme para ver o resultado.
+        </div>
+      )}
+
       {!confirmed && (
         <Button
           onClick={handleConfirm}
@@ -152,8 +162,11 @@ export function QuestionCard({
           fullWidth
           size="lg"
           variant="primary"
+          className={selected ? "shadow-lg shadow-violet-950/40" : "opacity-80"}
         >
-          Confirmar Resposta
+          {selectedLabel
+            ? `Confirmar alternativa ${selectedLabel} →`
+            : "Escolha uma alternativa"}
         </Button>
       )}
     </div>
