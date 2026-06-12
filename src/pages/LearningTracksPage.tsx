@@ -153,7 +153,7 @@ export function LearningTracksPage({
                 </h1>
                 <p className="mt-2 text-sm leading-relaxed text-slate-300">
                   Esta área prepara o app para alfabetização, escola, concursos
-                  direcionados e, no futuro, faculdade — sem quebrar o MVP atual.
+                  direcionados e, no futuro, faculdade — sem quebrar a base atual.
                 </p>
               </div>
             </div>

@@ -464,7 +464,7 @@ export function HomePage({
                   },
                   {
                     icon: "🧪",
-                    label: "Feedback Beta",
+                    label: "Centro do Beta",
                     helper: "Enviar teste, erro ou sugestão",
                     action: onFeedback,
                   },

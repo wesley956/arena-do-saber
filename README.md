@@ -258,7 +258,7 @@ Arquivos e áreas importantes:
 
 ## 📌 Status do projeto
 
-O **Arena do Saber** está em fase de **MVP jogável e polido**, com o núcleo principal funcionando:
+O **Arena do Saber** está em fase de **beta jogável e polido**, com o núcleo principal funcionando:
 
 - modos de jogo ativos;
 - banco inicial estruturado;

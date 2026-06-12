@@ -78,7 +78,7 @@ export function AboutPage({ progress, onBack, onPrivacy }: AboutPageProps) {
         <Card className="p-5">
           <h2 className="text-lg font-black text-white">✨ Créditos</h2>
           <p className="mt-3 text-sm leading-relaxed text-slate-300">
-            Projeto criado como um MVP jogável de quiz educacional, com foco em
+            Projeto criado como uma versão beta jogável de quiz educacional, com foco em
             diversão, estudo e evolução contínua. Conteúdo e mecânicas foram
             organizados para testes públicos em fase beta.
           </p>
