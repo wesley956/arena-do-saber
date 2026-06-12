@@ -5,6 +5,7 @@ import { AnswerOption } from "./AnswerOption";
 import { Button } from "../ui/Button";
 import { Badge } from "../ui/Badge";
 import { QuestionScratchpad } from "./QuestionScratchpad";
+import { vibrateTap } from "../../lib/haptics";
 
 interface QuestionCardProps {
   question: Question;
@@ -50,6 +51,7 @@ export function QuestionCard({
     if (confirmed) return;
     const answerId = selected ?? "";
     const isCorrect = answerId === question.correctAlternativeId;
+    vibrateTap();
     setConfirmed(true);
     setTimeout(() => {
       onAnswer(answerId, isCorrect);

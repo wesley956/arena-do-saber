@@ -23,6 +23,7 @@ import {
 } from "../lib/gameEngine";
 import { getBotAvatar, getBotName } from "../lib/bot";
 import { getNextQuestionForCategory } from "../lib/questionSelector";
+import { vibrateReward } from "../lib/haptics";
 
 const BADGE_CHALLENGE_SIZE = 3;
 const BADGE_CHALLENGE_PASSING_SCORE = 2;
@@ -293,6 +294,10 @@ setLastBadgeMessage(null);
       correctCount: badgeChallenge.correctCount + (isCorrect ? 1 : 0),
     };
 
+    if (updatedChallenge.correctCount >= BADGE_CHALLENGE_PASSING_SCORE) {
+      vibrateReward();
+    }
+
     setBadgeChallenge(updatedChallenge);
     setLastXP(xpGained);
 
@@ -350,6 +355,10 @@ setLastBadgeMessage(null);
     isCorrect &&
     cappedCategoryProgress >= EMBLEM_THRESHOLD &&
     !match.playerEmblems.includes(currentQuestion.categoryId);
+
+  if (emblemGained || challengeUnlocked) {
+    vibrateReward();
+  }
 
   setPendingBadgeChallengeCategoryId(
     challengeUnlocked ? currentQuestion.categoryId : null

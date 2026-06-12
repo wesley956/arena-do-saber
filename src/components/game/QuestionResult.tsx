@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import { Question } from "../../types/game";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
+import { vibrateError, vibrateReward, vibrateSuccess } from "../../lib/haptics";
 
 interface QuestionResultProps {
   question: Question;
@@ -22,6 +24,20 @@ export function QuestionResult({
   const correctAnswer = question.alternatives.find(
     (a) => a.id === question.correctAlternativeId
   )?.text;
+
+  useEffect(() => {
+    if (emblemGained) {
+      vibrateReward();
+      return;
+    }
+
+    if (isCorrect) {
+      vibrateSuccess();
+      return;
+    }
+
+    vibrateError();
+  }, [emblemGained, isCorrect]);
 
   return (
     <div className="flex flex-col gap-4">
