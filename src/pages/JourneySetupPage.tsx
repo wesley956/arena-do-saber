@@ -124,6 +124,32 @@ const contestOptions: Array<{
   },
 ];
 
+
+function getGoalTitle(goal: PlayerGoal) {
+  if (goal === "literacy") return "Alfabetização";
+  if (goal === "school") return "Escola";
+  if (goal === "contest") return "Concurso";
+  return "Conhecimentos gerais";
+}
+
+function getStageTitle(stage: StudyStage) {
+  if (stage === "literacy") return "Alfabetização";
+  if (stage === "fundamental1") return "Fundamental I";
+  if (stage === "fundamental2") return "Fundamental II";
+  if (stage === "highSchool") return "Ensino Médio";
+  return "Adulto / Concurso";
+}
+
+function getContestTrackTitle(track: ContestTrack) {
+  if (track === "pm") return "Polícia Militar";
+  if (track === "gcm") return "Guarda Municipal";
+  if (track === "cityHall") return "Prefeitura";
+  if (track === "bank") return "Banco";
+  if (track === "administrative") return "Administrativo";
+  if (track === "court") return "Tribunal";
+  return "Outro";
+}
+
 function getInitialGoal(profile: LocalPlayerProfile | null): PlayerGoal {
   return profile?.goal ?? "school";
 }
@@ -185,6 +211,12 @@ export function JourneySetupPage({
     [goal, studyStage, contestTrack]
   );
 
+  const selectedGoalTitle = getGoalTitle(goal);
+  const selectedStageTitle = getStageTitle(
+    goal === "literacy" ? "literacy" : studyStage
+  );
+  const selectedContestTitle = getContestTrackTitle(contestTrack);
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -234,6 +266,59 @@ export function JourneySetupPage({
               para liberar conteúdos, trilhas e modos mais adequados.
             </p>
           </div>
+        </Card>
+
+        <Card className="border-violet-400/25 bg-violet-950/15 p-4">
+          <p className="text-xs font-black uppercase tracking-wide text-violet-200">
+            Resumo da sua jornada
+          </p>
+
+          <div className="mt-3 grid gap-2">
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-3">
+              <p className="text-xs font-black uppercase tracking-wide text-slate-400">
+                Nome do jogador
+              </p>
+              <p className="mt-1 text-base font-black text-white">
+                {nickname.trim() || "Estudante"}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-3">
+                <p className="text-xs font-black uppercase tracking-wide text-slate-400">
+                  Objetivo
+                </p>
+                <p className="mt-1 text-sm font-black text-white">
+                  {selectedGoalTitle}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/40 p-3">
+                <p className="text-xs font-black uppercase tracking-wide text-slate-400">
+                  Fase
+                </p>
+                <p className="mt-1 text-sm font-black text-white">
+                  {selectedStageTitle}
+                </p>
+              </div>
+            </div>
+
+            {goal === "contest" && (
+              <div className="rounded-2xl border border-amber-400/25 bg-amber-950/20 p-3">
+                <p className="text-xs font-black uppercase tracking-wide text-amber-200">
+                  Trilha de concurso
+                </p>
+                <p className="mt-1 text-sm font-black text-white">
+                  {selectedContestTitle}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <p className="mt-3 text-xs leading-relaxed text-slate-400">
+            Esse perfil fica salvo neste aparelho. Em versões futuras, ele poderá
+            ser usado para liberar conteúdos por idade, fase escolar e objetivo.
+          </p>
         </Card>
 
         <Card className="p-4">
