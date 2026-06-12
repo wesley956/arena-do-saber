@@ -21,6 +21,7 @@ interface HomePageProps {
   onFeedback: () => void;
   onJourney: () => void;
   onTracks: () => void;
+  onSettings: () => void;
   onRecommendedStart: () => void;
   onDuel: () => void;
   onStudyMap: () => void;
@@ -151,6 +152,7 @@ export function HomePage({
   onFeedback,
   onJourney,
   onTracks,
+  onSettings,
   onRecommendedStart,
   onDuel,
   onStudyMap,
@@ -465,6 +467,12 @@ export function HomePage({
                     label: "Feedback Beta",
                     helper: "Enviar teste, erro ou sugestão",
                     action: onFeedback,
+                  },
+                  {
+                    icon: "⚙️",
+                    label: "Configurações",
+                    helper: "Jornada, beta e dados locais",
+                    action: onSettings,
                   },
                   {
                     icon: "ℹ️",

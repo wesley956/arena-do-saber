@@ -14,6 +14,7 @@ import { BetaFeedbackPage } from "./pages/BetaFeedbackPage";
 import { EmblemsPage } from "./pages/EmblemsPage";
 import { JourneySetupPage } from "./pages/JourneySetupPage";
 import { LearningTracksPage } from "./pages/LearningTracksPage";
+import { SettingsPage } from "./pages/SettingsPage";
 import { OnboardingModal } from "./components/OnboardingModal";
 import { PwaInstallPrompt } from "./components/PwaInstallPrompt";
 import { GameMode, ClassicMatchState, PlayerProgress, World } from "./types/game";
@@ -33,6 +34,7 @@ export type AppScreen =
   | "feedback"
   | "journey"
   | "tracks"
+  | "settings"
   | "duel"
   | "studyMap"
   | "about"
@@ -291,6 +293,19 @@ export default function App() {
     />;
   }
 
+  if (screen === "settings") {
+    return (
+      <SettingsPage
+        progress={progress}
+        profile={playerProfile}
+        onBack={goHome}
+        onJourney={() => setScreen("journey")}
+        onBetaCenter={() => setScreen("feedback")}
+        onPrivacy={() => setScreen("privacy")}
+      />
+    );
+  }
+
   if (screen === "duel") {
     return (
       <QuickDuelPage
@@ -351,6 +366,7 @@ export default function App() {
         onFeedback={() => setScreen("feedback")}
         onJourney={() => setScreen("journey")}
         onTracks={() => setScreen("tracks")}
+        onSettings={() => setScreen("settings")}
         onRecommendedStart={handleRecommendedJourneyStart}
         onDuel={() => openWorldSelect("duel")}
         onStudyMap={() => setScreen("studyMap")}
