@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { PlayerProgress } from "../types/game";
 import { LocalPlayerProfile } from "../types/playerProfile";
 import { AppShell } from "../components/layout/AppShell";
@@ -10,6 +11,11 @@ import {
   APP_RELEASE_DATE,
   APP_VERSION,
 } from "../lib/appVersion";
+import {
+  getLocalSettings,
+  setHapticsEnabledPreference,
+} from "../lib/localSettings";
+import { vibrateTap } from "../lib/haptics";
 
 interface SettingsPageProps {
   progress: PlayerProgress;
@@ -40,6 +46,22 @@ export function SettingsPage({
   onBetaCenter,
   onPrivacy,
 }: SettingsPageProps) {
+  const [hapticsEnabled, setHapticsEnabledState] = useState(true);
+
+  useEffect(() => {
+    setHapticsEnabledState(getLocalSettings().hapticsEnabled);
+  }, []);
+
+  function toggleHaptics() {
+    const nextValue = !hapticsEnabled;
+    setHapticsEnabledState(nextValue);
+    setHapticsEnabledPreference(nextValue);
+
+    if (nextValue) {
+      vibrateTap();
+    }
+  }
+
   function resetOnboarding() {
     try {
       window.localStorage.removeItem(ONBOARDING_STORAGE_KEY);
@@ -97,6 +119,36 @@ export function SettingsPage({
           <Button className="mt-4" type="button" fullWidth onClick={onJourney}>
             Editar minha jornada
           </Button>
+        </Card>
+
+        <Card className="p-4">
+          <h2 className="text-lg font-black text-white">Sensação de jogo</h2>
+
+          <button
+            type="button"
+            onClick={toggleHaptics}
+            aria-pressed={hapticsEnabled}
+            className="mt-3 flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-3 text-left transition hover:border-emerald-400/50 hover:bg-slate-800/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+          >
+            <span>
+              <span className="block text-sm font-black text-white">
+                📳 Vibração do jogo
+              </span>
+              <span className="mt-1 block text-xs leading-relaxed text-slate-400">
+                Afeta toques, acertos, erros e conquistas no celular.
+              </span>
+            </span>
+
+            <span
+              className={`shrink-0 rounded-full px-3 py-1 text-xs font-black ${
+                hapticsEnabled
+                  ? "bg-emerald-500/20 text-emerald-200 border border-emerald-400/50"
+                  : "bg-slate-800 text-slate-300 border border-slate-700"
+              }`}
+            >
+              {hapticsEnabled ? "Ligada" : "Desligada"}
+            </span>
+          </button>
         </Card>
 
         <Card className="p-4">

@@ -1,3 +1,5 @@
+import { areHapticsEnabled } from "./localSettings";
+
 type HapticPattern = number | number[];
 
 function canVibrate() {
@@ -9,7 +11,7 @@ function canVibrate() {
 }
 
 function vibrate(pattern: HapticPattern) {
-  if (!canVibrate()) return;
+  if (!areHapticsEnabled() || !canVibrate()) return;
 
   try {
     window.navigator.vibrate(pattern);
