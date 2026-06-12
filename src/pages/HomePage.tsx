@@ -1,5 +1,6 @@
 import { type CSSProperties, useState } from "react";
 import { PlayerProgress } from "../types/game";
+import { LocalPlayerProfile } from "../types/playerProfile";
 import { AppShell } from "../components/layout/AppShell";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -11,12 +12,14 @@ import { APP_VERSION } from "../lib/appVersion";
 
 interface HomePageProps {
   progress: PlayerProgress;
+  playerProfile: LocalPlayerProfile | null;
   onPlay: () => void;
   onSolo: () => void;
   onReview: () => void;
   onProfile: () => void;
   onEmblems: () => void;
   onFeedback: () => void;
+  onJourney: () => void;
   onDuel: () => void;
   onStudyMap: () => void;
   onAbout: () => void;
@@ -49,14 +52,41 @@ function IntegratedArenaLogo({ compact = false }: { compact?: boolean }) {
   );
 }
 
+
+function getJourneyLabel(profile: LocalPlayerProfile | null) {
+  if (!profile) return "Definir objetivo";
+
+  if (profile.goal === "literacy") return "Alfabetização";
+  if (profile.goal === "contest") {
+    if (profile.contestTrack === "pm") return "Concurso · Polícia Militar";
+    if (profile.contestTrack === "gcm") return "Concurso · Guarda Municipal";
+    if (profile.contestTrack === "cityHall") return "Concurso · Prefeitura";
+    if (profile.contestTrack === "bank") return "Concurso · Banco";
+    if (profile.contestTrack === "administrative") return "Concurso · Administrativo";
+    if (profile.contestTrack === "court") return "Concurso · Tribunal";
+    return "Concurso · Geral";
+  }
+
+  if (profile.goal === "school") {
+    if (profile.studyStage === "fundamental1") return "Escola · Fundamental I";
+    if (profile.studyStage === "fundamental2") return "Escola · Fundamental II";
+    if (profile.studyStage === "highSchool") return "Escola · Ensino Médio";
+    return "Escola";
+  }
+
+  return "Conhecimentos gerais";
+}
+
 export function HomePage({
   progress,
+  playerProfile,
   onPlay,
   onSolo,
   onReview,
   onProfile,
   onEmblems,
   onFeedback,
+  onJourney,
   onDuel,
   onStudyMap,
   onAbout,
@@ -70,6 +100,8 @@ export function HomePage({
   const hasErrors = progress.wrongQuestionIds.length > 0;
   const completedEmblemCount = progress.completedEmblems.length;
   const totalEmblems = ALL_CATEGORIES.length;
+  const playerName = playerProfile?.nickname?.trim() || "Estudante";
+  const journeyLabel = getJourneyLabel(playerProfile);
 
   function openFromMenu(action: () => void) {
     setMenuOpen(false);
@@ -269,7 +301,7 @@ export function HomePage({
 
                   <div className="min-w-0">
                     <h2 className="truncate text-lg font-black text-white">
-                      Estudante Lv. {progress.level}
+                      {playerName} Lv. {progress.level}
                     </h2>
                     <p className="text-sm text-slate-300">
                       ⚡ {progress.xp} XP · {toNext} XP para Lv.{" "}
@@ -299,6 +331,12 @@ export function HomePage({
                     label: "Perfil completo",
                     helper: "Nível, XP e conquistas",
                     action: onProfile,
+                  },
+                  {
+                    icon: "🧭",
+                    label: "Minha Jornada",
+                    helper: journeyLabel,
+                    action: onJourney,
                   },
                   {
                     icon: "🏆",

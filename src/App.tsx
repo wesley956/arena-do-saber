@@ -12,10 +12,13 @@ import { AboutPage } from "./pages/AboutPage";
 import { PrivacyPolicyPage } from "./pages/PrivacyPolicyPage";
 import { BetaFeedbackPage } from "./pages/BetaFeedbackPage";
 import { EmblemsPage } from "./pages/EmblemsPage";
+import { JourneySetupPage } from "./pages/JourneySetupPage";
 import { OnboardingModal } from "./components/OnboardingModal";
 import { PwaInstallPrompt } from "./components/PwaInstallPrompt";
 import { GameMode, ClassicMatchState, PlayerProgress, World } from "./types/game";
+import { LocalPlayerProfile } from "./types/playerProfile";
 import { loadProgress, saveProgress } from "./lib/storage";
+import { loadPlayerProfile, savePlayerProfile } from "./lib/playerProfileStorage";
 
 export type AppScreen =
   | "home"
@@ -27,6 +30,7 @@ export type AppScreen =
   | "profile"
   | "emblems"
   | "feedback"
+  | "journey"
   | "duel"
   | "studyMap"
   | "about"
@@ -35,6 +39,7 @@ export type AppScreen =
 export default function App() {
   const [screen, setScreen] = useState<AppScreen>("home");
   const [progress, setProgress] = useState<PlayerProgress>(() => loadProgress());
+  const [playerProfile, setPlayerProfile] = useState<LocalPlayerProfile | null>(() => loadPlayerProfile());
   const [selectedWorld, setSelectedWorld] = useState<World>("school");
   const [preferredMode, setPreferredMode] = useState<GameMode | null>(null);
   const [lastMatchSummary, setLastMatchSummary] = useState<string | null>(null);
@@ -49,6 +54,12 @@ export default function App() {
   function updateProgress(next: PlayerProgress) {
     setProgress(next);
     saveProgress(next);
+  }
+
+  function handleSavePlayerProfile(next: LocalPlayerProfile) {
+    setPlayerProfile(next);
+    savePlayerProfile(next);
+    setScreen("home");
   }
 
   function goHome() {
@@ -109,6 +120,21 @@ export default function App() {
     setFromStudyMap(true);
     setReviewFromHome(false);
     setScreen("review");
+  }
+
+  if (screen === "journey" || (!playerProfile && screen === "home")) {
+    return (
+      <>
+        <OnboardingModal />
+        <JourneySetupPage
+          progress={progress}
+          profile={playerProfile}
+          isFirstRun={!playerProfile}
+          onSave={handleSavePlayerProfile}
+          onBack={playerProfile ? goHome : undefined}
+        />
+      </>
+    );
   }
 
   if (screen === "studyMap") {
@@ -254,6 +280,7 @@ export default function App() {
 
       <HomePage
         progress={progress}
+        playerProfile={playerProfile}
         onPlay={() => openWorldSelect("classic")}
         onSolo={() => openWorldSelect("solo")}
         onReview={() => {
@@ -263,6 +290,7 @@ export default function App() {
         onProfile={() => setScreen("profile")}
         onEmblems={() => setScreen("emblems")}
         onFeedback={() => setScreen("feedback")}
+        onJourney={() => setScreen("journey")}
         onDuel={() => openWorldSelect("duel")}
         onStudyMap={() => setScreen("studyMap")}
         onAbout={() => setScreen("about")}
