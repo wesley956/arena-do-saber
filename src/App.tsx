@@ -283,7 +283,12 @@ export default function App() {
   }
 
   if (screen === "feedback") {
-    return <BetaFeedbackPage progress={progress} onBack={goHome} />;
+    return <BetaFeedbackPage
+      progress={progress}
+      profile={playerProfile}
+      onBack={goHome}
+      onJourney={() => setScreen("journey")}
+    />;
   }
 
   if (screen === "duel") {
