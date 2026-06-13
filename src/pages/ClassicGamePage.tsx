@@ -55,13 +55,19 @@ function addUniqueIds(items: string[], ids: string[]): string[] {
 }
 
 function getBadgeChallengeResultMessage(correctCount: number): string {
-  if (correctCount === 3) return "Desafio perfeito! Insígnia conquistada!";
-  if (correctCount === 2) return "Desafio vencido! Insígnia conquistada!";
-  if (correctCount === 1) {
-    return "Quase! Você precisa acertar pelo menos 2. Tente novamente.";
+  if (correctCount === 3) {
+    return "Desafio perfeito! Você provou domínio total e conquistou a insígnia!";
   }
 
-  return "A insígnia escapou desta vez. Continue tentando.";
+  if (correctCount === 2) {
+    return "Desafio vencido! Você acertou o necessário e conquistou a insígnia!";
+  }
+
+  if (correctCount === 1) {
+    return "Quase! Faltou só mais um acerto para conquistar a insígnia.";
+  }
+
+  return "A insígnia escapou desta vez. Revise a categoria e tente novamente.";
 }
 
 const CLASSIC_BADGE_GOAL_TITLE = "Insígnias de Sabedoria";
@@ -114,6 +120,9 @@ export function ClassicGamePage({
   const currentBadgeChallengeQuestionNumber = badgeChallenge
     ? badgeChallenge.currentIndex + 1
     : 0;
+  const badgeChallengeSummaryCategory = badgeChallengeSummary
+    ? categories.find((category) => category.id === badgeChallengeSummary.categoryId)
+    : null;
 
   // FIX: handleMatchEnd usa useCallback com dependências corretas
   const handleMatchEnd = useCallback(
@@ -369,9 +378,9 @@ setLastBadgeMessage(null);
 
   setLastBadgeMessage(
     challengeUnlocked
-      ? "Desafio da Insígnia liberado! Você dominou o básico de " +
+      ? "Você acumulou 3 acertos em " +
         (badgeCategory?.emblemName ?? badgeCategory?.name ?? "categoria") +
-        ". Encare o desafio para conquistar a insígnia."
+        ". Agora vem a prova final: acerte 2 de 3 para conquistar a insígnia."
       : null
   );
 
@@ -902,36 +911,71 @@ if (!match.lastAnswerCorrect) {
       {badgeChallengeSummary && (
         <Card
           className={
-            "p-4 mb-4 border shadow-lg " +
+            "p-4 mb-4 border shadow-xl " +
             (badgeChallengeSummary.passed
-              ? "border-emerald-500/60 bg-emerald-950/30 shadow-emerald-950/20"
-              : "border-amber-500/60 bg-amber-950/30 shadow-amber-950/20")
+              ? "border-emerald-400/70 bg-emerald-950/35 shadow-emerald-950/30"
+              : "border-amber-400/70 bg-amber-950/30 shadow-amber-950/25")
           }
         >
           <div className="flex items-start gap-3">
-            <span className="text-2xl">
+            <div
+              className={
+                "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border text-3xl " +
+                (badgeChallengeSummary.passed
+                  ? "border-emerald-300/50 bg-emerald-500/15"
+                  : "border-amber-300/50 bg-amber-500/15")
+              }
+            >
               {badgeChallengeSummary.passed ? "🏆" : "⚔️"}
-            </span>
-            <div className="min-w-0">
-              <p
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-black uppercase tracking-wide text-slate-400">
+                Resultado do Desafio da Insígnia
+              </p>
+
+              <h3
                 className={
-                  "text-sm font-black " +
+                  "mt-1 text-base font-black " +
                   (badgeChallengeSummary.passed
-                    ? "text-emerald-300"
-                    : "text-amber-300")
+                    ? "text-emerald-200"
+                    : "text-amber-200")
                 }
               >
                 {badgeChallengeSummary.message}
+              </h3>
+
+              <p className="mt-1 text-xs text-slate-300">
+                {badgeChallengeSummaryCategory?.icon}{" "}
+                {badgeChallengeSummaryCategory?.emblemName ??
+                  badgeChallengeSummaryCategory?.name ??
+                  "Categoria"}{" "}
+                · {badgeChallengeSummary.correctCount}/{BADGE_CHALLENGE_SIZE} acertos
               </p>
-              <p className="text-xs text-slate-300 mt-1">
-                Resultado do desafio: {badgeChallengeSummary.correctCount}/
-                {BADGE_CHALLENGE_SIZE} acertos. Meta: {BADGE_CHALLENGE_PASSING_SCORE}/
-                {BADGE_CHALLENGE_SIZE}.
-              </p>
+
+              <div className="mt-3 grid grid-cols-3 gap-2">
+                {Array.from({ length: BADGE_CHALLENGE_SIZE }).map((_, index) => {
+                  const wonPoint = index < badgeChallengeSummary.correctCount;
+                  return (
+                    <div
+                      key={index}
+                      className={
+                        "rounded-xl border px-2 py-2 text-center text-xs font-black " +
+                        (wonPoint
+                          ? "border-emerald-400/50 bg-emerald-500/15 text-emerald-200"
+                          : "border-slate-700 bg-slate-950/40 text-slate-500")
+                      }
+                    >
+                      {wonPoint ? "✓" : "·"} P{index + 1}
+                    </div>
+                  );
+                })}
+              </div>
+
               {!badgeChallengeSummary.passed && (
-                <p className="text-xs text-slate-400 mt-2">
-                  O progresso 3/3 foi mantido. Quando esta categoria aparecer de novo,
-                  tente o desafio novamente.
+                <p className="mt-3 rounded-2xl border border-slate-700 bg-slate-950/40 p-3 text-xs leading-relaxed text-slate-300">
+                  O progresso 3/3 foi mantido. Quando esta categoria aparecer novamente,
+                  você pode tentar o desafio outra vez.
                 </p>
               )}
             </div>
@@ -963,41 +1007,72 @@ if (!match.lastAnswerCorrect) {
       )}
 
       {badgeChallenge && currentQuestion && (
-        <Card className="p-4 mb-4 border-amber-500/60 bg-amber-950/30 shadow-lg shadow-amber-950/20">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="text-xs uppercase tracking-wide text-amber-300 font-black">
-                Desafio da Insígnia
-              </p>
-              <h2 className="text-white font-black text-lg mt-1">
-                {activeBadgeChallengeCategory?.emblemName ??
-                  activeBadgeChallengeCategory?.name ??
-                  "Insígnia"}
-              </h2>
-              <p className="text-xs text-slate-300 mt-1">
-                Acerte pelo menos {BADGE_CHALLENGE_PASSING_SCORE} de {BADGE_CHALLENGE_SIZE} para conquistar a insígnia.
-              </p>
+        <Card className="mb-4 overflow-hidden border-amber-400/70 bg-amber-950/30 p-0 shadow-xl shadow-amber-950/25">
+          <div className="border-b border-amber-400/20 bg-amber-500/10 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs font-black uppercase tracking-wide text-amber-300">
+                  Desafio da Insígnia
+                </p>
+
+                <h2 className="mt-1 text-xl font-black text-white">
+                  {activeBadgeChallengeCategory?.icon}{" "}
+                  {activeBadgeChallengeCategory?.emblemName ??
+                    activeBadgeChallengeCategory?.name ??
+                    "Insígnia"}
+                </h2>
+
+                <p className="mt-1 text-xs leading-relaxed text-slate-300">
+                  Prove domínio: são {BADGE_CHALLENGE_SIZE} perguntas. Acerte pelo menos{" "}
+                  {BADGE_CHALLENGE_PASSING_SCORE} para conquistar a insígnia.
+                </p>
+              </div>
+
+              <div className="shrink-0 rounded-full border border-amber-300/40 bg-amber-500/20 px-3 py-1 text-xs font-black text-amber-100">
+                {currentBadgeChallengeQuestionNumber}/{BADGE_CHALLENGE_SIZE}
+              </div>
             </div>
-            <div className="rounded-full bg-amber-500/20 px-3 py-1 text-xs font-black text-amber-200 shrink-0">
-              Pergunta {currentBadgeChallengeQuestionNumber}/{BADGE_CHALLENGE_SIZE}
+
+            <div className="mt-4 grid grid-cols-3 gap-2">
+              {Array.from({ length: BADGE_CHALLENGE_SIZE }).map((_, index) => {
+                const completed = index < badgeChallenge.currentIndex;
+                const current = index === badgeChallenge.currentIndex;
+
+                return (
+                  <div
+                    key={index}
+                    className={
+                      "rounded-2xl border px-2 py-2 text-center text-xs font-black " +
+                      (current
+                        ? "border-amber-300 bg-amber-400/20 text-amber-100 ring-2 ring-amber-300/20"
+                        : completed
+                          ? "border-emerald-400/40 bg-emerald-500/15 text-emerald-200"
+                          : "border-slate-700 bg-slate-950/40 text-slate-500")
+                    }
+                  >
+                    {completed ? "✓" : current ? "⚔️" : "·"} Perg. {index + 1}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 mt-3">
-            <div className="rounded-xl bg-slate-950/40 border border-slate-700/60 p-2 text-center">
-              <p className="text-xs uppercase font-black text-slate-400">
-                Acertos do desafio
+          <div className="grid grid-cols-2 gap-3 p-4">
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-950/20 p-3 text-center">
+              <p className="text-xs font-black uppercase tracking-wide text-emerald-300">
+                Acertos
               </p>
-              <p className="text-lg font-black text-emerald-300">
+              <p className="mt-1 text-2xl font-black text-emerald-200">
                 {badgeChallenge.correctCount}/{BADGE_CHALLENGE_SIZE}
               </p>
             </div>
-            <div className="rounded-xl bg-slate-950/40 border border-slate-700/60 p-2 text-center">
-              <p className="text-xs uppercase font-black text-slate-400">
-                Regra
+
+            <div className="rounded-2xl border border-violet-500/30 bg-violet-950/20 p-3 text-center">
+              <p className="text-xs font-black uppercase tracking-wide text-violet-300">
+                Meta
               </p>
-              <p className="text-xs font-black text-amber-200">
-                2 de 3 conquista
+              <p className="mt-1 text-sm font-black text-violet-100">
+                {BADGE_CHALLENGE_PASSING_SCORE} acertos conquista
               </p>
             </div>
           </div>
