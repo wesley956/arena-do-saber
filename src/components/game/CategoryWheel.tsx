@@ -76,10 +76,25 @@ export function CategoryWheel({
     };
   }, []);
 
+  const finalCategory = finalIndex >= 0 ? categories[finalIndex] : null;
+
   return (
     <div className="flex flex-col items-center gap-4">
+      <div className="w-full rounded-3xl border border-violet-500/30 bg-violet-950/20 p-3 text-center shadow-lg shadow-violet-950/20">
+        <p className="text-xs font-black uppercase tracking-wide text-violet-300">
+          Roleta da Arena
+        </p>
+        <p className="mt-1 text-sm text-slate-300">
+          {spinning
+            ? "A categoria está sendo escolhida..."
+            : finalCategory
+              ? "Categoria definida. Prepare sua resposta!"
+              : "Gire para descobrir qual matéria entra na disputa."}
+        </p>
+      </div>
+
       {/* Wheel grid */}
-      <div className="grid grid-cols-3 gap-2 w-full">
+      <div className="grid w-full grid-cols-3 gap-2">
         {categories.map((cat, idx) => {
           const isHighlighted = highlightedIndex === idx;
           const isFinal = finalIndex === idx;
@@ -87,17 +102,19 @@ export function CategoryWheel({
           return (
             <div
               key={cat.id}
-              className={`relative flex flex-col items-center justify-center p-3 rounded-xl border-2 transition-all duration-100 ${
+              className={`relative flex min-h-[82px] flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all duration-150 ${
                 isFinal
-                  ? `${cat.bgClass} border-white/40 shadow-lg scale-105`
+                  ? `${cat.bgClass} scale-105 border-white/60 shadow-xl shadow-violet-950/40 ring-2 ring-amber-300/40`
                   : isHighlighted
-                  ? "bg-slate-700 border-violet-400 scale-[1.02]"
-                  : "bg-slate-800/60 border-slate-700"
+                    ? "scale-[1.03] border-violet-300 bg-violet-900/60 shadow-lg shadow-violet-950/30"
+                    : "border-slate-700 bg-slate-800/60"
               }`}
             >
-              <span className="text-2xl mb-1">{cat.icon}</span>
+              <span className={isHighlighted || isFinal ? "mb-1 text-3xl" : "mb-1 text-2xl"}>
+                {cat.icon}
+              </span>
               <span
-                className={`text-xs font-bold text-center leading-tight ${
+                className={`text-center text-xs font-black leading-tight ${
                   isFinal ? "text-white" : "text-slate-300"
                 }`}
               >
@@ -105,7 +122,7 @@ export function CategoryWheel({
               </span>
 
               {isFinal && (
-                <span className="absolute -top-1.5 -right-1.5 text-xs bg-amber-400 text-slate-900 rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                <span className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-amber-300 text-xs font-black text-slate-950 shadow-lg shadow-amber-950/40">
                   ★
                 </span>
               )}
@@ -115,11 +132,16 @@ export function CategoryWheel({
       </div>
 
       {/* Result label */}
-      {finalIndex >= 0 && !spinning && (
-        <div className="text-center">
-          <p className="text-xs text-slate-400 mb-1">Categoria sorteada</p>
-          <p className="font-bold text-white">
-            {categories[finalIndex]?.icon} {categories[finalIndex]?.name}
+      {finalCategory && !spinning && (
+        <div className="w-full rounded-3xl border border-amber-400/40 bg-amber-950/25 p-4 text-center shadow-lg shadow-amber-950/20">
+          <p className="text-xs font-black uppercase tracking-wide text-amber-300">
+            Categoria sorteada
+          </p>
+          <p className="mt-1 text-xl font-black text-white">
+            {finalCategory.icon} {finalCategory.name}
+          </p>
+          <p className="mt-1 text-xs text-slate-300">
+            Valendo progresso de insígnia. Boa sorte!
           </p>
         </div>
       )}
@@ -130,9 +152,9 @@ export function CategoryWheel({
         fullWidth
         size="lg"
         variant="primary"
-        className={spinning ? "animate-pulse" : ""}
+        className={spinning ? "animate-pulse shadow-lg shadow-violet-950/40" : "shadow-lg shadow-violet-950/40"}
       >
-        {spinning ? "⟳ Girando..." : "🎲 Girar Roleta"}
+        {spinning ? "⟳ Roleta girando..." : finalCategory ? "🎲 Girar novamente" : "🎲 Girar Roleta"}
       </Button>
     </div>
   );

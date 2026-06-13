@@ -86,6 +86,7 @@ export function ClassicGamePage({
   );
   const [localProgress, setLocalProgress] = useState<PlayerProgress>(progress);
   const [totalXPGained, setTotalXPGained] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
   const [showBotTurnNotice, setShowBotTurnNotice] = useState(false);
   const [botThinking, setBotThinking] = useState(false);
   // FIX: estado para guardar o XP real da última resposta
@@ -103,6 +104,7 @@ export function ClassicGamePage({
     ? getQuestionById(match.currentQuestionId)
     : null;
   const playerBadgeCount = match.playerEmblems.length;
+  const badgeGoalCount = categories.length;
   const allPlayerBadgesEarned =
     categories.length > 0 &&
     categories.every((category) => match.playerEmblems.includes(category.id));
@@ -521,6 +523,7 @@ if (!match.lastAnswerCorrect) {
   }
 
   function handleFinishedMatchRestart() {
+    setHasStarted(true);
     setMatch(initClassicMatch(world));
     setTotalXPGained(0);
     setShowBotTurnNotice(false);
@@ -535,6 +538,103 @@ if (!match.lastAnswerCorrect) {
   // -------------------------------------------------------
   // RENDER
   // -------------------------------------------------------
+
+  if (!hasStarted) {
+    return (
+      <AppShell
+        header={
+          <Header
+            progress={localProgress}
+            title="Partida Clássica"
+            world={world}
+            onBack={onBack}
+          />
+        }
+      >
+        <Card className="overflow-hidden p-0" glow>
+          <div className="border-b border-violet-500/20 bg-violet-950/30 p-5 text-center">
+            <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-3xl border border-violet-400/30 bg-violet-500/15 text-5xl shadow-xl shadow-violet-950/30">
+              🎲
+            </div>
+            <p className="text-xs font-black uppercase tracking-wide text-violet-300">
+              Modo principal
+            </p>
+            <h1 className="mt-1 text-2xl font-black text-white">
+              Partida Clássica
+            </h1>
+            <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-slate-300">
+              Gire a roleta, responda perguntas e conquiste todas as Insígnias de Sabedoria antes do {getBotName()}.
+            </p>
+          </div>
+
+          <div className="space-y-4 p-5">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-violet-500/30 bg-violet-950/20 p-3 text-center">
+                <div className="text-2xl">🏅</div>
+                <div className="mt-1 text-2xl font-black text-violet-200">
+                  {badgeGoalCount}
+                </div>
+                <div className="text-xs font-bold text-slate-400">
+                  insígnias
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-red-500/30 bg-red-950/20 p-3 text-center">
+                <div className="text-2xl">{getBotAvatar()}</div>
+                <div className="mt-1 text-sm font-black text-red-200">
+                  {getBotName()}
+                </div>
+                <div className="text-xs font-bold text-slate-400">
+                  rival local
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-700 bg-slate-900/70 p-4">
+              <p className="mb-3 text-sm font-black text-white">
+                Como vencer
+              </p>
+
+              <div className="space-y-3 text-sm text-slate-300">
+                <div className="flex gap-3">
+                  <span className="shrink-0">🎲</span>
+                  <p>Gire a roleta para sortear uma matéria.</p>
+                </div>
+                <div className="flex gap-3">
+                  <span className="shrink-0">✅</span>
+                  <p>Acertos acumulam progresso na categoria.</p>
+                </div>
+                <div className="flex gap-3">
+                  <span className="shrink-0">⚔️</span>
+                  <p>Com 3 acertos, você libera o Desafio da Insígnia.</p>
+                </div>
+                <div className="flex gap-3">
+                  <span className="shrink-0">🏆</span>
+                  <p>Acerte 2 de 3 no desafio para conquistar a insígnia.</p>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setHasStarted(true)}
+              className="w-full rounded-2xl bg-violet-500 px-4 py-4 text-base font-black text-white shadow-xl shadow-violet-950/40 transition hover:bg-violet-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-200"
+            >
+              Começar Partida →
+            </button>
+
+            <button
+              type="button"
+              onClick={onBack}
+              className="w-full rounded-2xl border border-slate-700 bg-slate-900/70 px-4 py-3 text-sm font-black text-slate-200 transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
+            >
+              ← Voltar
+            </button>
+          </div>
+        </Card>
+      </AppShell>
+    );
+  }
 
   if (match.status === "finished") {
     const playerWon = match.winner === "player";
@@ -842,9 +942,18 @@ if (!match.lastAnswerCorrect) {
       {/* IDLE: Roleta */}
       {match.status === "idle" && (
         <Card className="p-4">
-          <p className="text-sm font-bold text-white mb-3 text-center">
-            🎲 Gire a roleta para escolher a categoria!
-          </p>
+          <div className="mb-4 text-center">
+            <p className="text-xs font-black uppercase tracking-wide text-violet-300">
+              Sua vez de jogar
+            </p>
+            <h2 className="mt-1 text-xl font-black text-white">
+              Gire a roleta e encare a categoria
+            </h2>
+            <p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-slate-400">
+              Cada acerto aproxima você de uma insígnia. Se errar, o {getBotName()} ganha a chance de jogar.
+            </p>
+          </div>
+
           <CategoryWheel
             categories={categories}
             onSpin={handleSpin}
