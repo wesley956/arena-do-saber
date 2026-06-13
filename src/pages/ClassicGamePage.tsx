@@ -6,6 +6,7 @@ import { Header } from "../components/layout/Header";
 import { CategoryWheel } from "../components/game/CategoryWheel";
 import { QuestionCard } from "../components/game/QuestionCard";
 import { QuestionResult } from "../components/game/QuestionResult";
+import { SessionSummary } from "../components/game/SessionSummary";
 import { EmblemGrid } from "../components/game/EmblemGrid";
 import { ProgressBar } from "../components/game/ProgressBar";
 import { Card } from "../components/ui/Card";
@@ -84,7 +85,7 @@ export function ClassicGamePage({
     initClassicMatch(world)
   );
   const [localProgress, setLocalProgress] = useState<PlayerProgress>(progress);
-  const [_totalXPGained, setTotalXPGained] = useState(0);
+  const [totalXPGained, setTotalXPGained] = useState(0);
   const [showBotTurnNotice, setShowBotTurnNotice] = useState(false);
   const [botThinking, setBotThinking] = useState(false);
   // FIX: estado para guardar o XP real da última resposta
@@ -123,9 +124,6 @@ export function ClassicGamePage({
         const newTotal = prev + xpGained;
         onProgressUpdate(updatedProgress);
         setMatch(finishedMatch);
-        setTimeout(() => {
-          onGameEnd(finishedMatch, newTotal);
-        }, 800);
         return newTotal;
       });
     },
@@ -518,34 +516,104 @@ if (!match.lastAnswerCorrect) {
     onProgressUpdate,
   ]);
 
+  function handleFinishedMatchExit() {
+    onGameEnd(match, totalXPGained);
+  }
+
+  function handleFinishedMatchRestart() {
+    setMatch(initClassicMatch(world));
+    setTotalXPGained(0);
+    setShowBotTurnNotice(false);
+    setBotThinking(false);
+    setLastXP(0);
+    setLastBadgeMessage(null);
+    setBadgeChallenge(null);
+    setBadgeChallengeSummary(null);
+    setPendingBadgeChallengeCategoryId(null);
+  }
+
   // -------------------------------------------------------
   // RENDER
   // -------------------------------------------------------
 
   if (match.status === "finished") {
+    const playerWon = match.winner === "player";
+    const draw = match.winner === "draw";
+    const playerScore = match.playerEmblems.length;
+    const botScore = match.botEmblems.length;
+
     return (
       <AppShell
         header={
           <Header progress={localProgress} title="Partida Clássica" world={world} />
         }
       >
-        <div className="text-center py-12">
-          <div className="text-6xl mb-4 animate-bounce">
-            {match.winner === "player"
-              ? "🏆"
-              : match.winner === "draw"
-              ? "🤝"
-              : "😔"}
+        <SessionSummary
+          icon={playerWon ? "🏆" : draw ? "🤝" : "🥈"}
+          title={
+            playerWon
+              ? "Você dominou a Arena!"
+              : draw
+                ? "Partida empatada!"
+                : `${getBotName()} venceu a partida`
+          }
+          message={
+            playerWon
+              ? "Excelente! Você conquistou as Insígnias de Sabedoria antes do Rival Bot."
+              : draw
+                ? "A disputa ficou equilibrada. Mais uma partida pode decidir o domínio."
+                : "O Rival Bot levou essa, mas seu progresso e aprendizado continuam salvos."
+          }
+          metrics={[
+            {
+              icon: "🧑‍🎓",
+              label: "Suas insígnias",
+              value: playerScore,
+              tone: playerWon ? "success" : draw ? "info" : "neutral",
+            },
+            {
+              icon: getBotAvatar(),
+              label: `${getBotName()}`,
+              value: botScore,
+              tone: playerWon ? "neutral" : draw ? "info" : "danger",
+            },
+            {
+              icon: "⚡",
+              label: "XP da partida",
+              value: `+${totalXPGained}`,
+              tone: "warning",
+            },
+            {
+              icon: "🎲",
+              label: "Rodadas",
+              value: `${match.round}/${match.maxRounds}`,
+              tone: "info",
+            },
+          ]}
+          tip={
+            playerWon
+              ? "Jogue novamente em outro mundo ou revise os erros para manter a sequência."
+              : "Tente novamente e foque nas categorias em que faltam insígnias."
+          }
+        >
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={handleFinishedMatchRestart}
+              className="rounded-2xl border border-violet-400/40 bg-violet-500/15 px-4 py-3 text-sm font-black text-violet-100 transition hover:bg-violet-500/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300"
+            >
+              🔄 Jogar de novo
+            </button>
+
+            <button
+              type="button"
+              onClick={handleFinishedMatchExit}
+              className="rounded-2xl border border-slate-700 bg-slate-900/70 px-4 py-3 text-sm font-black text-slate-100 transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300"
+            >
+              ← Voltar à Home
+            </button>
           </div>
-          <p className="text-white font-black text-xl mb-2">
-          {match.winner === "player"
-            ? "Você conquistou todas as Insígnias de Sabedoria!"
-            : match.winner === "draw"
-              ? "Partida encerrada em empate."
-              : "Partida encerrada."}
-        </p>
-        <p className="text-slate-400 text-sm">Finalizando partida...</p>
-        </div>
+        </SessionSummary>
       </AppShell>
     );
   }
