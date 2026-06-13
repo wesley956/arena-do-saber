@@ -6,6 +6,7 @@ import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { QuestionCard } from "../components/game/QuestionCard";
 import { QuestionResult } from "../components/game/QuestionResult";
+import { SessionSummary } from "../components/game/SessionSummary";
 import { getCategoriesByWorld, getCategoryById } from "../data/categories";
 import { getQuestionById } from "../data/questions";
 import { getNextQuestionForCategory } from "../lib/questionSelector";
@@ -42,6 +43,7 @@ export function SoloTrainingPage({
   const [localProgress, setLocalProgress] = useState<PlayerProgress>(progress);
   const [lastCorrect, setLastCorrect] = useState(false);
   const [lastXP, setLastXP] = useState(0);
+  const [sessionXP, setSessionXP] = useState(0);
 
   // Se veio do Mapa de Estudos com categoria pré-selecionada, auto-inicia
   useEffect(() => {
@@ -69,6 +71,7 @@ export function SoloTrainingPage({
     if (!question) {
       return;
     }
+    setSessionXP(0);
     setSession({
       world,
       categoryId,
@@ -89,6 +92,7 @@ export function SoloTrainingPage({
     const xpGained = isCorrect ? getXPForAnswer(currentQuestion.difficulty) : 0;
     setLastXP(xpGained);
     setLastCorrect(isCorrect);
+    setSessionXP((value) => value + xpGained);
 
     const newProgress = applyXPToProgress(
       localProgress,
@@ -152,6 +156,7 @@ export function SoloTrainingPage({
   }
 
   function handleRestart() {
+    setSessionXP(0);
     setSession(null);
     setPhase("select");
   }
@@ -220,44 +225,55 @@ export function SoloTrainingPage({
           />
         }
       >
-        <Card className="p-6 text-center mb-4" glow>
-          <div className="text-5xl mb-3">📚</div>
-          <h2 className="text-xl font-black text-white mb-1">Treino Concluído!</h2>
-          <p className="text-slate-400 text-sm mb-4">
-            Ótimo trabalho! Continue praticando para evoluir.
-          </p>
-
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="bg-slate-700/40 rounded-xl p-3">
-              <div className="text-2xl font-black text-emerald-400">
-                {session.correct}
-              </div>
-              <div className="text-xs text-slate-400">Acertos</div>
-            </div>
-            <div className="bg-slate-700/40 rounded-xl p-3">
-              <div className="text-2xl font-black text-red-400">
-                {session.wrong}
-              </div>
-              <div className="text-xs text-slate-400">Erros</div>
-            </div>
-          </div>
-
-          {total > 0 && (
-            <p className="text-sm text-slate-300">
-              Taxa de acerto:{" "}
-              <strong className="text-violet-300">{accuracy}%</strong>
-            </p>
-          )}
-        </Card>
-
-        <div className="flex flex-col gap-3">
+        <SessionSummary
+          icon={accuracy >= 80 ? "🏆" : accuracy >= 60 ? "📚" : "💪"}
+          title="Treino concluído!"
+          message={
+            accuracy >= 80
+              ? "Excelente sessão. Você dominou bem essa matéria."
+              : accuracy >= 60
+                ? "Boa evolução. Mais uma rodada pode consolidar o conteúdo."
+                : "O treino revelou pontos para revisar. Continue praticando."
+          }
+          metrics={[
+            {
+              icon: "✅",
+              label: "Acertos",
+              value: session.correct,
+              tone: "success",
+            },
+            {
+              icon: "❌",
+              label: "Erros",
+              value: session.wrong,
+              tone: "danger",
+            },
+            {
+              icon: "🎯",
+              label: "Precisão",
+              value: `${accuracy}%`,
+              tone: accuracy >= 60 ? "success" : "warning",
+            },
+            {
+              icon: "⚡",
+              label: "XP do treino",
+              value: `+${sessionXP}`,
+              tone: "warning",
+            },
+          ]}
+          tip={
+            currentCategory
+              ? `Faça mais uma rodada de ${currentCategory.name} ou revise os erros salvos.`
+              : "Faça mais uma rodada ou revise os erros salvos."
+          }
+        >
           <Button onClick={handleRestart} fullWidth size="lg" variant="primary">
             🔄 Estudar outra matéria
           </Button>
           <Button onClick={onBack} fullWidth size="md" variant="ghost">
             ← Voltar
           </Button>
-        </div>
+        </SessionSummary>
       </AppShell>
     );
   }

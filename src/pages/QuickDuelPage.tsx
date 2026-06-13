@@ -6,6 +6,7 @@ import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { QuestionCard } from "../components/game/QuestionCard";
 import { QuestionResult } from "../components/game/QuestionResult";
+import { SessionSummary } from "../components/game/SessionSummary";
 import { getRandomQuestionsFromWorld } from "../lib/questionSelector";
 import { botAnswersCorrectly, getBotAvatar, getBotName } from "../lib/bot";
 import { applyXPToProgress } from "../lib/gameEngine";
@@ -33,6 +34,7 @@ export function QuickDuelPage({
   const [botScore, setBotScore] = useState(0);
   const [lastCorrect, setLastCorrect] = useState(false);
   const [lastXP, setLastXP] = useState(0);
+  const [duelXP, setDuelXP] = useState(0);
   const [localProgress, setLocalProgress] = useState(progress);
   // Refs to always read the latest scores inside finishDuel (avoids stale closure)
   const playerScoreRef = useRef(0);
@@ -46,6 +48,7 @@ export function QuickDuelPage({
     setIndex(0);
     setPlayerScore(0);
     setBotScore(0);
+    setDuelXP(0);
     playerScoreRef.current = 0;
     botScoreRef.current = 0;
     setPhase(selected.length > 0 ? "question" : "finished");
@@ -67,6 +70,7 @@ export function QuickDuelPage({
 
     setLastCorrect(isCorrect);
     setLastXP(xpGained);
+    setDuelXP((value) => value + xpGained);
     setLocalProgress(nextProgress);
     onProgressUpdate(nextProgress);
     if (isCorrect) {
@@ -94,13 +98,18 @@ export function QuickDuelPage({
     // Use refs to read the definitive scores (avoids stale closure from async setState)
     const finalPlayerScore = playerScoreRef.current;
     const finalBotScore = botScoreRef.current;
+    const winBonus = finalPlayerScore > finalBotScore ? getXPForEvent("duel_win") : 0;
+
+    if (winBonus > 0) {
+      setDuelXP((value) => value + winBonus);
+    }
+
     setLocalProgress((current) => {
-      if (finalPlayerScore > finalBotScore) {
-        const bonus = getXPForEvent("duel_win");
+      if (winBonus > 0) {
         const next = {
           ...current,
-          xp: current.xp + bonus,
-          level: calcLevel(current.xp + bonus),
+          xp: current.xp + winBonus,
+          level: calcLevel(current.xp + winBonus),
         };
         onProgressUpdate(next);
         return next;
@@ -166,22 +175,53 @@ export function QuickDuelPage({
 
   const won = playerScore > botScore;
   const drew = playerScore === botScore;
+  const duelAccuracy =
+    questions.length > 0 ? Math.round((playerScore / questions.length) * 100) : 0;
 
   return (
     <AppShell header={<Header progress={localProgress} title="Duelo Rápido" world={world} onBack={onBack} />}>
-      <Card className="p-6 text-center" glow>
-        <div className="mb-3 text-6xl">{won ? "🏆" : drew ? "🤝" : "🥈"}</div>
-        <h2 className="mb-2 text-2xl font-black text-white">
-          {won ? "Você venceu!" : drew ? "Empate!" : `${getBotName()} venceu`}
-        </h2>
-        <p className="mb-5 text-sm text-slate-400">
-          Placar final: Você {playerScore} x {botScore} {getBotName()}
-        </p>
-        {won && (
-          <p className="mb-4 rounded-xl border border-amber-700 bg-amber-900/30 p-3 text-sm font-bold text-amber-300">
-            ⚡ Bônus de vitória: +{getXPForEvent("duel_win")} XP
-          </p>
-        )}
+      <SessionSummary
+        icon={won ? "🏆" : drew ? "🤝" : "🥈"}
+        title={won ? "Você venceu!" : drew ? "Empate!" : `${getBotName()} venceu`}
+        message={
+          won
+            ? "Vitória no duelo! Você respondeu melhor que o rival e ganhou bônus."
+            : drew
+              ? "Duelo equilibrado. Mais uma rodada pode virar o placar."
+              : "O rival levou essa, mas os erros viraram treino para a próxima."
+        }
+        metrics={[
+          {
+            icon: "🧑‍🎓",
+            label: "Você",
+            value: playerScore,
+            tone: won ? "success" : drew ? "info" : "neutral",
+          },
+          {
+            icon: getBotAvatar(),
+            label: getBotName(),
+            value: botScore,
+            tone: won ? "neutral" : drew ? "info" : "danger",
+          },
+          {
+            icon: "🎯",
+            label: "Precisão",
+            value: `${duelAccuracy}%`,
+            tone: duelAccuracy >= 60 ? "success" : "warning",
+          },
+          {
+            icon: "⚡",
+            label: "XP do duelo",
+            value: `+${duelXP}`,
+            tone: won ? "warning" : "neutral",
+          },
+        ]}
+        tip={
+          won
+            ? "Tente manter a sequência no próximo duelo."
+            : "Jogue de novo ou revise os erros salvos para virar esse placar."
+        }
+      >
         <div className="grid grid-cols-2 gap-3">
           <Button onClick={startDuel} fullWidth variant="secondary">
             Jogar de novo
@@ -190,7 +230,7 @@ export function QuickDuelPage({
             Voltar
           </Button>
         </div>
-      </Card>
+      </SessionSummary>
     </AppShell>
   );
 }
