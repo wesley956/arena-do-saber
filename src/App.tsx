@@ -281,7 +281,21 @@ export default function App() {
   }
 
   if (screen === "emblems") {
-    return <EmblemsPage progress={progress} onBack={goHome} />;
+    return (
+      <EmblemsPage
+        progress={progress}
+        onBack={goHome}
+        onStartClassic={(world) => {
+          setPreferredMode("classic");
+          if (world) {
+            setSelectedWorld(world);
+            setScreen("classic");
+          } else {
+            setScreen("world");
+          }
+        }}
+      />
+    );
   }
 
   if (screen === "feedback") {
