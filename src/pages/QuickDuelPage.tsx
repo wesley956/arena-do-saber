@@ -34,6 +34,7 @@ export function QuickDuelPage({
   const [botScore, setBotScore] = useState(0);
   const [lastCorrect, setLastCorrect] = useState(false);
   const [lastXP, setLastXP] = useState(0);
+  const [lastBotCorrect, setLastBotCorrect] = useState(false);
   const [duelXP, setDuelXP] = useState(0);
   const [localProgress, setLocalProgress] = useState(progress);
   // Refs to always read the latest scores inside finishDuel (avoids stale closure)
@@ -69,6 +70,7 @@ export function QuickDuelPage({
     );
 
     setLastCorrect(isCorrect);
+    setLastBotCorrect(botCorrect);
     setLastXP(xpGained);
     setDuelXP((value) => value + xpGained);
     setLocalProgress(nextProgress);
@@ -168,6 +170,11 @@ export function QuickDuelPage({
           xpGained={lastXP}
           onContinue={continueDuel}
           savedForReview={!lastCorrect}
+          botResult={{
+            name: getBotName(),
+            avatar: getBotAvatar(),
+            correct: lastBotCorrect,
+          }}
         />
       </AppShell>
     );

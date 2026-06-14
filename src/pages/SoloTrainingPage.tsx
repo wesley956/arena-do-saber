@@ -29,6 +29,8 @@ const SOLO_QUESTION_CYCLE_OPTIONS = {
   minFreshRatio: 0.0001,
 };
 
+const DEFAULT_SESSION_LIMIT = 10;
+
 export function SoloTrainingPage({
   world,
   progress,
@@ -44,6 +46,7 @@ export function SoloTrainingPage({
   const [lastCorrect, setLastCorrect] = useState(false);
   const [lastXP, setLastXP] = useState(0);
   const [sessionXP, setSessionXP] = useState(0);
+  const [sessionLimit, setSessionLimit] = useState(DEFAULT_SESSION_LIMIT);
 
   // Se veio do Mapa de Estudos com categoria pré-selecionada, auto-inicia
   useEffect(() => {
@@ -72,6 +75,7 @@ export function SoloTrainingPage({
       return;
     }
     setSessionXP(0);
+    setSessionLimit(DEFAULT_SESSION_LIMIT);
     setSession({
       world,
       categoryId,
@@ -122,7 +126,7 @@ export function SoloTrainingPage({
     if (!session) return;
 
     const total = session.correct + session.wrong;
-    if (total >= 10) {
+    if (total >= sessionLimit) {
       setPhase("done");
       return;
     }
@@ -149,6 +153,43 @@ export function SoloTrainingPage({
             ...prev,
             currentQuestionId: nextQuestion.id,
             askedQuestionIds: addSoloTrainingSeenQuestion(session.categoryId, nextQuestion.id),
+          }
+        : prev
+    );
+    setPhase("question");
+  }
+
+
+  function handleContinueTraining() {
+    if (!session) return;
+
+    const nextLimit = sessionLimit + DEFAULT_SESSION_LIMIT;
+
+    const seenQuestionIds = mergeSoloTrainingSeenQuestionIds(
+      session.categoryId,
+      session.askedQuestionIds
+    );
+
+    const nextQuestion = getNextQuestionForCategory(
+      session.categoryId,
+      seenQuestionIds,
+      SOLO_QUESTION_CYCLE_OPTIONS
+    );
+
+    if (!nextQuestion) {
+      return;
+    }
+
+    setSessionLimit(nextLimit);
+    setSession((prev) =>
+      prev
+        ? {
+            ...prev,
+            currentQuestionId: nextQuestion.id,
+            askedQuestionIds: addSoloTrainingSeenQuestion(
+              session.categoryId,
+              nextQuestion.id
+            ),
           }
         : prev
     );
@@ -267,7 +308,10 @@ export function SoloTrainingPage({
               : "Faça mais uma rodada ou revise os erros salvos."
           }
         >
-          <Button onClick={handleRestart} fullWidth size="lg" variant="primary">
+          <Button onClick={handleContinueTraining} fullWidth size="lg" variant="secondary">
+            📖 Continuar treinando (+10)
+          </Button>
+          <Button onClick={handleRestart} fullWidth size="md" variant="primary">
             🔄 Estudar outra matéria
           </Button>
           <Button onClick={onBack} fullWidth size="md" variant="ghost">
@@ -298,7 +342,7 @@ export function SoloTrainingPage({
             {currentCategory?.icon} {currentCategory?.name}
           </span>
           <span>
-            Questão {total + 1}/10
+            Questão {total + 1}/{sessionLimit}
           </span>
         </div>
 

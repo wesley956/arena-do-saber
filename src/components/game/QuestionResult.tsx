@@ -11,6 +11,11 @@ interface QuestionResultProps {
   emblemGained?: string;
   onContinue: () => void;
   savedForReview?: boolean;
+  botResult?: {
+    name: string;
+    avatar: string;
+    correct: boolean;
+  };
 }
 
 export function QuestionResult({
@@ -20,6 +25,7 @@ export function QuestionResult({
   emblemGained,
   onContinue,
   savedForReview = false,
+  botResult,
 }: QuestionResultProps) {
   const correctAnswer = question.alternatives.find(
     (a) => a.id === question.correctAlternativeId
@@ -102,6 +108,22 @@ export function QuestionResult({
               🏆 Nova conquista desbloqueada
             </div>
           )}
+
+          {botResult && (
+            <div
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-black ${
+                botResult.correct
+                  ? "border-red-600/70 bg-red-900/60 text-red-200"
+                  : "border-emerald-600/50 bg-emerald-900/40 text-emerald-200"
+              }`}
+            >
+              <span aria-hidden="true">{botResult.avatar}</span>
+              <span>
+                {botResult.name} {botResult.correct ? "acertou também" : "errou essa"}
+              </span>
+            </div>
+          )}
+
         </div>
       </div>
 

@@ -9,6 +9,7 @@ import { xpProgressInLevel, xpToNextLevel } from "../lib/xp";
 import { getAccuracyRate } from "../lib/stats";
 import { ALL_CATEGORIES } from "../data/categories";
 import { APP_VERSION } from "../lib/appVersion";
+import { getDailyMission } from "../lib/dailyMission";
 
 interface HomePageProps {
   progress: PlayerProgress;
@@ -170,6 +171,7 @@ export function HomePage({
   const playerName = playerProfile?.nickname?.trim() || "Estudante";
   const journeyLabel = getJourneyLabel(playerProfile);
   const recommendedPath = getRecommendedPath(playerProfile);
+  const dailyMission = getDailyMission(progress);
 
   function openFromMenu(action: () => void) {
     setMenuOpen(false);
@@ -276,6 +278,39 @@ export function HomePage({
           </div>
         </Card>
 
+        <Card className={`p-4 ${dailyMission.tone}`}>
+          <div className="flex items-start gap-3">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-950/70 text-2xl">
+              {dailyMission.icon}
+            </div>
+
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-black uppercase tracking-wide text-slate-400">
+                Missão de hoje
+              </p>
+              <h2 className="mt-1 text-lg font-black leading-tight text-white">
+                {dailyMission.title}
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-slate-300">
+                {dailyMission.description}
+              </p>
+
+              <Button
+                type="button"
+                size="sm"
+                className="mt-4 w-full sm:w-auto"
+                onClick={() => {
+                  if (dailyMission.action === "classic") onPlay();
+                  if (dailyMission.action === "solo") onSolo();
+                  if (dailyMission.action === "review") onReview();
+                  if (dailyMission.action === "duel") onDuel();
+                }}
+              >
+                {dailyMission.buttonLabel}
+              </Button>
+            </div>
+          </div>
+        </Card>
 
         <section className="grid grid-cols-2 gap-3">
           <Card className="flex min-h-[180px] flex-col p-4" glow>
