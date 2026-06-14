@@ -15,12 +15,12 @@ export function AppShell({ children, header }: AppShellProps) {
       </div>
 
       {header && (
-        <div className="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/60">
+        <div className="safe-top sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/60">
           {header}
         </div>
       )}
 
-      <main className="flex-1 relative z-10 w-full max-w-lg mx-auto px-4 py-4 pb-8">
+      <main className="safe-bottom page-enter flex-1 relative z-10 w-full max-w-lg mx-auto px-4 py-4 pb-8">
         {children}
       </main>
     </div>

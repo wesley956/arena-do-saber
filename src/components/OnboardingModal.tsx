@@ -93,6 +93,7 @@ export function OnboardingModal() {
       role="dialog"
       aria-modal="true"
       aria-labelledby="onboarding-title"
+      aria-describedby="onboarding-description"
     >
       <Card className="w-full max-w-2xl overflow-hidden border-violet-500/40 bg-slate-950 p-0 shadow-2xl shadow-violet-950/50">
         <div className="relative p-5 sm:p-6">
@@ -127,7 +128,7 @@ export function OnboardingModal() {
                 </h2>
               </div>
 
-              <p className="mt-3 text-sm leading-relaxed text-slate-300 sm:text-base">
+              <p id="onboarding-description" className="mt-3 text-sm leading-relaxed text-slate-300 sm:text-base">
                 Um quiz educacional onde você estuda, compete, conquista
                 insígnias e segue uma jornada de aprendizado feita para seu
                 objetivo.
@@ -144,7 +145,7 @@ export function OnboardingModal() {
             </button>
           </div>
 
-          <div className="relative grid gap-3 sm:grid-cols-2">
+          <div className="relative grid gap-3 sm:grid-cols-2" aria-live="polite" aria-atomic="true">
             {ITEMS.map((item) => (
               <div
                 key={item.title}

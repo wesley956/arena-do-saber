@@ -44,7 +44,7 @@ const STATUS_CONFIG: Record<
   emblemReady: {
     label: "Emblema pronto!",
     badge: "bg-amber-900/60 text-amber-300 border-amber-600",
-    dot: "bg-amber-400 animate-pulse",
+    dot: "bg-amber-400 motion-safe:animate-pulse",
   },
   conquered: {
     label: "Conquistado 🏅",

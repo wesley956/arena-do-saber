@@ -863,7 +863,7 @@ if (!match.lastAnswerCorrect) {
                 {[0, 1, 2].map((i) => (
                   <div
                     key={i}
-                    className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce"
+                    className="w-1.5 h-1.5 bg-amber-400 rounded-full motion-safe:animate-bounce"
                     style={{ animationDelay: `${i * 0.15}s` }}
                   />
                 ))}
@@ -880,7 +880,7 @@ if (!match.lastAnswerCorrect) {
             (allPlayerBadgesEarned
               ? "border-violet-400/70 bg-violet-950/40 shadow-violet-950/30"
               : lastBadgeMessage?.startsWith("Desafio da Insígnia liberado")
-                ? "border-amber-400/60 bg-amber-950/30 shadow-amber-950/20 animate-pulse"
+                ? "border-amber-400/60 bg-amber-950/30 shadow-amber-950/20 motion-safe:animate-pulse"
                 : "border-emerald-500/60 bg-emerald-950/30 shadow-emerald-950/20")
           }
         >

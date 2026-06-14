@@ -152,7 +152,7 @@ export function CategoryWheel({
         fullWidth
         size="lg"
         variant="primary"
-        className={spinning ? "animate-pulse shadow-lg shadow-violet-950/40" : "shadow-lg shadow-violet-950/40"}
+        className={spinning ? "motion-safe:animate-pulse shadow-lg shadow-violet-950/40" : "shadow-lg shadow-violet-950/40"}
       >
         {spinning ? "⟳ Roleta girando..." : finalCategory ? "🎲 Girar novamente" : "🎲 Girar Roleta"}
       </Button>

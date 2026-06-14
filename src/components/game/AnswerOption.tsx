@@ -45,7 +45,7 @@ export function AnswerOption({
     labelClass =
       "bg-emerald-400 border-emerald-200 text-emerald-950 shadow-sm shadow-emerald-950/30";
     indicator = (
-      <span className="text-emerald-300 text-xl font-black flex-shrink-0 animate-bounce">
+      <span className="text-emerald-300 text-xl font-black flex-shrink-0 motion-safe:animate-bounce">
         ✓
       </span>
     );
@@ -55,7 +55,7 @@ export function AnswerOption({
     labelClass =
       "bg-red-500 border-red-300 text-white shadow-sm shadow-red-950/30";
     indicator = (
-      <span className="text-red-300 text-xl font-black flex-shrink-0 animate-pulse">
+      <span className="text-red-300 text-xl font-black flex-shrink-0 motion-safe:animate-pulse">
         ✗
       </span>
     );

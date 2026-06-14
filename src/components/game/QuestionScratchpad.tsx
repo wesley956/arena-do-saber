@@ -140,6 +140,7 @@ export function QuestionScratchpad({ questionId, categoryId }: QuestionScratchpa
   if (!isOpen) {
     return (
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
         className={`w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl border transition-all duration-150 text-sm font-semibold
           ${hasContent
@@ -180,6 +181,7 @@ export function QuestionScratchpad({ questionId, categoryId }: QuestionScratchpa
             </span>
           )}
           <button
+            type="button"
             onClick={() => setIsOpen(false)}
             className="text-slate-400 hover:text-slate-300 text-sm px-1 transition-colors"
             aria-label="Fechar caderno"
@@ -196,9 +198,10 @@ export function QuestionScratchpad({ questionId, categoryId }: QuestionScratchpa
             <div className="flex flex-wrap gap-1">
               {(showLogic ? [...MATH_BUTTONS, ...LOGIC_BUTTONS] : MATH_BUTTONS).map((btn) => (
                 <button
+                  type="button"
                   key={btn.label}
                   onClick={() => insertAtCursor(btn.insert)}
-                  className="px-2 py-1 text-xs font-mono rounded-lg bg-slate-700/70 hover:bg-indigo-800/70 border border-slate-600/50 hover:border-indigo-600 text-slate-300 hover:text-white transition-all"
+                  className="min-h-[36px] px-2.5 py-1.5 text-xs font-mono rounded-lg bg-slate-700/70 hover:bg-indigo-800/70 border border-slate-600/50 hover:border-indigo-600 text-slate-300 hover:text-white transition-all"
                 >
                   {btn.label}
                 </button>
@@ -209,9 +212,10 @@ export function QuestionScratchpad({ questionId, categoryId }: QuestionScratchpa
             <div className="flex flex-wrap gap-1">
               {TEXT_BUTTONS.map((btn) => (
                 <button
+                  type="button"
                   key={btn.label}
                   onClick={() => insertAtCursor(btn.insert)}
-                  className="px-2 py-1 text-xs rounded-lg bg-slate-700/70 hover:bg-violet-800/70 border border-slate-600/50 hover:border-violet-600 text-slate-300 hover:text-white transition-all"
+                  className="min-h-[36px] px-2.5 py-1.5 text-xs rounded-lg bg-slate-700/70 hover:bg-violet-800/70 border border-slate-600/50 hover:border-violet-600 text-slate-300 hover:text-white transition-all"
                 >
                   {btn.label}
                 </button>
@@ -240,6 +244,7 @@ export function QuestionScratchpad({ questionId, categoryId }: QuestionScratchpa
             {text.length}/{MAX_CHARS}
           </span>
           <button
+            type="button"
             onClick={handleClear}
             disabled={!hasContent}
             className="text-xs text-slate-400 hover:text-red-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"

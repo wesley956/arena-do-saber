@@ -71,8 +71,8 @@ export function QuestionResult({
         <div
           className={`mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl text-4xl ${
             isCorrect
-              ? "bg-emerald-400/15 animate-bounce"
-              : "bg-red-400/15 animate-pulse"
+              ? "bg-emerald-400/15 motion-safe:animate-bounce"
+              : "bg-red-400/15 motion-safe:animate-pulse"
           }`}
         >
           {resultIcon}
