@@ -447,3 +447,39 @@ html[data-theme="light"] .arena-brand-clean-image {
     drop-shadow(0 0 8px rgba(124, 58, 237, 0.25))
     drop-shadow(0 0 14px rgba(245, 158, 11, 0.18));
 }
+
+/* ============================================================
+   Game feel — result and bot rhythm
+   ============================================================ */
+
+.result-reveal {
+  animation: arena-result-reveal 0.38s ease-out;
+}
+
+.bot-turn-card {
+  animation: arena-bot-turn-in 0.3s ease-out;
+}
+
+@keyframes arena-result-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes arena-bot-turn-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

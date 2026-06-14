@@ -19,7 +19,7 @@ interface QuickDuelPageProps {
   onBack: () => void;
 }
 
-type Phase = "intro" | "question" | "result" | "finished";
+type Phase = "intro" | "question" | "botThinking" | "result" | "finished";
 
 export function QuickDuelPage({
   world,
@@ -83,7 +83,11 @@ export function QuickDuelPage({
       botScoreRef.current += 1;
       setBotScore((value) => value + 1);
     }
-    setPhase("result");
+    setPhase("botThinking");
+
+    window.setTimeout(() => {
+      setPhase("result");
+    }, 1250);
   }
 
   function continueDuel() {
@@ -156,6 +160,36 @@ export function QuickDuelPage({
         </Card>
         <Card className="p-4">
           <QuestionCard question={currentQuestion} onAnswer={handleAnswer} showTimer timerSeconds={30} hideScratchpad />
+        </Card>
+      </AppShell>
+    );
+  }
+
+  if (phase === "botThinking" && currentQuestion) {
+    return (
+      <AppShell header={<Header progress={localProgress} title="Duelo Rápido" world={world} onBack={onBack} />}>
+        <Card className="p-5 text-center border-amber-700/50 bg-amber-900/20">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-amber-400/15 text-4xl motion-safe:animate-pulse">
+            {getBotAvatar()}
+          </div>
+
+          <h2 className="mt-3 text-xl font-black text-amber-100">
+            {getBotName()} está respondendo...
+          </h2>
+
+          <p className="mt-2 text-sm leading-relaxed text-slate-300">
+            Sua resposta já foi registrada. Agora o bot está escolhendo a alternativa dele.
+          </p>
+
+          <div className="mt-4 flex justify-center gap-1" aria-hidden="true">
+            {[0, 1, 2].map((i) => (
+              <span
+                key={i}
+                className="h-2 w-2 rounded-full bg-amber-300 motion-safe:animate-bounce"
+                style={{ animationDelay: `${i * 0.16}s` }}
+              />
+            ))}
+          </div>
         </Card>
       </AppShell>
     );

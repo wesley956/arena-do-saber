@@ -23,6 +23,11 @@ import {
   EMBLEM_THRESHOLD,
 } from "../lib/gameEngine";
 import { getBotAvatar, getBotName } from "../lib/bot";
+
+type BotTurnResult = "correct" | "wrong" | null;
+const BOT_TURN_THINKING_MS = 950;
+const BOT_TURN_ANSWERING_MS = 950;
+const BOT_TURN_RESULT_HOLD_MS = 1350;
 import { getNextQuestionForCategory } from "../lib/questionSelector";
 import { vibrateReward } from "../lib/haptics";
 
@@ -95,6 +100,8 @@ export function ClassicGamePage({
   const [hasStarted, setHasStarted] = useState(false);
   const [showBotTurnNotice, setShowBotTurnNotice] = useState(false);
   const [botThinking, setBotThinking] = useState(false);
+  const [botTurnMessage, setBotTurnMessage] = useState("Pensando na resposta...");
+  const [botTurnResult, setBotTurnResult] = useState<BotTurnResult>(null);
   // FIX: estado para guardar o XP real da última resposta
   const [lastXP, setLastXP] = useState(0);
   const [lastBadgeMessage, setLastBadgeMessage] = useState<string | null>(null);
@@ -487,26 +494,61 @@ setLastBadgeMessage(null);
       return;
     }
 if (!match.lastAnswerCorrect) {
-      // Player errou -> turno do bot
+      // Player errou -> turno do bot com ritmo mais cinematográfico
       setShowBotTurnNotice(true);
       setBotThinking(true);
+      setBotTurnResult(null);
+      setBotTurnMessage("Pensando na resposta...");
       setMatch((prev) => ({ ...prev, status: "botTurn" }));
 
-      setTimeout(() => {
+      window.setTimeout(() => {
+        setBotTurnMessage("Escolhendo uma alternativa...");
+      }, BOT_TURN_THINKING_MS);
+
+      window.setTimeout(() => {
         setBotThinking(false);
+
         // FIX: usar o estado mais atual do match via função de atualização
         setMatch((currentMatch) => {
+          const categoryId = currentMatch.selectedCategoryId;
+          const previousBotProgress = categoryId
+            ? currentMatch.botCategoryProgress[categoryId] ?? 0
+            : 0;
+          const previousBotEmblems = currentMatch.botEmblems.length;
+
           const afterBot = simulateBotTurn(currentMatch);
+
+          const nextBotProgress = categoryId
+            ? afterBot.botCategoryProgress[categoryId] ?? previousBotProgress
+            : previousBotProgress;
+
+          const botCorrect =
+            nextBotProgress > previousBotProgress ||
+            afterBot.botEmblems.length > previousBotEmblems;
+
           const checked = checkVictory(afterBot);
+
+          setBotTurnResult(botCorrect ? "correct" : "wrong");
+          setBotTurnMessage(
+            botCorrect
+              ? `${getBotName()} acertou e avançou na categoria.`
+              : `${getBotName()} errou. Sua vez está voltando!`
+          );
+
           if (checked.status === "finished") {
-            // Agendar fim de partida fora do setState
-            setTimeout(() => handleMatchEnd(checked), 0);
+            window.setTimeout(() => handleMatchEnd(checked), BOT_TURN_RESULT_HOLD_MS);
             return checked;
           }
-          setShowBotTurnNotice(false);
+
+          window.setTimeout(() => {
+            setShowBotTurnNotice(false);
+            setBotTurnResult(null);
+            setBotTurnMessage("Pensando na resposta...");
+          }, BOT_TURN_RESULT_HOLD_MS);
+
           return checked;
         });
-      }, 1200);
+      }, BOT_TURN_THINKING_MS + BOT_TURN_ANSWERING_MS);
     } else {
       // Player acertou -> mantém a vez, gira de novo
       setMatch((prev) => ({
@@ -537,6 +579,8 @@ if (!match.lastAnswerCorrect) {
     setTotalXPGained(0);
     setShowBotTurnNotice(false);
     setBotThinking(false);
+    setBotTurnResult(null);
+    setBotTurnMessage("Pensando na resposta...");
     setLastXP(0);
     setLastBadgeMessage(null);
     setBadgeChallenge(null);
@@ -845,28 +889,64 @@ if (!match.lastAnswerCorrect) {
 
       {/* Bot turn notice */}
       {showBotTurnNotice && (
-        <Card className="p-4 mb-4 border-amber-700/50 bg-amber-900/20">
+        <Card
+          className={
+            "bot-turn-card p-4 mb-4 border " +
+            (botTurnResult === "wrong"
+              ? "border-emerald-500/45 bg-emerald-950/20"
+              : botTurnResult === "correct"
+                ? "border-red-500/45 bg-red-950/20"
+                : "border-amber-700/50 bg-amber-900/20")
+          }
+        >
           <div className="flex items-center gap-3">
-            <span className="text-2xl">{getBotAvatar()}</span>
-            <div>
-              <p className="font-bold text-amber-300 text-sm">
-                {getBotName()} está jogando...
+            <span className="text-3xl motion-safe:animate-pulse">
+              {getBotAvatar()}
+            </span>
+
+            <div className="min-w-0">
+              <p
+                className={
+                  "text-sm font-black " +
+                  (botTurnResult === "wrong"
+                    ? "text-emerald-200"
+                    : botTurnResult === "correct"
+                      ? "text-red-200"
+                      : "text-amber-200")
+                }
+              >
+                {botTurnResult === "wrong"
+                  ? `${getBotName()} errou essa!`
+                  : botTurnResult === "correct"
+                    ? `${getBotName()} acertou a pergunta`
+                    : `${getBotName()} está jogando...`}
               </p>
-              {botThinking && (
-                <p className="text-xs text-amber-400/70 mt-0.5">
-                  Pensando na resposta...
-                </p>
-              )}
+
+              <p className="mt-0.5 text-xs leading-relaxed text-slate-300">
+                {botTurnMessage}
+              </p>
             </div>
-            {botThinking && (
-              <div className="ml-auto flex gap-1">
+
+            {botThinking ? (
+              <div className="ml-auto flex gap-1" aria-hidden="true">
                 {[0, 1, 2].map((i) => (
                   <div
                     key={i}
-                    className="w-1.5 h-1.5 bg-amber-400 rounded-full motion-safe:animate-bounce"
+                    className="h-1.5 w-1.5 rounded-full bg-amber-400 motion-safe:animate-bounce"
                     style={{ animationDelay: `${i * 0.15}s` }}
                   />
                 ))}
+              </div>
+            ) : (
+              <div
+                className={
+                  "ml-auto shrink-0 rounded-full border px-3 py-1 text-xs font-black " +
+                  (botTurnResult === "wrong"
+                    ? "border-emerald-400/50 bg-emerald-500/15 text-emerald-100"
+                    : "border-red-400/50 bg-red-500/15 text-red-100")
+                }
+              >
+                {botTurnResult === "wrong" ? "Sua vez" : "Bot avançou"}
               </div>
             )}
           </div>

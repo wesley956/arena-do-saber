@@ -67,7 +67,7 @@ export function QuestionResult({
   return (
     <div className="flex flex-col gap-4">
       <div
-        className={`rounded-2xl p-5 text-center border-2 overflow-hidden relative ${
+        className={`result-reveal rounded-2xl p-5 text-center border-2 overflow-hidden relative ${
           isCorrect
             ? "bg-emerald-900/45 border-emerald-400 shadow-xl shadow-emerald-950/30"
             : "bg-red-900/45 border-red-400 shadow-xl shadow-red-950/30"
