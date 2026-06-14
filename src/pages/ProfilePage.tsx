@@ -12,6 +12,7 @@ import {
   getAllProfileWorldStats,
   getPlayerAchievements,
   getPlayerProfileSummary,
+  getNextPlayerAchievements,
 } from "../lib/achievements";
 
 interface ProfilePageProps {
@@ -153,6 +154,8 @@ function WorldProgressSection({ worldStats }: { worldStats: ProfileWorldStats })
         </div>
       </div>
 
+      <MiniProgressBar value={(worldStats.conqueredEmblems / 6) * 100} />
+
       <div className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-3 text-sm">
         <div className="rounded-xl bg-slate-900/50 p-3">
           <p className="font-black text-white">{worldStats.answered}</p>
@@ -206,9 +209,13 @@ function AchievementCard({ achievement }: { achievement: PlayerAchievement }) {
           {achievement.unlocked ? "Desbloqueada" : "Bloqueada"}
         </span>
       </div>
-      <p className="mt-3 break-words text-xs font-bold leading-snug opacity-80">
-        {achievement.progressLabel}
-      </p>
+      <div className="mt-3">
+        <div className="flex items-center justify-between gap-2 text-xs font-bold opacity-80">
+          <span className="break-words">{achievement.progressLabel}</span>
+          <span className="shrink-0">{achievement.progressPercent}%</span>
+        </div>
+        <MiniProgressBar value={achievement.progressPercent} />
+      </div>
     </div>
   );
 }
@@ -218,6 +225,7 @@ export function ProfilePage({ progress, onProgressUpdate, onBack }: ProfilePageP
   const worldStats = getAllProfileWorldStats(progress);
   const achievements = getPlayerAchievements(progress);
   const unlockedAchievements = achievements.filter((achievement) => achievement.unlocked).length;
+  const nextAchievements = getNextPlayerAchievements(progress);
   const xpInLevel = xpProgressInLevel(progress.xp);
   const xpToNext = xpToNextLevel(progress.xp);
 
@@ -252,7 +260,7 @@ export function ProfilePage({ progress, onProgressUpdate, onBack }: ProfilePageP
                   Estudante Lv. {progress.level}
                 </h2>
                 <p className="mt-1 break-words leading-snug text-slate-400">
-                  {progress.xp} XP total · {xpToNext} XP para o próximo nível
+                  {progress.xp} XP total · faltam {xpToNext} XP para o Lv. {progress.level + 1}
                 </p>
               </div>
             </div>
@@ -287,6 +295,33 @@ export function ProfilePage({ progress, onProgressUpdate, onBack }: ProfilePageP
             <WorldProgressSection key={item.world} worldStats={item} />
           ))}
         </section>
+
+        {nextAchievements.length > 0 && (
+          <Card className="min-w-0 p-5 border-sky-400/25 bg-sky-950/15">
+            <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div className="min-w-0">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-sky-300">
+                  Próximas metas
+                </p>
+                <h3 className="mt-1 break-words text-2xl font-black leading-tight text-white">
+                  Continue sua evolução
+                </h3>
+                <p className="mt-1 break-words text-sm leading-snug text-slate-400">
+                  Estas são as conquistas mais próximas com base no seu progresso local.
+                </p>
+              </div>
+              <div className="w-fit shrink-0 rounded-full border border-sky-400/30 bg-sky-500/10 px-4 py-2 text-sm font-black text-sky-200">
+                {nextAchievements.length} meta(s)
+              </div>
+            </div>
+
+            <div className="mt-5 grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-3">
+              {nextAchievements.map((achievement) => (
+                <AchievementCard key={achievement.id} achievement={achievement} />
+              ))}
+            </div>
+          </Card>
+        )}
 
         <Card className="min-w-0 p-5">
           <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">

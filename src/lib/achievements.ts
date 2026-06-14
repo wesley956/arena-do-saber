@@ -56,6 +56,7 @@ export interface PlayerAchievement {
   icon: string;
   unlocked: boolean;
   progressLabel: string;
+  progressPercent: number;
   tone: AchievementTone;
 }
 
@@ -180,14 +181,6 @@ function getSoloTrainingTotals(): { totalSeen: number; categoriesStudied: number
   };
 }
 
-function hasAllEmblemsInAnyWorld(progress: PlayerProgress): boolean {
-  return (["school", "contest"] as World[]).some((world) =>
-    getCategoriesByWorld(world).every((category) =>
-      progress.completedEmblems.includes(category.id)
-    )
-  );
-}
-
 export function getPlayerProfileSummary(progress: PlayerProgress): PlayerProfileSummary {
   const worldStats = getAllProfileWorldStats(progress);
   const totalAnswered = Math.max(0, progress.totalCorrect + progress.totalWrong);
@@ -224,6 +217,14 @@ export function getPlayerAchievements(progress: PlayerProgress): PlayerAchieveme
     world.categories.some((category) => category.activityScore > 0)
   ).length;
   const hasAnyBadge = summary.completedEmblemsCount > 0;
+  const bestWorldEmblemCount = Math.max(
+    ...(["school", "contest"] as World[]).map((world) =>
+      getCategoriesByWorld(world).filter((category) =>
+        progress.completedEmblems.includes(category.id)
+      ).length
+    )
+  );
+  const hasCompleteWorld = bestWorldEmblemCount >= 6;
 
   return [
     {
@@ -233,6 +234,7 @@ export function getPlayerAchievements(progress: PlayerProgress): PlayerAchieveme
       icon: "👣",
       unlocked: summary.totalAnswered >= 1,
       progressLabel: `${Math.min(summary.totalAnswered, 1)}/1 pergunta`,
+      progressPercent: safePercent(summary.totalAnswered, 1),
       tone: "bronze",
     },
     {
@@ -242,6 +244,7 @@ export function getPlayerAchievements(progress: PlayerProgress): PlayerAchieveme
       icon: "🎯",
       unlocked: summary.totalCorrect >= 1,
       progressLabel: `${Math.min(summary.totalCorrect, 1)}/1 acerto`,
+      progressPercent: safePercent(summary.totalCorrect, 1),
       tone: "emerald",
     },
     {
@@ -251,6 +254,7 @@ export function getPlayerAchievements(progress: PlayerProgress): PlayerAchieveme
       icon: "🧠",
       unlocked: summary.soloSeenQuestionCount >= 10,
       progressLabel: `${Math.min(summary.soloSeenQuestionCount, 10)}/10 no Treino Solo`,
+      progressPercent: safePercent(summary.soloSeenQuestionCount, 10),
       tone: "silver",
     },
     {
@@ -260,6 +264,7 @@ export function getPlayerAchievements(progress: PlayerProgress): PlayerAchieveme
       icon: "📚",
       unlocked: summary.soloCategoriesStudied >= 2,
       progressLabel: `${Math.min(summary.soloCategoriesStudied, 2)}/2 matérias`,
+      progressPercent: safePercent(summary.soloCategoriesStudied, 2),
       tone: "violet",
     },
     {
@@ -269,6 +274,7 @@ export function getPlayerAchievements(progress: PlayerProgress): PlayerAchieveme
       icon: "🧭",
       unlocked: studiedWorlds >= 2,
       progressLabel: `${Math.min(studiedWorlds, 2)}/2 mundos`,
+      progressPercent: safePercent(studiedWorlds, 2),
       tone: "silver",
     },
     {
@@ -278,6 +284,7 @@ export function getPlayerAchievements(progress: PlayerProgress): PlayerAchieveme
       icon: "🏅",
       unlocked: hasAnyBadge,
       progressLabel: `${summary.completedEmblemsCount}/1 insígnia`,
+      progressPercent: safePercent(summary.completedEmblemsCount, 1),
       tone: "gold",
     },
     {
@@ -285,8 +292,11 @@ export function getPlayerAchievements(progress: PlayerProgress): PlayerAchieveme
       title: "Mestre das Insígnias",
       description: "Conquistar todas as insígnias de um mundo.",
       icon: "👑",
-      unlocked: hasAllEmblemsInAnyWorld(progress),
-      progressLabel: hasAllEmblemsInAnyWorld(progress) ? "Mundo completo" : "0/1 mundo completo",
+      unlocked: hasCompleteWorld,
+      progressLabel: hasCompleteWorld
+        ? "Mundo completo"
+        : `${bestWorldEmblemCount}/6 insígnias em um mundo`,
+      progressPercent: safePercent(bestWorldEmblemCount, 6),
       tone: "gold",
     },
     {
@@ -296,6 +306,7 @@ export function getPlayerAchievements(progress: PlayerProgress): PlayerAchieveme
       icon: "📝",
       unlocked: summary.scratchpadCount > 0,
       progressLabel: `${summary.scratchpadCount}/1 anotação`,
+      progressPercent: safePercent(summary.scratchpadCount, 1),
       tone: "violet",
     },
     {
@@ -305,6 +316,7 @@ export function getPlayerAchievements(progress: PlayerProgress): PlayerAchieveme
       icon: "💾",
       unlocked: summary.soloSeenQuestionCount > 0,
       progressLabel: `${summary.soloSeenQuestionCount} pergunta(s) salvas`,
+      progressPercent: safePercent(summary.soloSeenQuestionCount, 1),
       tone: "emerald",
     },
     {
@@ -313,8 +325,20 @@ export function getPlayerAchievements(progress: PlayerProgress): PlayerAchieveme
       description: "Vencer um Desafio da Insígnia detectado por insígnia conquistada.",
       icon: "⚔️",
       unlocked: hasAnyBadge,
-      progressLabel: hasAnyBadge ? "Desafio vencido" : "Bloqueada",
+      progressLabel: hasAnyBadge ? "Desafio vencido" : "Conquiste uma insígnia",
+      progressPercent: safePercent(summary.completedEmblemsCount, 1),
       tone: "bronze",
     },
   ];
+}
+
+
+export function getNextPlayerAchievements(
+  progress: PlayerProgress,
+  limit = 3
+): PlayerAchievement[] {
+  return getPlayerAchievements(progress)
+    .filter((achievement) => !achievement.unlocked)
+    .sort((a, b) => b.progressPercent - a.progressPercent)
+    .slice(0, limit);
 }
