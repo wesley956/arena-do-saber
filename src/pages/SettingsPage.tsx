@@ -15,8 +15,11 @@ import {
 import {
   getLocalSettings,
   setHapticsEnabledPreference,
+  setThemePreference,
+  type ThemePreference,
 } from "../lib/localSettings";
 import { vibrateTap } from "../lib/haptics";
+import { applyThemePreference } from "../lib/theme";
 
 interface SettingsPageProps {
   progress: PlayerProgress;
@@ -27,6 +30,32 @@ interface SettingsPageProps {
   onPrivacy: () => void;
 }
 
+
+const THEME_OPTIONS: Array<{
+  value: ThemePreference;
+  icon: string;
+  title: string;
+  helper: string;
+}> = [
+  {
+    value: "system",
+    icon: "🌓",
+    title: "Automático",
+    helper: "Segue o tema claro ou escuro do dispositivo.",
+  },
+  {
+    value: "dark",
+    icon: "🌙",
+    title: "Escuro",
+    helper: "Mantém o visual gamer noturno da Arena.",
+  },
+  {
+    value: "light",
+    icon: "☀️",
+    title: "Claro",
+    helper: "Usa fundos claros e cartões suaves para estudar de dia.",
+  },
+];
 
 function getProfileLabel(profile: LocalPlayerProfile | null) {
   if (!profile) return "Jornada ainda não definida";
@@ -47,10 +76,22 @@ export function SettingsPage({
   onPrivacy,
 }: SettingsPageProps) {
   const [hapticsEnabled, setHapticsEnabledState] = useState(true);
+  const [themePreferenceState, setThemePreferenceState] =
+    useState<ThemePreference>("dark");
 
   useEffect(() => {
-    setHapticsEnabledState(getLocalSettings().hapticsEnabled);
+    const settings = getLocalSettings();
+
+    setHapticsEnabledState(settings.hapticsEnabled);
+    setThemePreferenceState(settings.themePreference);
   }, []);
+
+  function changeThemePreference(nextTheme: ThemePreference) {
+    setThemePreferenceState(nextTheme);
+    setThemePreference(nextTheme);
+    applyThemePreference(nextTheme);
+    vibrateTap();
+  }
 
   function toggleHaptics() {
     const nextValue = !hapticsEnabled;
@@ -119,6 +160,57 @@ export function SettingsPage({
           <Button className="mt-4" type="button" fullWidth onClick={onJourney}>
             Editar minha jornada
           </Button>
+        </Card>
+
+        <Card className="p-4">
+          <h2 className="text-lg font-black text-white">Aparência</h2>
+          <p className="mt-1 text-sm leading-relaxed text-slate-300">
+            Escolha como a Arena deve aparecer neste dispositivo.
+          </p>
+
+          <div className="mt-3 grid gap-2">
+            {THEME_OPTIONS.map((option) => {
+              const active = themePreferenceState === option.value;
+
+              return (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => changeThemePreference(option.value)}
+                  aria-pressed={active}
+                  className={`flex w-full items-center justify-between gap-3 rounded-2xl border p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 ${
+                    active
+                      ? "border-violet-400/60 bg-violet-500/15"
+                      : "border-slate-800 bg-slate-900/60 hover:border-violet-400/50 hover:bg-slate-800/80"
+                  }`}
+                >
+                  <span className="flex min-w-0 items-start gap-3">
+                    <span className="text-xl" aria-hidden="true">
+                      {option.icon}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-sm font-black text-white">
+                        {option.title}
+                      </span>
+                      <span className="mt-1 block text-xs leading-relaxed text-slate-400">
+                        {option.helper}
+                      </span>
+                    </span>
+                  </span>
+
+                  <span
+                    className={`shrink-0 rounded-full px-3 py-1 text-xs font-black ${
+                      active
+                        ? "border border-violet-400/50 bg-violet-500/20 text-violet-100"
+                        : "border border-slate-700 bg-slate-800 text-slate-300"
+                    }`}
+                  >
+                    {active ? "Ativo" : "Usar"}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </Card>
 
         <Card className="p-4">

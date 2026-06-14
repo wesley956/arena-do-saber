@@ -21,6 +21,7 @@ import { GameMode, ClassicMatchState, PlayerProgress, World } from "./types/game
 import { LocalPlayerProfile } from "./types/playerProfile";
 import { loadProgress, saveProgress } from "./lib/storage";
 import { loadPlayerProfile, savePlayerProfile } from "./lib/playerProfileStorage";
+import { applyThemePreference, setupThemeChangeListener } from "./lib/theme";
 
 export type AppScreen =
   | "home"
@@ -50,6 +51,11 @@ export default function App() {
   const [reviewFromHome, setReviewFromHome] = useState(false);
   const [fromStudyMap, setFromStudyMap] = useState(false);
   const [preselectedCategoryId, setPreselectedCategoryId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    applyThemePreference();
+    return setupThemeChangeListener();
+  }, []);
 
   useEffect(() => {
     saveProgress(progress);

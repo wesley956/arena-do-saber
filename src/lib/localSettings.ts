@@ -1,12 +1,24 @@
 import { LEGACY_KEYS, STORAGE_KEYS } from "./storageKeys";
 
+export type ThemePreference = "system" | "dark" | "light";
+
 export interface LocalSettings {
   hapticsEnabled: boolean;
+  themePreference: ThemePreference;
 }
 
 const DEFAULT_LOCAL_SETTINGS: LocalSettings = {
   hapticsEnabled: true,
+  themePreference: "dark",
 };
+
+function normalizeThemePreference(value: unknown): ThemePreference {
+  if (value === "system" || value === "dark" || value === "light") {
+    return value;
+  }
+
+  return DEFAULT_LOCAL_SETTINGS.themePreference;
+}
 
 function migrateLocalSettings(): void {
   if (typeof window === "undefined") return;
@@ -45,6 +57,7 @@ export function getLocalSettings(): LocalSettings {
         typeof parsed.hapticsEnabled === "boolean"
           ? parsed.hapticsEnabled
           : DEFAULT_LOCAL_SETTINGS.hapticsEnabled,
+      themePreference: normalizeThemePreference(parsed.themePreference),
     };
   } catch {
     return DEFAULT_LOCAL_SETTINGS;
@@ -73,5 +86,13 @@ export function setHapticsEnabledPreference(enabled: boolean) {
   saveLocalSettings({
     ...getLocalSettings(),
     hapticsEnabled: enabled,
+  });
+}
+
+
+export function setThemePreference(themePreference: ThemePreference) {
+  saveLocalSettings({
+    ...getLocalSettings(),
+    themePreference,
   });
 }

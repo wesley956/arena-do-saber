@@ -4,6 +4,9 @@ import "./index.css";
 import App from "./App";
 import { PwaInstallPrompt } from "./components/PwaInstallPrompt";
 import { registerServiceWorker } from "./lib/registerServiceWorker";
+import { applyThemePreference } from "./lib/theme";
+
+applyThemePreference();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
