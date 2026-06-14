@@ -75,6 +75,17 @@ export function QuestionResult({
         aria-live="polite"
       >
         <div
+          className={`result-particles ${
+            isCorrect ? "result-particles-success" : "result-particles-error"
+          }`}
+          aria-hidden="true"
+        >
+          {Array.from({ length: 14 }, (_, index) => (
+            <span key={index} className={`result-particle result-particle-${index + 1}`} />
+          ))}
+        </div>
+
+        <div
           className={`mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl text-4xl ${
             isCorrect
               ? "bg-emerald-400/15 motion-safe:animate-bounce"

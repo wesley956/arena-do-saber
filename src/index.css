@@ -483,3 +483,215 @@ html[data-theme="light"] .arena-brand-clean-image {
     transform: translateY(0) scale(1);
   }
 }
+
+/* ============================================================
+   Arena ambient background — floating particles
+   ============================================================ */
+
+.arena-ambient-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0.78;
+}
+
+.arena-ambient-background::before {
+  content: "";
+  position: absolute;
+  inset: -18%;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(251, 191, 36, 0.08), transparent 18%),
+    radial-gradient(circle at 50% 22%, rgba(168, 85, 247, 0.10), transparent 30%),
+    linear-gradient(135deg, transparent 0%, rgba(124, 58, 237, 0.04) 42%, transparent 68%);
+  transform: rotate(-8deg);
+}
+
+.arena-ambient-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(28px);
+  opacity: 0.45;
+}
+
+.arena-ambient-orb-book {
+  left: 50%;
+  top: 7%;
+  width: 180px;
+  height: 180px;
+  transform: translateX(-50%);
+  background: rgba(124, 58, 237, 0.22);
+}
+
+.arena-ambient-orb-star {
+  right: -60px;
+  top: 28%;
+  width: 150px;
+  height: 150px;
+  background: rgba(251, 191, 36, 0.12);
+}
+
+.arena-ambient-particle {
+  position: absolute;
+  bottom: -24px;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgba(251, 191, 36, 0.72);
+  box-shadow:
+    0 0 8px rgba(251, 191, 36, 0.55),
+    0 0 16px rgba(168, 85, 247, 0.35);
+  animation: arena-particle-rise 13s linear infinite;
+}
+
+.arena-ambient-particle:nth-child(3n) {
+  width: 3px;
+  height: 3px;
+  background: rgba(196, 181, 253, 0.72);
+}
+
+.arena-ambient-particle:nth-child(4n) {
+  width: 5px;
+  height: 5px;
+  background: rgba(96, 165, 250, 0.58);
+}
+
+.arena-ambient-particle-1 { left: 8%; animation-delay: -1s; animation-duration: 12s; }
+.arena-ambient-particle-2 { left: 16%; animation-delay: -7s; animation-duration: 15s; }
+.arena-ambient-particle-3 { left: 23%; animation-delay: -3s; animation-duration: 13s; }
+.arena-ambient-particle-4 { left: 31%; animation-delay: -10s; animation-duration: 16s; }
+.arena-ambient-particle-5 { left: 38%; animation-delay: -5s; animation-duration: 14s; }
+.arena-ambient-particle-6 { left: 45%; animation-delay: -12s; animation-duration: 18s; }
+.arena-ambient-particle-7 { left: 51%; animation-delay: -2s; animation-duration: 12s; }
+.arena-ambient-particle-8 { left: 58%; animation-delay: -8s; animation-duration: 17s; }
+.arena-ambient-particle-9 { left: 64%; animation-delay: -4s; animation-duration: 13s; }
+.arena-ambient-particle-10 { left: 70%; animation-delay: -11s; animation-duration: 19s; }
+.arena-ambient-particle-11 { left: 76%; animation-delay: -6s; animation-duration: 15s; }
+.arena-ambient-particle-12 { left: 83%; animation-delay: -9s; animation-duration: 16s; }
+.arena-ambient-particle-13 { left: 91%; animation-delay: -3s; animation-duration: 14s; }
+.arena-ambient-particle-14 { left: 12%; animation-delay: -13s; animation-duration: 20s; }
+.arena-ambient-particle-15 { left: 35%; animation-delay: -15s; animation-duration: 22s; }
+.arena-ambient-particle-16 { left: 55%; animation-delay: -14s; animation-duration: 21s; }
+.arena-ambient-particle-17 { left: 73%; animation-delay: -16s; animation-duration: 23s; }
+.arena-ambient-particle-18 { left: 88%; animation-delay: -18s; animation-duration: 24s; }
+
+@keyframes arena-particle-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.65);
+  }
+
+  12% {
+    opacity: 0.85;
+  }
+
+  50% {
+    transform: translate3d(18px, -52vh, 0) scale(1);
+  }
+
+  88% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(-16px, -108vh, 0) scale(0.45);
+  }
+}
+
+html[data-theme="light"] .arena-ambient-background {
+  opacity: 0.5;
+}
+
+html[data-theme="light"] .arena-ambient-background::before {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(245, 158, 11, 0.08), transparent 20%),
+    radial-gradient(circle at 50% 22%, rgba(124, 58, 237, 0.08), transparent 32%),
+    linear-gradient(135deg, transparent 0%, rgba(14, 165, 233, 0.04) 42%, transparent 68%);
+}
+
+html[data-theme="light"] .arena-ambient-orb-book {
+  background: rgba(124, 58, 237, 0.16);
+}
+
+html[data-theme="light"] .arena-ambient-orb-star {
+  background: rgba(245, 158, 11, 0.16);
+}
+
+/* ============================================================
+   Answer feedback — stars and sparks
+   ============================================================ */
+
+.result-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.result-particle {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  opacity: 0;
+  animation: result-burst 900ms ease-out forwards;
+}
+
+.result-particles-success .result-particle {
+  background: rgba(251, 191, 36, 0.95);
+  box-shadow:
+    0 0 8px rgba(251, 191, 36, 0.95),
+    0 0 14px rgba(16, 185, 129, 0.45);
+}
+
+.result-particles-error .result-particle {
+  width: 6px;
+  height: 2px;
+  border-radius: 9999px;
+  background: rgba(248, 113, 113, 0.95);
+  box-shadow:
+    0 0 8px rgba(248, 113, 113, 0.82),
+    0 0 14px rgba(251, 146, 60, 0.42);
+}
+
+.result-particle-1 { --x: -88px; --y: -58px; animation-delay: 0ms; }
+.result-particle-2 { --x: -58px; --y: -86px; animation-delay: 45ms; }
+.result-particle-3 { --x: -22px; --y: -74px; animation-delay: 90ms; }
+.result-particle-4 { --x: 24px; --y: -88px; animation-delay: 30ms; }
+.result-particle-5 { --x: 64px; --y: -62px; animation-delay: 70ms; }
+.result-particle-6 { --x: 88px; --y: -18px; animation-delay: 110ms; }
+.result-particle-7 { --x: 72px; --y: 38px; animation-delay: 65ms; }
+.result-particle-8 { --x: 34px; --y: 72px; animation-delay: 100ms; }
+.result-particle-9 { --x: -12px; --y: 78px; animation-delay: 35ms; }
+.result-particle-10 { --x: -56px; --y: 58px; animation-delay: 85ms; }
+.result-particle-11 { --x: -88px; --y: 16px; animation-delay: 125ms; }
+.result-particle-12 { --x: 0px; --y: -112px; animation-delay: 145ms; }
+.result-particle-13 { --x: 104px; --y: -44px; animation-delay: 155ms; }
+.result-particle-14 { --x: -104px; --y: -28px; animation-delay: 160ms; }
+
+@keyframes result-burst {
+  0% {
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(0.4) rotate(0deg);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(calc(-50% + var(--x)), calc(-50% + var(--y)), 0)
+      scale(1.15)
+      rotate(180deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arena-ambient-particle,
+  .result-particle {
+    animation: none;
+  }
+}

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { ArenaAmbientBackground } from "../effects/ArenaAmbientBackground";
 
 interface AppShellProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ export function AppShell({ children, header }: AppShellProps) {
       <div className="theme-bg-decoration fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-violet-900/20 rounded-full blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-900/20 rounded-full blur-3xl" />
+        <ArenaAmbientBackground />
       </div>
 
       {header && (
