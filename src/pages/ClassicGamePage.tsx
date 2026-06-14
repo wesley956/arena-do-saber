@@ -506,7 +506,7 @@ if (!match.lastAnswerCorrect) {
           setShowBotTurnNotice(false);
           return checked;
         });
-      }, 2000);
+      }, 1200);
     } else {
       // Player acertou -> mantém a vez, gira de novo
       setMatch((prev) => ({

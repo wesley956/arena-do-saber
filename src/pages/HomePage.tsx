@@ -226,10 +226,10 @@ export function HomePage({
           </Card>
 
           <Card className="p-3 text-center">
-            <p className="text-2xl font-black text-amber-300">
-              {completedEmblemCount}
+            <p className="text-2xl font-black text-orange-300">
+              {progress.streak > 0 ? `${progress.streak}🔥` : "—"}
             </p>
-            <p className="mt-1 text-xs font-bold text-slate-300">Insígnias</p>
+            <p className="mt-1 text-xs font-bold text-slate-300">Sequência</p>
           </Card>
         </section>
 

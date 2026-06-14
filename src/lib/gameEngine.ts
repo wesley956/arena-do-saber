@@ -8,7 +8,7 @@ import {
 import { getCategoriesByWorld } from "../data/categories";
 import { getRandomQuestion } from "./questionSelector";
 import { getXPForAnswer, getXPForEvent, calcLevel } from "./xp";
-import { botAnswersCorrectly, botChooseCategory } from "./bot";
+import { botAnswersCorrectly, botChooseCategory, initBot } from "./bot";
 import { loadProgress, saveProgress } from "./storage";
 
 // ============================================================
@@ -24,6 +24,7 @@ export const MAX_ROUNDS = 20;
 // Iniciar partida
 // ------------------------------------------------------------
 export function initClassicMatch(world: World): ClassicMatchState {
+  initBot();
   return {
     id: uuid(),
     world,
