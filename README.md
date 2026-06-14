@@ -276,12 +276,9 @@ O projeto já possui uma base sólida para testes com usuários, expansão de co
 Ideias para evolução do projeto:
 
 - Fazer deploy no **Vercel**.
-- Criar tela de conquistas/perfil.
 - Expandir o banco de perguntas.
 - Adicionar ranking local.
-- Transformar em **PWA instalável**.
 - Melhorar animações e feedback visual.
-- Adicionar estatísticas de desempenho por matéria.
 - Criar mais desafios e modos de revisão.
 
 ---
@@ -368,3 +365,32 @@ O que aconteceu:
 O que eu esperava:
 Conseguiu repetir o erro? Sim/Não
 Print ou vídeo, se tiver:
+---
+
+## ✅ Fechamento pré-beta — 0.1.1-beta
+
+O **Arena do Saber** está preparado para uma rodada de testes públicos controlados com amigos e usuários reais.
+
+Principais melhorias aplicadas nesta fase:
+
+- onboarding inicial com jornada personalizada;
+- tela Sobre / Créditos;
+- política de privacidade simples;
+- PWA instalável;
+- suporte Android/Capacitor;
+- hardening das chaves de `localStorage` com migração de dados antigos;
+- ajustes mobile com `safe-area` para celulares com notch/barra de gesto;
+- acessibilidade básica em cards clicáveis, modal e animações reduzidas;
+- bot local com personalidades;
+- missão do dia na Home;
+- Duelo Rápido com resultado do bot;
+- Treino Solo com opção de continuar treinando;
+- Perfil com progressão visual, próximas metas e conquistas;
+- checklist de beta público em `docs/BETA_PUBLICO_CHECKLIST.md`.
+
+Para validar tudo antes de publicar ou gerar APK:
+
+```bash
+npm run verify
+```
+

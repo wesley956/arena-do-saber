@@ -226,7 +226,7 @@ Print ou vídeo, se tiver:
 
         <Card className="border-amber-400/25 bg-amber-950/15 p-4">
           <p className="text-xs font-black uppercase tracking-wide text-amber-200">
-            Novidades da versão
+            Novidades da versão · fechamento pré-beta
           </p>
 
           <h2 className="mt-1 text-lg font-black text-white">
@@ -341,6 +341,20 @@ Print ou vídeo, se tiver:
             Dados locais
           </p>
           <p className="mt-2 text-sm leading-relaxed text-slate-300">
+            <div className="rounded-2xl border border-sky-400/25 bg-sky-950/20 p-4">
+              <p className="text-xs font-black uppercase tracking-wide text-sky-200">
+                Fechamento pré-beta
+              </p>
+              <ul className="mt-3 space-y-2 text-sm leading-relaxed text-slate-300">
+                <li>✅ Bot com personalidades e partidas mais rápidas.</li>
+                <li>✅ Missão do dia, sequência e progresso mais claro na Home.</li>
+                <li>✅ Treino Solo com continuidade e histórico persistente.</li>
+                <li>✅ Duelo Rápido mostrando se o bot acertou ou errou.</li>
+                <li>✅ Perfil com próximas metas, conquistas e progresso por mundo.</li>
+                <li>✅ Ajustes mobile, safe-area, acessibilidade e reduced motion.</li>
+              </ul>
+            </div>
+
             Nesta versão beta, progresso, jornada, erros e conquistas ficam
             salvos no próprio dispositivo. Ainda não existe conta online nem
             sincronização em nuvem.
