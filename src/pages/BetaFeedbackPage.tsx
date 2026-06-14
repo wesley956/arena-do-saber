@@ -9,6 +9,8 @@ import {
   APP_BUILD_LABEL,
   APP_CHANNEL,
   APP_RELEASE_DATE,
+  APP_RELEASE_NOTES,
+  APP_RELEASE_TITLE,
   APP_VERSION,
 } from "../lib/appVersion";
 
@@ -219,6 +221,42 @@ Print ou vídeo, se tiver:
                 {APP_RELEASE_DATE}
               </p>
             </div>
+          </div>
+        </Card>
+
+        <Card className="border-amber-400/25 bg-amber-950/15 p-4">
+          <p className="text-xs font-black uppercase tracking-wide text-amber-200">
+            Novidades da versão
+          </p>
+
+          <h2 className="mt-1 text-lg font-black text-white">
+            {APP_RELEASE_TITLE}
+          </h2>
+
+          <p className="mt-2 text-sm leading-relaxed text-slate-300">
+            Esta atualização prepara o Arena do Saber para testes públicos com
+            uma experiência mais clara, mais gostosa de jogar e melhor para
+            estudar.
+          </p>
+
+          <div className="mt-4 space-y-2">
+            {APP_RELEASE_NOTES.map((note) => (
+              <div
+                key={note.title}
+                className="flex gap-3 rounded-2xl border border-slate-800 bg-slate-950/40 p-3"
+              >
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-amber-500/15 text-xl">
+                  {note.icon}
+                </span>
+
+                <div className="min-w-0">
+                  <p className="text-sm font-black text-white">{note.title}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-slate-400">
+                    {note.description}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </Card>
 
