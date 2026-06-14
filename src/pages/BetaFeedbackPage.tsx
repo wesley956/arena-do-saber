@@ -1,3 +1,4 @@
+import { STORAGE_KEYS } from "../lib/storageKeys";
 import { useMemo, useState } from "react";
 import { PlayerProgress } from "../types/game";
 import { LocalPlayerProfile } from "../types/playerProfile";
@@ -21,7 +22,6 @@ interface BetaFeedbackPageProps {
   onJourney: () => void;
 }
 
-const ONBOARDING_STORAGE_KEY = "arena-do-saber:onboarding-seen";
 
 const TEST_CHECKLIST = [
   "Abrir o app como se fosse a primeira vez e ver o onboarding.",
@@ -143,7 +143,7 @@ Print ou vídeo, se tiver:
 
   function resetOnboarding() {
     try {
-      window.localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+      window.localStorage.removeItem(STORAGE_KEYS.ONBOARDING_SEEN);
       setResetDone(true);
       window.setTimeout(() => {
         window.location.reload();

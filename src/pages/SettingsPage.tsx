@@ -1,3 +1,4 @@
+import { STORAGE_KEYS } from "../lib/storageKeys";
 import { useEffect, useState } from "react";
 import { PlayerProgress } from "../types/game";
 import { LocalPlayerProfile } from "../types/playerProfile";
@@ -26,7 +27,6 @@ interface SettingsPageProps {
   onPrivacy: () => void;
 }
 
-const ONBOARDING_STORAGE_KEY = "arena-do-saber:onboarding-seen";
 
 function getProfileLabel(profile: LocalPlayerProfile | null) {
   if (!profile) return "Jornada ainda não definida";
@@ -64,7 +64,7 @@ export function SettingsPage({
 
   function resetOnboarding() {
     try {
-      window.localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+      window.localStorage.removeItem(STORAGE_KEYS.ONBOARDING_SEEN);
       window.location.reload();
     } catch {
       // Se localStorage falhar, apenas mantém o app funcionando.

@@ -1,8 +1,8 @@
+import { STORAGE_KEYS } from "../lib/storageKeys";
 import { type CSSProperties, useEffect, useState } from "react";
 import { Button } from "./ui/Button";
 import { Card } from "./ui/Card";
 
-const ONBOARDING_STORAGE_KEY = "arena-do-saber:onboarding-seen";
 
 type OnboardingItem = {
   icon: string;
@@ -59,7 +59,7 @@ const ITEMS: OnboardingItem[] = [
 
 function hasSeenOnboarding(): boolean {
   try {
-    return window.localStorage.getItem(ONBOARDING_STORAGE_KEY) === "true";
+    return window.localStorage.getItem(STORAGE_KEYS.ONBOARDING_SEEN) === "true";
   } catch {
     return false;
   }
@@ -67,7 +67,7 @@ function hasSeenOnboarding(): boolean {
 
 function markOnboardingAsSeen() {
   try {
-    window.localStorage.setItem(ONBOARDING_STORAGE_KEY, "true");
+    window.localStorage.setItem(STORAGE_KEYS.ONBOARDING_SEEN, "true");
   } catch {
     // O jogo deve continuar funcionando mesmo sem acesso ao localStorage.
   }

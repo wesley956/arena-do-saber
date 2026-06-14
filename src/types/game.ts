@@ -65,6 +65,7 @@ export interface Question {
 // Player Progress
 // ------------------------------------------------------------
 export interface PlayerProgress {
+  _version: number;
   xp: number;
   level: number;
   streak: number;

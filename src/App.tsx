@@ -92,15 +92,6 @@ export default function App() {
     setScreen("solo");
   }
 
-  function handleSmartSoloStart() {
-    setLastMatchSummary(null);
-    setPreferredMode("solo");
-    setSelectedWorld(getPreferredWorldFromJourney());
-    setFromStudyMap(false);
-    setPreselectedCategoryId(undefined);
-    setScreen("solo");
-  }
-
   function handleSmartClassicStart() {
     setLastMatchSummary(null);
     setPreferredMode("classic");
@@ -370,7 +361,7 @@ export default function App() {
         progress={progress}
         playerProfile={playerProfile}
         onPlay={handleSmartClassicStart}
-        onSolo={handleSmartSoloStart}
+        onSolo={handleRecommendedJourneyStart}
         onReview={() => {
           setReviewFromHome(true);
           setScreen("review");

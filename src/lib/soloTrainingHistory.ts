@@ -1,4 +1,6 @@
-const SOLO_TRAINING_HISTORY_STORAGE_KEY = "arena-do-saber:solo-training-history";
+import { LEGACY_KEYS, STORAGE_KEYS } from "./storageKeys";
+
+const SOLO_TRAINING_HISTORY_STORAGE_KEY = STORAGE_KEYS.SOLO_TRAINING_HISTORY;
 const MAX_HISTORY_IDS_PER_CATEGORY = 50;
 
 type SoloTrainingHistory = Record<string, string[]>;
@@ -9,6 +11,23 @@ function getStorage(): Storage | null {
     return window.localStorage ?? null;
   } catch {
     return null;
+  }
+}
+
+function migrateSoloTrainingHistory(storage: Storage): void {
+  try {
+    const legacyHistory = storage.getItem(LEGACY_KEYS.SOLO_TRAINING_HISTORY);
+    const currentHistory = storage.getItem(STORAGE_KEYS.SOLO_TRAINING_HISTORY);
+
+    if (legacyHistory && !currentHistory) {
+      storage.setItem(STORAGE_KEYS.SOLO_TRAINING_HISTORY, legacyHistory);
+    }
+
+    if (legacyHistory) {
+      storage.removeItem(LEGACY_KEYS.SOLO_TRAINING_HISTORY);
+    }
+  } catch {
+    // Histórico é melhoria de experiência. Se a migração falhar, o jogo continua.
   }
 }
 
@@ -51,6 +70,8 @@ function readSoloTrainingHistory(): SoloTrainingHistory {
   if (!storage) return {};
 
   try {
+    migrateSoloTrainingHistory(storage);
+
     const rawHistory = storage.getItem(SOLO_TRAINING_HISTORY_STORAGE_KEY);
     if (!rawHistory) return {};
 
@@ -69,6 +90,7 @@ function writeSoloTrainingHistory(history: SoloTrainingHistory): void {
       SOLO_TRAINING_HISTORY_STORAGE_KEY,
       JSON.stringify(normalizeHistory(history))
     );
+    storage.removeItem(LEGACY_KEYS.SOLO_TRAINING_HISTORY);
   } catch {
     // localStorage pode estar indisponível, cheio ou bloqueado pelo navegador.
     // O Treino Solo continua funcionando com histórico apenas em memória.

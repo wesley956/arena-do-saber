@@ -4,8 +4,7 @@ import {
   PlayerGoal,
   StudyStage,
 } from "../types/playerProfile";
-
-const PLAYER_PROFILE_KEY = "arena-do-saber-player-profile-v1";
+import { LEGACY_KEYS, STORAGE_KEYS } from "./storageKeys";
 
 const GOALS: PlayerGoal[] = ["literacy", "school", "contest", "general"];
 const STAGES: StudyStage[] = [
@@ -41,6 +40,25 @@ function isContestTrack(value: unknown): value is ContestTrack {
   return isString(value) && CONTEST_TRACKS.includes(value as ContestTrack);
 }
 
+function migratePlayerProfileStorage(): void {
+  try {
+    if (typeof window === "undefined") return;
+
+    const legacyProfile = window.localStorage.getItem(LEGACY_KEYS.PLAYER_PROFILE);
+    const currentProfile = window.localStorage.getItem(STORAGE_KEYS.PLAYER_PROFILE);
+
+    if (legacyProfile && !currentProfile) {
+      window.localStorage.setItem(STORAGE_KEYS.PLAYER_PROFILE, legacyProfile);
+    }
+
+    if (legacyProfile) {
+      window.localStorage.removeItem(LEGACY_KEYS.PLAYER_PROFILE);
+    }
+  } catch {
+    // Migração silenciosa: o app continua funcionando.
+  }
+}
+
 function normalizeProfile(value: unknown): LocalPlayerProfile | null {
   if (!value || typeof value !== "object") return null;
 
@@ -68,7 +86,9 @@ export function loadPlayerProfile(): LocalPlayerProfile | null {
   try {
     if (typeof window === "undefined") return null;
 
-    const raw = window.localStorage.getItem(PLAYER_PROFILE_KEY);
+    migratePlayerProfileStorage();
+
+    const raw = window.localStorage.getItem(STORAGE_KEYS.PLAYER_PROFILE);
     if (!raw) return null;
 
     return normalizeProfile(JSON.parse(raw));
@@ -82,13 +102,15 @@ export function savePlayerProfile(profile: LocalPlayerProfile) {
     if (typeof window === "undefined") return;
 
     window.localStorage.setItem(
-      PLAYER_PROFILE_KEY,
+      STORAGE_KEYS.PLAYER_PROFILE,
       JSON.stringify({
         ...profile,
         nickname: profile.nickname.trim() || "Estudante",
         updatedAt: new Date().toISOString(),
       })
     );
+
+    window.localStorage.removeItem(LEGACY_KEYS.PLAYER_PROFILE);
   } catch {
     // Falha silenciosa: o app continua funcionando sem bloquear o jogador.
   }
