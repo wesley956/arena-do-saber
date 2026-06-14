@@ -1,9 +1,10 @@
-import { type CSSProperties, useState } from "react";
+import { useState } from "react";
 import { PlayerProgress } from "../types/game";
 import { LocalPlayerProfile } from "../types/playerProfile";
 import { AppShell } from "../components/layout/AppShell";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
+import { ArenaBrandMark } from "../components/brand/ArenaBrandMark";
 import { ProgressBar } from "../components/game/ProgressBar";
 import { xpProgressInLevel, xpToNextLevel } from "../lib/xp";
 import { getAccuracyRate } from "../lib/stats";
@@ -29,33 +30,6 @@ interface HomePageProps {
   onAbout: () => void;
   onPrivacy: () => void;
 }
-
-const LOGO_MASK_STYLE: CSSProperties = {
-  WebkitMaskImage:
-    "radial-gradient(circle at center, black 0%, black 56%, rgba(0,0,0,0.85) 72%, transparent 100%)",
-  maskImage:
-    "radial-gradient(circle at center, black 0%, black 56%, rgba(0,0,0,0.85) 72%, transparent 100%)",
-  filter: "drop-shadow(0 0 18px rgba(168, 85, 247, 0.42))",
-};
-
-function IntegratedArenaLogo({ compact = false }: { compact?: boolean }) {
-  return (
-    <div
-      className={`relative shrink-0 ${compact ? "h-12 w-12" : "h-16 w-16 sm:h-20 sm:w-20"}`}
-      aria-hidden="true"
-    >
-      <div className="absolute inset-2 rounded-full bg-violet-500/30 blur-xl" />
-      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-400/20 via-transparent to-amber-300/10 blur-md" />
-      <img
-        src="/brand/arena-logo.png"
-        alt=""
-        className="relative h-full w-full scale-125 object-cover"
-        style={LOGO_MASK_STYLE}
-      />
-    </div>
-  );
-}
-
 
 function getJourneyLabel(profile: LocalPlayerProfile | null) {
   if (!profile) return "Definir objetivo";
@@ -200,7 +174,7 @@ export function HomePage({
           </div>
 
           <div className="relative mt-3 flex items-center justify-center gap-3">
-            <IntegratedArenaLogo />
+            <ArenaBrandMark size="lg" />
             <h1 className="text-left text-3xl font-black leading-none text-white sm:text-4xl">
               Arena
               <span className="block bg-gradient-to-r from-violet-200 via-sky-200 to-amber-100 bg-clip-text text-transparent">
@@ -415,7 +389,7 @@ export function HomePage({
             <div className="relative flex-1 p-4">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex min-w-0 items-center gap-3">
-                  <IntegratedArenaLogo compact />
+                  <ArenaBrandMark size="sm" />
                   <div className="min-w-0">
                     <p className="truncate text-base font-black text-white">
                       Arena do Saber

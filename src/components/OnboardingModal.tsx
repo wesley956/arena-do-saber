@@ -1,7 +1,8 @@
 import { STORAGE_KEYS } from "../lib/storageKeys";
-import { type CSSProperties, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/Button";
 import { Card } from "./ui/Card";
+import { ArenaBrandMark } from "./brand/ArenaBrandMark";
 
 
 type OnboardingItem = {
@@ -10,13 +11,6 @@ type OnboardingItem = {
   description: string;
 };
 
-const LOGO_MASK_STYLE: CSSProperties = {
-  WebkitMaskImage:
-    "radial-gradient(circle at center, black 0%, black 58%, rgba(0,0,0,0.82) 74%, transparent 100%)",
-  maskImage:
-    "radial-gradient(circle at center, black 0%, black 58%, rgba(0,0,0,0.82) 74%, transparent 100%)",
-  filter: "drop-shadow(0 0 18px rgba(168, 85, 247, 0.45))",
-};
 
 const ITEMS: OnboardingItem[] = [
   {
@@ -107,15 +101,7 @@ export function OnboardingModal() {
               </p>
 
               <div className="flex items-center gap-3">
-                <div className="relative h-16 w-16 shrink-0" aria-hidden="true">
-                  <div className="absolute inset-2 rounded-full bg-violet-500/35 blur-xl" />
-                  <img
-                    src="/brand/arena-logo.png"
-                    alt=""
-                    className="relative h-full w-full scale-125 object-cover"
-                    style={LOGO_MASK_STYLE}
-                  />
-                </div>
+                <ArenaBrandMark size="md" />
 
                 <h2
                   id="onboarding-title"
